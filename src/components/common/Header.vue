@@ -1,10 +1,14 @@
 <template>
     <div class="header">
-        <div class="logo">后台管理系统</div>
+        <div class="logo">
+            <a class="el-dropdown-link" href="#/readme">后台管理系统</a>
+        </div>
         <div class="user-info">
+             <a class="el-dropdown-link" href="#/setting">
+                    设置
+                </a>
             <el-dropdown trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link">
-                    <img class="user-logo" src="../../../static/img/img.jpg">
                     {{username}}
                 </span>
                 <el-dropdown-menu slot="dropdown">
@@ -51,6 +55,9 @@
         float: left;
         width:250px;
         text-align: center;
+    }
+    .header .logo a {
+        color: #fff;
     }
     .user-info {
         float: right;

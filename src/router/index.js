@@ -55,5 +55,27 @@ export default new Router({
             path: '/login',
             component: resolve => require(['../components/page/Login.vue'], resolve)
         },
+        {
+            path: '/setting',
+            component: resolve => require(['../components/page/setting/Setting.vue'], resolve),
+            children:[
+                {
+                    path: '/',
+                    component: resolve => require(['../components/page/setting/userSetting.vue'], resolve)
+                },{
+                    path: '/permissionSettings',
+                    component: resolve => require(['../components/page/setting/permissionSettings.vue'], resolve)
+                },{
+                    path: '/companyInfo',
+                    component: resolve => require(['../components/page/setting/companyInfo.vue'], resolve)
+                },{
+                    path: '/joinCompany',
+                    component: resolve => require(['../components/page/setting/joinCompany.vue'], resolve)
+                },{
+                    path: '/Franchisee',
+                    component: resolve => require(['../components/page/setting/Franchisee.vue'], resolve)
+                },
+            ]
+        }
     ]
 })
