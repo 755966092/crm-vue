@@ -1,8 +1,7 @@
 <template>
-	<div>
-		
-		<el-row :gutter="10">
-		  	<el-col :xs="8" :sm="8" :md="8" :lg="8" :xl="8">
+	<div class="componentsRoot">
+		<el-row :gutter="5">
+			<el-col :span="8">
 				<div class="title">
 					<span>组织架构</span>
 					<el-button type="text" @click="showModel('subCompany')">新建子公司</el-button>
@@ -10,80 +9,74 @@
 				</div>
 				<p class="companyName">本公司</p>
 				<div class="select">
-					<el-select v-model="value" placeholder="请选择">
-					    <el-option
-					      v-for="item in options"
-					      :key="item.value"
-					      :label="item.label"
-					      :value="item.value">
-					    </el-option>
-					  </el-select>
+					<el-cascader expand-trigger="hover" :options="parentCompanyList"  @change="handleChange">
+					</el-cascader>
 				</div>
 				<div class="companyName">
 					<el-button type="text">调整加盟商</el-button>
 				</div>
 				<Tree :treeData="treeData"></Tree>
-		  	</el-col>
-		  	<el-col :xs="16" :sm="16" :md="16" :lg="16" :xl="16">
-					<div class="title">
-						<span>市场部</span>
-						<el-button type="text" @click="showModel('rename')">重命名</el-button>
-						<el-button type="text" @click="showModel('subDepartment')">添加子部门</el-button>
-						<el-button type="text">上移</el-button>
-						<el-button type="text">下移</el-button>
-						<el-button type="text" @click="showModel('delDepartment')">删除</el-button>
-					</div>
-					<div>
-						<span>部门成员(不包括子部门成员)</span>	
-						<el-button type="text" @click="showModel('addEmployee')">添加成员</el-button>
-						<el-button type="text" @click="showModel('setSupervisor')">设置主管</el-button>
-					</div>
-					<settingTable  @handover="showModel('handover')" @deleteBtn="showModel('deleteBtn')" @showModel="showModelTable()" @selectRole="showModel('selectRole')"></settingTable>
-		  	</el-col>
+			</el-col>
+			<el-col :span="16">
+				<div class="title">
+					<span>市场部</span>
+					<el-button type="text" @click="showModel('rename')">重命名</el-button>
+					<el-button type="text" @click="showModel('subDepartment')">添加子部门</el-button>
+					<el-button type="text">上移</el-button>
+					<el-button type="text">下移</el-button>
+					<el-button type="text" @click="showModel('delDepartment')">删除</el-button>
+				</div>
+				<div>
+					<span>部门成员(不包括子部门成员)</span>
+					<el-button type="text" @click="showModel('addEmployee')">添加成员</el-button>
+					<el-button type="text" @click="showModel('setSupervisor')">设置主管</el-button>
+				</div>
+				<settingTable @handover="showModel('handover')" @deleteBtn="showModel('deleteBtn')" @showModel="showModelTable()" @selectRole="showModel('selectRole')"></settingTable>
+			</el-col>
 		</el-row>
 		<template>
-			<div>
-						<el-dialog
-						title="员工信息"
-						:visible.sync="dialogVisible"
-						width="20%"
-						>
-							
-						<div>
-								<span class="iptName">姓名:</span> 
-							<el-input  v-model="input" placeholder="请输入内容"></el-input>
-						</div>
-						<div>
-							<span class="iptName">职务:</span> 
-							<el-input  v-model="input" placeholder="请输入内容"></el-input>
+				<div>
+							<el-dialog
+							title="员工信息"
+							:visible.sync="dialogVisible"
+							width="20%"
+							>
+								
+							<div>
+									<span class="iptName">姓名:</span> 
+								<el-input  v-model="input" placeholder="请输入内容"></el-input>
 							</div>
-						<div>
-							<span class="iptName">角色:</span> 
-							<el-input  v-model="input" placeholder="请输入内容"></el-input>
-							</div>
-						<div>
-							<span class="iptName">电话:</span> 
-							<el-input  v-model="input" placeholder="请输入内容"></el-input>
-							</div>
-						<div>
-							<span class="iptName">手机:</span> 
-							<el-input  v-model="input" placeholder="请输入内容"></el-input>
-							</div>
-						<div>
-							<span class="iptName">微信:</span> 
-							<el-input  v-model="input" placeholder="请输入内容"></el-input>
-							</div>
-						<div>
-							<span class="iptName">QQ:</span> 
-							<el-input  v-model="input" placeholder="请输入内容"></el-input>
-							</div>
-							<span slot="footer" class="dialog-footer">
-									<el-button @click="dialogVisible = false">取 消</el-button>
-									<el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-							</span>
-						</el-dialog>
-			</div>
-		</template>
+							<div>
+								<span class="iptName">职务:</span> 
+								<el-input  v-model="input" placeholder="请输入内容"></el-input>
+								</div>
+							<div>
+								<span class="iptName">角色:</span> 
+								<el-input  v-model="input" placeholder="请输入内容"></el-input>
+								</div>
+							<div>
+								<span class="iptName">电话:</span> 
+								<el-input  v-model="input" placeholder="请输入内容"></el-input>
+								</div>
+							<div>
+								<span class="iptName">手机:</span> 
+								<el-input  v-model="input" placeholder="请输入内容"></el-input>
+								</div>
+							<div>
+								<span class="iptName">微信:</span> 
+								<el-input  v-model="input" placeholder="请输入内容"></el-input>
+								</div>
+							<div>
+								<span class="iptName">QQ:</span> 
+								<el-input  v-model="input" placeholder="请输入内容"></el-input>
+								</div>
+								<span slot="footer" class="dialog-footer">
+										<el-button @click="dialogVisible = false">取 消</el-button>
+										<el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+								</span>
+							</el-dialog>
+				</div>
+</template>
 		<!-- 重命名 -->
 			<div class="rename">
 						<el-dialog
@@ -381,164 +374,320 @@
 </template>
 
 <script>
-import Tree from "./settingComponents/Tree.vue";
-import settingTable from "./settingComponents/settingTable";
-import settingModel from "./settingComponents/settingModel";
-export default {
-  components: {
-    Tree,
-    settingTable,
-    settingModel
-  },
-  data() {
-    return {
-      dialogVisible: false,
-      rename: false,
-      subDepartment: false,
-      delDepartment: false,
-      subCompany: false,
-      editFranchisee: false,
-      addEmployee: false,
-      currentEmployee: false,
-      newEmployee: false,
-      setSupervisor: false,
-      selectRole: false,
-      handover: false,
-			selectPeople: false,
-			deleteBtn: false,
-			deleteEmployee: false,
-			selectPeopleFlag: '本部门',
-			deleteEmployeeFlag: "",
-      input: "aaa",
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
-        }
-      ],
-      treeData: [
-        {
-          label: "一级 1",
-          children: [
-            {
-              label: "二级 2-1"
-            },
-            {
-              label: "二级 2-2"
-            }
-          ]
-        },
-        {
-          label: "一级 1",
-          children: [
-            {
-              label: "二级 2-1"
-            },
-            {
-              label: "二级 2-2"
-            }
-          ]
-        }
-      ],
-      value: ""
-    };
-  },
-  methods: {
-    showModel(param) {
-      this[param] = true;
-    },
-    showModelTable(row, data) {
-      console.log(data);
-      this.dialogVisible = true;
-    },
-		addCurrentEmployee() {
-			// 现有员工选择
-			this.addEmployee = false;
-			this.currentEmployee = true;
+	import Tree from "./settingComponents/Tree.vue";
+	import settingTable from "./settingComponents/settingTable";
+	import settingModel from "./settingComponents/settingModel";
+	export default {
+		components: {
+			Tree,
+			settingTable,
+			settingModel
 		},
-		addNewEmployee() {
+		data() {
+			return {
+				dialogVisible: false,
+				rename: false,
+				subDepartment: false,
+				delDepartment: false,
+				subCompany: false,
+				editFranchisee: false,
+				addEmployee: false,
+				currentEmployee: false,
+				newEmployee: false,
+				setSupervisor: false,
+				selectRole: false,
+				handover: false,
+				selectPeople: false,
+				deleteBtn: false,
+				deleteEmployee: false,
+				selectPeopleFlag: '本部门',
+				deleteEmployeeFlag: "",
+				input: "aaa",
+				options: [{
+						value: "选项1",
+						label: "黄金糕"
+					},
+					{
+						value: "选项2",
+						label: "双皮奶"
+					},
+					{
+						value: "选项3",
+						label: "蚵仔煎"
+					},
+					{
+						value: "选项4",
+						label: "龙须面"
+					},
+					{
+						value: "选项5",
+						label: "北京烤鸭"
+					}
+				],
+				treeData: [{
+					label: "技术部",
+					children: [{
+						label: "市场部",
+						children: [{
+							label: "产品部",
+							children: [{
+								label: "财务部"
+							}]
+						}]
+					}]
+				}, {
+					label: "技术部2",
+					children: [{
+						label: "市场部2",
+						children: [{
+							label: "产品部2",
+							children: [{
+								label: "财务部2"
+							}]
+						}]
+					}, {
+						label: "市场部3",
+						children: [{
+							label: "产品部2",
+							children: [{
+								label: "财务部2"
+							}]
+						}]
+					}]
+				}],
+				parentCompanyList: [{
+					value: 'zhinan',
+					label: '指南',
+					children: [{
+						value: 'shejiyuanze',
+						label: '设计原则',
+						children: [{
+							value: 'yizhi',
+							label: '一致'
+						}, {
+							value: 'fankui',
+							label: '反馈'
+						}, {
+							value: 'xiaolv',
+							label: '效率'
+						}, {
+							value: 'kekong',
+							label: '可控'
+						}]
+					}, {
+						value: 'daohang',
+						label: '导航',
+						children: [{
+							value: 'cexiangdaohang',
+							label: '侧向导航'
+						}, {
+							value: 'dingbudaohang',
+							label: '顶部导航'
+						}]
+					}]
+				}, {
+					value: 'zujian',
+					label: '组件',
+					children: [{
+						value: 'notice',
+						label: 'Notice',
+						children: [{
+							value: 'alert',
+							label: 'Alert 警告'
+						}, {
+							value: 'loading',
+							label: 'Loading 加载'
+						}, {
+							value: 'message',
+							label: 'Message 消息提示'
+						}, {
+							value: 'message-box',
+							label: 'MessageBox 弹框'
+						}, {
+							value: 'notification',
+							label: 'Notification 通知'
+						}]
+					}, {
+						value: 'navigation',
+						label: 'Navigation',
+						children: [{
+							value: 'menu',
+							label: 'NavMenu 导航菜单'
+						}, {
+							value: 'tabs',
+							label: 'Tabs 标签页'
+						}, {
+							value: 'breadcrumb',
+							label: 'Breadcrumb 面包屑'
+						}, {
+							value: 'dropdown',
+							label: 'Dropdown 下拉菜单'
+						}, {
+							value: 'steps',
+							label: 'Steps 步骤条'
+						}]
+					}, {
+						value: 'others',
+						label: 'Others',
+						children: [{
+							value: 'dialog',
+							label: 'Dialog 对话框'
+						}, {
+							value: 'tooltip',
+							label: 'Tooltip 文字提示'
+						}, {
+							value: 'popover',
+							label: 'Popover 弹出框'
+						}, {
+							value: 'card',
+							label: 'Card 卡片'
+						}, {
+							value: 'carousel',
+							label: 'Carousel 走马灯'
+						}, {
+							value: 'collapse',
+							label: 'Collapse 折叠面板'
+						}]
+					}]
+				}, {
+					value: 'ziyuan',
+					label: '资源',
+					children: [{
+						value: 'axure',
+						label: 'Axure Components'
+					}, {
+						value: 'sketch',
+						label: 'Sketch Templates'
+					}, {
+						value: 'jiaohu',
+						label: '组件交互文档'
+					}]
+				}],
+				value: ""
+			};
+		},
+		methods: {
+			showModel(param) {
+				this[param] = true;
+			},
+			showModelTable(row, data) {
+				console.log(data);
+				this.dialogVisible = true;
+			},
+			addCurrentEmployee() {
 				// 现有员工选择
-			this.addEmployee = false;
-			this.newEmployee = true;
-		},
-		handoverBusiness(n) {
-			// n=1 交接本部门业务
-			// n=0 交接全部业务
-			this.handover = false;
-			if(n===1) {
-				this.selectPeopleFlag = '本部门业务'
-			} else {
-				this.selectPeopleFlag = '所有业务'
-			}
-			this.selectPeople = true;
-
-		},
-		deleteEmployeeEvent(n) {
-			// n=1 交接本部门业务
-			// n=0 交接全部业务
-			this.deleteBtn = false;
-			if(n===1) {
-				this.deleteEmployeeFlag = '本部门员工'
-			} else {
-				this.deleteEmployeeFlag = '所有业务'
-			}
-			this.deleteEmployee = true;
-
-		}
-  },
-  created() {
-    // 便捷方法
-			this.$axios({
-				method: "POST",
-				withCredentials: false,
-				url: "/api/company/CompanyMyList",
-				data: {
-					token: "1511328705UZVQ"
+				this.addEmployee = false;
+				this.currentEmployee = true;
+			},
+			addNewEmployee() {
+				// 现有员工选择
+				this.addEmployee = false;
+				this.newEmployee = true;
+			},
+			handoverBusiness(n) {
+				// n=1 交接本部门业务
+				// n=0 交接全部业务
+				this.handover = false;
+				if (n === 1) {
+					this.selectPeopleFlag = '本部门业务'
+				} else {
+					this.selectPeopleFlag = '所有业务'
 				}
-			})
-      .then(function(res) {
-        console.log(res);
-      })
-      .catch(function(err) {
-        console.log(err);
-			});
-  }
-};
+				this.selectPeople = true;
+			},
+			deleteEmployeeEvent(n) {
+				// n=1 交接本部门业务
+				// n=0 交接全部业务
+				this.deleteBtn = false;
+				if (n === 1) {
+					this.deleteEmployeeFlag = '本部门员工'
+				} else {
+					this.deleteEmployeeFlag = '所有业务'
+				}
+				this.deleteEmployee = true;
+			},
+			// 点击级联选择器
+			handleChange() {
+
+			},
+			// 公司所有部门
+			childrenDepartment() {
+				this.$axios({
+						method: 'POST',
+						withCredentials: false,
+						url: '/api/department/getChildrenDepartment',
+						data: {
+							token: "1511328705UZVQ",
+							mother_id: 0
+						}
+					})
+					.then(function(res) {
+						console.log(res.data.data.list);
+						// this.treeData
+						var ele = res.data.data.list;
+					})
+					.catch(function(err) {
+						console.log(err);
+					});
+			},
+
+			// 所有子公司
+			applyCompany() {
+				let self = this;
+				this.$axios({
+					method: 'POST',
+					withCredentials: false,
+					url: '/api/company/CompanyMyList',
+					data: {
+						token: "1511328705UZVQ",
+					}
+				})
+				.then(function(res) {
+					var  arr = []
+					// for (let i = 0; i < res.data.data.list.length; i++) {
+						res.data.data.list.label=res.data.data.list.name
+					// }
+					// for( let key in res.data.data.list) {
+						arr.push(res.data.data.list)
+					// }
+					console.log(typeof arr);
+					console.log(arr);
+					
+					self.parentCompanyList =  arr
+					// console.log(self.parentCompanyList);
+				})
+				.catch(function(err) {
+					console.log(err);
+				});
+			}
+		},
+		created() {
+			this.childrenDepartment();
+		}
+	};
 </script>
+
 <style scoped>
-.companyName {
-  margin: 10px 0;
-}
-.el-input,
-.el-select {
-  width: 100%;
-  margin: 5px 0;
-}
-.iptName {
-  display: inline-block;
-  width: 50px;
-}
-.el-dialog--small {
-  width: 30%;
-}
-.addEmployeeBtn {
-	width: 100%;
-	margin: 5px 0;
-}
+	.companyName {
+		margin: 10px 0;
+	}
+	.el-input,
+	.el-select {
+		width: 100%;
+		margin: 5px 0;
+	}
+	.iptName {
+		display: inline-block;
+		width: 50px;
+	}
+	.el-dialog--small {
+		width: 30%;
+	}
+	.addEmployeeBtn {
+		width: 100%;
+		margin: 5px 0;
+	}
+	#wrap {
+		min-width: 800px;
+	}
 </style>

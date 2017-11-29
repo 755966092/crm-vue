@@ -65,11 +65,13 @@
     .sidebar{
         display: block;
         position: absolute;
-        width: 250px;
+        /* width: 250px; */
+        min-width: 180px;
+        padding: 0 20px;
         left: 0;
         top: 70px;
         bottom:0;
-        background: #2E363F;
+        background: #324157;
     }
     .sidebar > ul {
         height:100%;

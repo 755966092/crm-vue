@@ -17,3 +17,9 @@
         }
     }
 </script>
+<style >
+.content {
+    min-width: 800px;
+}
+</style>
+
