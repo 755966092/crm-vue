@@ -425,6 +425,7 @@
 					}
 				],
 				treeData: [{
+					name: "技术部",
 					label: "技术部",
 					children: [{
 						label: "市场部",
@@ -612,7 +613,8 @@
 			},
 			// 公司所有部门
 			childrenDepartment() {
-				this.$axios({
+				var self = this;
+				self.$axios({
 						method: 'POST',
 						withCredentials: false,
 						url: '/api/department/getChildrenDepartment',
@@ -622,15 +624,35 @@
 						}
 					})
 					.then(function(res) {
-						console.log(res.data.data.list);
 						// this.treeData
-						var ele = res.data.data.list;
+						// var dataW = self.rachData(res.data.data.list,res.data.data.list);
+						// self.getMenuName(res.data.data.list)
+						// console.log(JSON.stringify(res.data.data.list))
+						self.treeData = res.data.data.list
 					})
 					.catch(function(err) {
 						console.log(err);
 					});
 			},
-
+			getMenuName(menus) {
+				var name = "";
+				for (var i = 0; i < menus.length; i++) {
+					menus[i].label = menus[i].name;
+					menus[i].value = menus[i].id;
+					(function() {
+							console.log('遍历')
+							console.log(rest)
+							var m = arguments[0];
+							for (var j = 0; j < m.length; j++) {
+								console.log(m[i].name);
+								m[i].label = m[i].name
+								if( m[j].children != null && m[j].children.length > 0) {
+									arguments.callee(m[j].children); //递归匿名方法
+								}
+							}
+					})(menus[i].children);
+				}
+			},
 			// 所有子公司
 			applyCompany() {
 				let self = this;
@@ -643,18 +665,9 @@
 					}
 				})
 				.then(function(res) {
-					var  arr = []
-					// for (let i = 0; i < res.data.data.list.length; i++) {
-						res.data.data.list.label=res.data.data.list.name
-					// }
-					// for( let key in res.data.data.list) {
-						arr.push(res.data.data.list)
-					// }
-					console.log(typeof arr);
-					console.log(arr);
-					
-					self.parentCompanyList =  arr
-					// console.log(self.parentCompanyList);
+					var  arr = [];
+					self.parentCompanyList = res.data.data.list
+					// console.log(JSON.stringify(res.data.data.list));
 				})
 				.catch(function(err) {
 					console.log(err);
@@ -663,6 +676,7 @@
 		},
 		created() {
 			this.childrenDepartment();
+			this.applyCompany();
 		}
 	};
 </script>
