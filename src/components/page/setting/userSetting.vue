@@ -425,6 +425,7 @@
 					}
 				],
 				treeData: [],
+				parentCompanyList: [],
 				value: ""
 			};
 		},
@@ -533,7 +534,8 @@
 				.catch(function(err) {
 					console.log(err);
 				});
-			}
+			},
+			
 		},
 		created() {
 			this.childrenDepartment();
