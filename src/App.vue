@@ -13,4 +13,10 @@
     .componentsRoot {
         min-width: 800px;
     }
+    .fl {
+        float: left;
+    }
+    .fr {
+        float: right;
+    }
 </style>

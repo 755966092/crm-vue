@@ -20,30 +20,92 @@
                         <el-tree
                             :data="treeData"
                             default-expand-all
-                            :expand-on-click-node = false
+                            :expand-on-click-node=false
                             @node-click="nodeClick"
                         ></el-tree>
                     </div>
                 </template>
             </el-col>
             <el-col :span="16">
-                <div class="title">
-                    <span>{{ departmentName }}</span>
-                    <el-button type="text" @click="showModel('rename')">重命名</el-button>
-                    <el-button type="text" @click="showModel('subDepartment')">添加子部门</el-button>
-                    <el-button type="text">上移</el-button>
-                    <el-button type="text">下移</el-button>
-                    <el-button type="text" @click="showModel('delDepartment')">删除</el-button>
+                <div class="title clearfix">
+                    <span class="fl departmentText">{{ departmentName }}</span>
+                    <div class="fr ">
+                        <el-button type="text" @click="showModel('rename')">重命名</el-button>
+                        <el-button type="text" @click="showModel('subDepartment')">添加子部门</el-button>
+                        <el-button type="text">上移</el-button>
+                        <el-button type="text">下移</el-button>
+                        <el-button type="text" @click="showModel('delDepartment')">删除</el-button>
+                    </div>
                 </div>
                 <div>
                     <span>部门成员(不包括子部门成员)</span>
                     <el-button type="text" @click="showModel('addEmployee')">添加成员</el-button>
                     <el-button type="text" @click="showModel('setSupervisor')">设置主管</el-button>
                 </div>
-                <settingTable @handover="showModel('handover')" @deleteBtn="showModel('deleteBtn')"
-                              @showModel="showModelTable()" @selectRole="showModel('selectRole')"></settingTable>
+                <template>
+                    <div>
+                        <el-table
+                            :data="departmentStaff"
+                            tooltip-effect="dark"
+                            style="width: 100%"
+                            border
+                        >
+                            <el-table-column
+                                type="selection"
+                            >
+                            </el-table-column>
+                            <el-table-column
+                                sortable
+                                label="姓名"
+                            >
+                                <template slot-scope="scope">
+                                    <span class="colorBlue"
+                                          @click="showModelTable(scope.$index, scope.row,'showModel')">{{ scope.row.user_name }}</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                prop="user_id"
+                                label="角色"
+                                sortable
+                            >
+                            </el-table-column>
+                            <el-table-column
+                                prop="user_name"
+                                label="手机号"
+                                show-overflow-tooltip>
+                            </el-table-column>
+                            <el-table-column
+                                prop="position"
+                                label="职务"
+                                show-overflow-tooltip>
+                            </el-table-column>
+                            <el-table-column
+                                label="操作"
+                                width="200"
+                            >
+                                <template slot-scope="scope">
+                                    <el-button
+                                        size="mini"
+                                        @click="showModelTable(scope.$index, scope.row, 'selectRole')">更改角色
+                                    </el-button>
+                                    <el-button
+                                        size="mini"
+                                        @click="showModelTable(scope.$index, scope.row, 'handover')">交接
+                                    </el-button>
+                                    <el-button
+                                        size="mini"
+                                        type="danger"
+                                        @click="showModelTable(scope.$index, scope.row, 'deleteBtn')">删除
+                                    </el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                </template>
+
             </el-col>
         </el-row>
+        <!-- 新建员工 -->
         <template>
             <div>
                 <el-dialog
@@ -260,9 +322,9 @@
             >
                 选择员工
                 <div style="width:100%">
-                    <el-select v-model="value" placeholder="请选择">
+                    <el-select v-model="headId" placeholder="请选择">
                         <el-option
-                            v-for="item in options"
+                            v-for="item in departmentStaffOption"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
@@ -271,7 +333,7 @@
                 </div>
                 <span slot="footer" class="dialog-footer">
 								<el-button @click="setSupervisor = false">取 消</el-button>
-								<el-button type="primary" @click="setSupervisor = false">确 定</el-button>
+								<el-button type="primary" @click="setHead">确 定</el-button>
 						</span>
             </el-dialog>
         </div>
@@ -431,20 +493,26 @@
                         label: "北京烤鸭"
                     }
                 ],
+                // 部门员工
+                departmentStaff: [],
+                departmentStaffOption: [],
                 treeData: [],
                 parentCompanyList: [],
                 value: "",
                 // 部门名称
                 departmentName: '',
-                departmentID: '',
+                // 当前部门ID
+                departmentId: 1,
                 departmentNewName: '',
+                // 主管id
+                headId: '',
             };
         },
         methods: {
             showModel(param) {
                 this[param] = true;
             },
-            showModelTable(row, data) {
+            showModelTable(row, data, param) {
                 console.log(data);
                 this.dialogVisible = true;
             },
@@ -496,15 +564,18 @@
                         mother_id: 0
                     }
                 })
-                .then(function (res) {
-                    self.treeData = res.data.data.list;
-                    self.departmentName = res.data.data.list[0].label;
-                    self.departmentNewName = res.data.data.list[0].label;
-                    self.departmentId = res.data.data.list[0].id;
-                })
-                .catch(function (err) {
-                    console.log(err);
-                });
+                    .then(function (res) {
+                        self.treeData = res.data.data.list;
+                        // 初始化页面, 显示第一个部门的员工
+                        self.departmentName = res.data.data.list[0].label;
+                        self.departmentNewName = res.data.data.list[0].label;
+                        self.departmentId = res.data.data.list[0].id;
+                        // 初始化页面显示,第一个部门的员工
+                        self.departmentMakeAdminDepartmentList();
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
             },
             // 所有子公司
             applyCompany() {
@@ -531,6 +602,7 @@
                 this.departmentNewName = data.name
                 this.departmentName = data.name;
                 this.departmentId = data.id;
+                this.departmentMakeAdminDepartmentList();
             },
             // 重命名
             remnameDepartment() {
@@ -546,20 +618,72 @@
                         name: name
                     }
                 })
-                .then(function (res) {
-                    self.childrenDepartment();
-                    self.rename = false;
+                    .then(function (res) {
+                        self.childrenDepartment();
+                        self.rename = false;
 
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            },
+            // 当前部门下的员工
+            departmentMakeAdminDepartmentList() {
+                var self = this;
+                self.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/department/makeAdminDepartmentList',
+                    data: {
+                        token: "1511328705UZVQ",
+                        department_id: self.departmentId,
+                    }
                 })
-                .catch(function (err) {
-                    console.log(err);
-                });
+                    .then(function (res) {
+                        self.departmentStaff = res.data.data.list;
+                        self.departmentStaffOption.length = 0;
+                        console.log(JSON.stringify(self.departmentStaff))
+                        for (let i = 0; i < res.data.data.list.length; i++) {
+                            let obj = res.data.data.list[i];
+
+                            self.departmentStaffOption.push({
+                                label: obj.user_name,
+                                value: obj.user_id
+                            })
+
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            },
+            // 设置主管
+            setHead() {
+                var self = this;
+                self.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/department/makeAdminDepartment',
+                    data: {
+                        token: "1511328705UZVQ",
+                        department_id: self.departmentId,
+                        admin_id: self.headId
+                    }
+                })
+                    .then(function (res) {
+                        console.log('设置成功');
+                        self.setSupervisor = false
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
             }
         },
         //
         created() {
             this.childrenDepartment();
             this.applyCompany();
+
         }
     };
 </script>
@@ -588,4 +712,11 @@
     #wrap {
         min-width: 800px;
     }
+
+    .departmentText {
+        display: inline-block;
+        width: 150px;
+        line-height: 34px;
+    }
+
 </style>
