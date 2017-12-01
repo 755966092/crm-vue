@@ -5,7 +5,8 @@
                 <template v-if="item.subs">
                     <el-submenu :index="item.index">
                         <template slot="title"><i :class="item.icon"></i>{{ item.title }}</template>
-                        <el-menu-item v-for="(subItem,i) in item.subs" :key="i" :index="subItem.index">{{ subItem.title }}
+                        <el-menu-item v-for="(subItem,i) in item.subs" :key="i" :index="subItem.index">{{ subItem.title
+                            }}
                         </el-menu-item>
                     </el-submenu>
                 </template>
@@ -33,7 +34,7 @@
                         icon: 'el-icon-menu',
                         index: 'permissionSettings',
                         title: '角色和权限设置',
-                      
+
                     },
                     {
                         icon: 'el-icon-date',
@@ -53,16 +54,16 @@
                 ]
             }
         },
-        computed:{
-            onRoutes(){
-                return this.$route.path.replace('/','');
+        computed: {
+            onRoutes() {
+                return this.$route.path.replace('/', '');
             }
         }
     }
 </script>
 
 <style scoped>
-    .sidebar{
+    .sidebar {
         display: block;
         position: absolute;
         /* width: 250px; */
@@ -70,10 +71,11 @@
         padding: 0 20px;
         left: 0;
         top: 70px;
-        bottom:0;
+        bottom: 0;
         background: #324157;
     }
+
     .sidebar > ul {
-        height:100%;
+        height: 100%;
     }
 </style>
