@@ -10,45 +10,51 @@ export default new Router({
             redirect: '/login'
         },
         {
-            path: '/readme',
+            path: '/workbench',
             component: resolve => require(['../components/common/Home.vue'], resolve),
             children:[
                 {
                     path: '/',
-                    component: resolve => require(['../components/page/Readme.vue'], resolve)
+                    component: resolve => require(['../components/page/workbench/Workbench.vue'], resolve)    // 拖拽列表组件
                 },
                 {
-                    path: '/basetable',
-                    component: resolve => require(['../components/page/BaseTable.vue'], resolve)
+                    path: '/clue',
+                    component: resolve => require(['../components/page/workbench/clue.vue'], resolve)    // 拖拽列表组件
                 },
                 {
-                    path: '/vuetable',
-                    component: resolve => require(['../components/page/VueTable.vue'], resolve)     // vue-datasource组件
+                    path: '/client',
+                    component: resolve => require(['../components/page/workbench/Client.vue'], resolve)    // 拖拽列表组件
                 },
                 {
-                    path: '/baseform',
-                    component: resolve => require(['../components/page/BaseForm.vue'], resolve)
+                    path: '/contract',
+                    component: resolve => require(['../components/page/workbench/Contract.vue'], resolve)    // 拖拽列表组件
                 },
                 {
-                    path: '/vueeditor',
-                    component: resolve => require(['../components/page/VueEditor.vue'], resolve)    // Vue-Quill-Editor组件
+                    path: '/logpage',
+                    component: resolve => require(['../components/page/workbench/LogPage.vue'], resolve)    // 拖拽列表组件
                 },
                 {
-                    path: '/markdown',
-                    component: resolve => require(['../components/page/Markdown.vue'], resolve)     // Vue-Quill-Editor组件
+                    path: '/Report_FollowUp',
+                    component: resolve => require(['../components/page/workbench/reportCenter/Report_FollowUp.vue'], resolve)    // 拖拽列表组件
                 },
                 {
-                    path: '/upload',
-                    component: resolve => require(['../components/page/Upload.vue'], resolve)       // Vue-Core-Image-Upload组件
+                    path: '/Report_AddBusiness',
+                    component: resolve => require(['../components/page/workbench/reportCenter/Report_AddBusiness.vue'], resolve)    // 拖拽列表组件
                 },
                 {
-                    path: '/basecharts',
-                    component: resolve => require(['../components/page/BaseCharts.vue'], resolve)   // vue-schart组件
+                    path: '/Report_ContractSummary',
+                    component: resolve => require(['../components/page/workbench/reportCenter/Report_ContractSummary.vue'], resolve)    // 拖拽列表组件
                 },
                 {
-                    path: '/drag',
-                    component: resolve => require(['../components/page/DragList.vue'], resolve)    // 拖拽列表组件
-                }
+                    path: '/Report_CustomerType',
+                    component: resolve => require(['../components/page/workbench/reportCenter/Report_CustomerType.vue'], resolve)    // 拖拽列表组件
+                },
+                {
+                    path: '/Report_SalesRankings',
+                    component: resolve => require(['../components/page/workbench/reportCenter/Report_SalesRankings.vue'], resolve)    // 拖拽列表组件
+                },
+                
+
             ]
         },
         {

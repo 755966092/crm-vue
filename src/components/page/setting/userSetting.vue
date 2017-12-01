@@ -9,7 +9,13 @@
                 </div>
                 <p class="companyName">本公司</p>
                 <div class="select">
-                    <el-cascader expand-trigger="hover" :options="parentCompanyList" @change="handleChange">
+                    <el-cascader
+                        expand-trigger="hover"
+                        :options="parentCompanyList"
+                        @change="handleChange"
+                        change-on-select
+
+                    >
                     </el-cascader>
                 </div>
                 <div class="companyName">
@@ -60,7 +66,7 @@
                             >
                                 <template slot-scope="scope">
                                     <span class="colorBlue"
-                                          @click="showModelTable(scope.$index, scope.row,'showModel')">{{ scope.row.user_name }}</span>
+                                          @click="showModelTable(scope.$index, scope.row,'dialogVisible')">{{ scope.row.user_name }}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column
@@ -179,7 +185,7 @@
 						</span>
             </el-dialog>
         </div>
-        <!-- 删除 -->
+        <!-- 删除部门 -->
         <div class="delDepartment">
             <el-dialog
                 title="删除"
@@ -189,7 +195,7 @@
                 <span>是否确认删除该部门?</span>
                 <span slot="footer" class="dialog-footer">
 								<el-button @click="delDepartment = false">取 消</el-button>
-								<el-button type="primary" @click="delDepartment = false">确 定</el-button>
+								<el-button type="primary" @click="delDepartmentFn">确 定</el-button>
 						</span>
             </el-dialog>
         </div>
@@ -313,7 +319,7 @@
 						</span>
             </el-dialog>
         </div>
-        <!-- 设置主管 -->
+        <!-- 设置主管 接口完毕 -->
         <div class="setSupervisor">
             <el-dialog
                 title="设置主管"
@@ -506,6 +512,8 @@
                 departmentNewName: '',
                 // 主管id
                 headId: '',
+                // 子公司id
+                subsidiaryId:''
             };
         },
         methods: {
@@ -514,7 +522,7 @@
             },
             showModelTable(row, data, param) {
                 console.log(data);
-                this.dialogVisible = true;
+                this[param] = true;
             },
             addCurrentEmployee() {
                 // 现有员工选择
@@ -549,7 +557,9 @@
                 this.deleteEmployee = true;
             },
             // 点击级联选择器
-            handleChange() {
+            handleChange(data) {
+                console.log(JSON.stringify(data))
+                this.subsidiaryId = data[data.length-1];
 
             },
             // 公司所有部门
@@ -590,6 +600,7 @@
                 })
                     .then(function (res) {
                         self.parentCompanyList = res.data.data.list
+                        console.log(JSON.stringify(res.data.data.list))
                     })
                     .catch(function (err) {
                         console.log(err);
@@ -659,20 +670,24 @@
             },
             // 设置主管
             setHead() {
+
+            },
+            // 删除部门
+            delDepartmentFn() {
                 var self = this;
                 self.$axios({
                     method: 'POST',
                     withCredentials: false,
-                    url: '/api/department/makeAdminDepartment',
+                    url: '/api/department/UserDepartmentList',
                     data: {
                         token: "1511328705UZVQ",
                         department_id: self.departmentId,
-                        admin_id: self.headId
                     }
                 })
                     .then(function (res) {
                         console.log('设置成功');
-                        self.setSupervisor = false
+                        self.delDepartment = false;
+                        self.childrenDepartment();
                     })
                     .catch(function (err) {
                         console.log(err);
