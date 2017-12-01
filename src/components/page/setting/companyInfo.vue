@@ -1,7 +1,7 @@
 <template>
     <div class="componentsRoot">
         <el-row :gutter="10">
-            <el-col :span="7" style="background: #f00">
+            <el-col :span="7">
                 <h3>公司信息</h3>
                 <div class="select">
                     <el-cascader expand-trigger="hover" :options="parentCompanyList" @change="handleChange">

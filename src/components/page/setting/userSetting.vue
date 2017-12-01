@@ -15,11 +15,20 @@
                 <div class="companyName">
                     <el-button type="text">调整加盟商</el-button>
                 </div>
-                <Tree :treeData="treeData"></Tree>
+                <template>
+                    <div>
+                        <el-tree
+                            :data="treeData"
+                            default-expand-all
+                            :expand-on-click-node = false
+                            @node-click="nodeClick"
+                        ></el-tree>
+                    </div>
+                </template>
             </el-col>
             <el-col :span="16">
                 <div class="title">
-                    <span>市场部</span>
+                    <span>{{ departmentName }}</span>
                     <el-button type="text" @click="showModel('rename')">重命名</el-button>
                     <el-button type="text" @click="showModel('subDepartment')">添加子部门</el-button>
                     <el-button type="text">上移</el-button>
@@ -86,10 +95,10 @@
                 width="20%"
             >
                 新名称
-                <el-input style="width:100%" v-model="rename" placeholder="请输入内容"></el-input>
+                <el-input style="width:100%" v-model="departmentNewName" placeholder="请输入内容"></el-input>
                 <span slot="footer" class="dialog-footer">
 								<el-button @click="rename = false">取 消</el-button>
-								<el-button type="primary" @click="rename = false">确 定</el-button>
+								<el-button type="primary" @click="remnameDepartment">确 定</el-button>
 						</span>
             </el-dialog>
         </div>
@@ -185,7 +194,6 @@
                 <div class="addEmployeeBtn">
                     <el-button type="primary" class="addEmployeeBtn" @click="addNewEmployee">添加新员工</el-button>
                 </div>
-                </el-row>
             </el-dialog>
         </div>
         <!-- 现有员工中选择 -->
@@ -209,7 +217,6 @@
 								<el-button @click="currentEmployee = false">取 消</el-button>
 								<el-button type="primary" @click="currentEmployee = false">确 定</el-button>
 						</span>
-                </el-row>
             </el-dialog>
         </div>
         <!-- 添加新员工 -->
@@ -242,7 +249,6 @@
 								<el-button @click="newEmployee = false">取 消</el-button>
 								<el-button type="primary" @click="newEmployee = false">确 定</el-button>
 						</span>
-                </el-row>
             </el-dialog>
         </div>
         <!-- 设置主管 -->
@@ -267,7 +273,6 @@
 								<el-button @click="setSupervisor = false">取 消</el-button>
 								<el-button type="primary" @click="setSupervisor = false">确 定</el-button>
 						</span>
-                </el-row>
             </el-dialog>
         </div>
         <!-- 更改角色 -->
@@ -428,7 +433,11 @@
                 ],
                 treeData: [],
                 parentCompanyList: [],
-                value: ""
+                value: "",
+                // 部门名称
+                departmentName: '',
+                departmentID: '',
+                departmentNewName: '',
             };
         },
         methods: {
@@ -487,35 +496,15 @@
                         mother_id: 0
                     }
                 })
-                    .then(function (res) {
-                        // this.treeData
-                        // var dataW = self.rachData(res.data.data.list,res.data.data.list);
-                        // self.getMenuName(res.data.data.list)
-                        // console.log(JSON.stringify(res.data.data.list))
-                        self.treeData = res.data.data.list
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-            getMenuName(menus) {
-                var name = "";
-                for (var i = 0; i < menus.length; i++) {
-                    menus[i].label = menus[i].name;
-                    menus[i].value = menus[i].id;
-                    (function () {
-                        console.log('遍历')
-                        console.log(rest)
-                        var m = arguments[0];
-                        for (var j = 0; j < m.length; j++) {
-                            console.log(m[i].name);
-                            m[i].label = m[i].name
-                            if (m[j].children != null && m[j].children.length > 0) {
-                                arguments.callee(m[j].children); //递归匿名方法
-                            }
-                        }
-                    })(menus[i].children);
-                }
+                .then(function (res) {
+                    self.treeData = res.data.data.list;
+                    self.departmentName = res.data.data.list[0].label;
+                    self.departmentNewName = res.data.data.list[0].label;
+                    self.departmentId = res.data.data.list[0].id;
+                })
+                .catch(function (err) {
+                    console.log(err);
+                });
             },
             // 所有子公司
             applyCompany() {
@@ -529,16 +518,45 @@
                     }
                 })
                     .then(function (res) {
-                        var arr = [];
                         self.parentCompanyList = res.data.data.list
-                        // console.log(JSON.stringify(res.data.data.list));
                     })
                     .catch(function (err) {
                         console.log(err);
                     });
             },
+            nodeClick(data, note, self) {
+                // data 节点原始数据
+                // note 节点数据
+                // self 节点组件本身
+                this.departmentNewName = data.name
+                this.departmentName = data.name;
+                this.departmentId = data.id;
+            },
+            // 重命名
+            remnameDepartment() {
+                var self = this;
+                let name = self.departmentNewName || self.departmentName;
+                self.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/department/editDepartment',
+                    data: {
+                        token: "1511328705UZVQ",
+                        department_id: self.departmentId,
+                        name: name
+                    }
+                })
+                .then(function (res) {
+                    self.childrenDepartment();
+                    self.rename = false;
 
+                })
+                .catch(function (err) {
+                    console.log(err);
+                });
+            }
         },
+        //
         created() {
             this.childrenDepartment();
             this.applyCompany();
