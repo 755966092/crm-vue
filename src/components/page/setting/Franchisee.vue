@@ -82,40 +82,41 @@
                     >
 
                         <el-table-column
-                            prop="joinCompanyName"
+                            prop="trader_company_name"
                             label="拟加盟"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="companyName"
+                            prop="apply_company_name"
                             label="申请公司"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="applicant"
+                            prop="apply_user_name"
                             label="申请人"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="applicationTime"
+                            prop="create_time"
                             label="申请时间"
+                            sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="applicationStatus"
+                            prop="statu"
                             label="申请状态"
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="remarks"
+                            prop="content"
                             label="说明"
                             min-width="130"
                         >
@@ -298,12 +299,12 @@
                 // 申请状态
                 applicationStatusData: [
                     {
-                        joinCompanyName: '环球壹学教育科技有限公司',
-                        companyName: '环球壹学教育科技有限公司',
-                        applicant: '王小虎',
-                        applicationTime: '2019-11-09',
-                        applicationStatus: '待审批',
-                        remarks: '说明内容'
+                        trader_company_name: '环球壹学教育科技有限公司',
+                        apply_company_name: '环球壹学教育科技有限公司',
+                        apply_user_name: '王小虎',
+                        create_time: '2019-11-09',
+                        statu: '待审批',
+                        content: '说明内容'
                     }
                 ],// 申请状态
                 // 现已加盟
@@ -346,7 +347,29 @@
                     this.cancelTitle = '加盟'
                 }
                 this.cancelApplication = true
+            },
+            // 加盟商加盟状态
+            joiningTraderApplyFranchiseeStatu() {
+                var self = this;
+                self.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/joiningTrader/applyFranchiseeStatu',
+                    data: {
+                        token: "1511328705UZVQ",
+                    }
+                })
+                    .then(function (res) {
+                        self.applicationStatusData = res.data.data.list;
+
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
             }
+        },
+        created() {
+            this.joiningTraderApplyFranchiseeStatu();
         }
     }
 </script>
