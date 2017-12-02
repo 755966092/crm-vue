@@ -102,7 +102,7 @@
                         ]
                     },
                     {
-                        icon: 'el-icon-upload2',
+                        icon: 'el-icon-document',
                         index: 'logpage',
                         title: '日志'
                     }

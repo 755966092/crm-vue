@@ -387,6 +387,7 @@
                     <el-button type="primary" @click="refusedJoinFn2">下一步</el-button>
                 </span>
             </el-dialog>
+            
         </div>
         <div class="subCompany">
             <el-dialog

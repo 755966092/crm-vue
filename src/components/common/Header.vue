@@ -1,7 +1,7 @@
 <template>
     <div class="header">
         <div class="logo">
-            <a class="el-dropdown-link" href="#/readme">后台管理系统</a>
+            <a class="el-dropdown-link" href="#/workbench">后台管理系统</a>
         </div>
         <div class="user-info">
              <a class="el-dropdown-link" href="#/setting">

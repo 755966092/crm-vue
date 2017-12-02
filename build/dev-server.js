@@ -8,6 +8,8 @@ if (!process.env.NODE_ENV) {
 var opn = require('opn')
 var path = require('path')
 var express = require('express')
+
+
 var webpack = require('webpack')
 var proxyMiddleware = require('http-proxy-middleware')
 var webpackConfig = require('./webpack.dev.conf')
@@ -22,6 +24,18 @@ var proxyTable = config.dev.proxyTable
 
 var app = express()
 var compiler = webpack(webpackConfig)
+
+var jsonServer = require('json-server')
+const appServer = jsonServer.create()
+const appRouter = jsonServer.router('db.json')
+const middlewares = jsonServer.defaults()
+
+appServer.use(middlewares)
+appServer.use('/mock',appRouter)
+appServer.listen('8081', () => {
+    console.log('JSON Server is running')
+})
+
 
 var devMiddleware = require('webpack-dev-middleware')(compiler, {
   publicPath: webpackConfig.output.publicPath,
