@@ -713,5 +713,77 @@
             "clientCount": 19,
             "fullUpCount": 25
         }
+    ],
+    "clueTableData": [
+        {
+            "id": 1,
+            "number": 10,
+            "date": "1971-05-01 22:55:45",
+            "ctitle": "论记素电消水局",
+            "ctype": "中型",
+            "position": "K12",
+            "department": "人事部",
+            "positionPerple": "推广人",
+            "followUp": "未处理",
+            "canme": "许丽",
+            "cadd": "江苏省",
+            "phone": "13856787756"
+        },
+        {
+            "id": 2,
+            "number": 7,
+            "date": "1992-11-19 12:56:34",
+            "ctitle": "十道与带天",
+            "ctype": "小型",
+            "position": "K12",
+            "department": "开发部",
+            "positionPerple": "负责人",
+            "followUp": "未处理",
+            "canme": "黎强",
+            "cadd": "陕西省",
+            "phone": "15539486198"
+        },
+        {
+            "id": 3,
+            "number": 4,
+            "date": "1999-06-26 01:00:34",
+            "ctitle": "子自代取快出化",
+            "ctype": "小型",
+            "position": "英语",
+            "department": "开发部",
+            "positionPerple": "负责人",
+            "followUp": "联系方式无效",
+            "canme": "袁丽",
+            "cadd": "甘肃省",
+            "phone": "15833329636"
+        },
+        {
+            "id": 4,
+            "number": 8,
+            "date": "2002-06-28 22:46:46",
+            "ctitle": "展器集常非平标北",
+            "ctype": "中型",
+            "position": "英语",
+            "department": "人事部",
+            "positionPerple": "负责人",
+            "followUp": "联系方式有效",
+            "canme": "邓洋",
+            "cadd": "北京",
+            "phone": "18281469756"
+        },
+        {
+            "id": 5,
+            "number": 6,
+            "date": "2013-10-09 05:57:13",
+            "ctitle": "单克展该中增石",
+            "ctype": "大型",
+            "position": "出国",
+            "department": "人事部",
+            "positionPerple": "主管",
+            "followUp": "未处理",
+            "canme": "杜芳",
+            "cadd": "西藏自治区",
+            "phone": "15155743152"
+        }
     ]
 }

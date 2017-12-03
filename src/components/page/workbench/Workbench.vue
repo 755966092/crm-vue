@@ -260,7 +260,7 @@
         created() {
             this.getData();
             this.getPerformanceRanking();
-            this.getAlesAssistantData(1);
+            this.getAlesAssistantData(0);
         }
     }
 </script>

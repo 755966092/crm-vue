@@ -98,7 +98,8 @@
                     .catch(function (err) {
                         console.log(err);
                     });
-            },// 省市县数据
+            },
+            // 省市县数据
             requestCity() {
                 let self = this;
                 this.$axios({
