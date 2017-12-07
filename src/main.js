@@ -13,13 +13,7 @@ Vue.use(ElementUI);
 Vue.prototype.$axios = axios;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
-
 new Vue({
     router,
     render: h => h(App)
 }).$mount('#app');
-
-
-
-
-

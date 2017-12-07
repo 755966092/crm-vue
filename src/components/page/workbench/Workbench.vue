@@ -10,7 +10,7 @@
                             <a :href="item.url">{{item.ctitle}}</a>
                         </p>
                 </el-card>
-                <el-card class="box-card mt20">
+                <el-card class="box-card workbench mt20">
                     <div slot="header" class=" clearfix">
                         <span class="cardTitle">销售助手</span>
                         <div class="fr">

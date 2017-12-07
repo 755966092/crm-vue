@@ -1,9 +1,20 @@
-.el-select .el-input {
+.clueWrap .el-select .el-input {
     width: 100px;
 }
-.input-with-select .el-input-group__prepend {
+.clueWrap .input-with-select .el-input-group__prepend {
     background-color: #fff;
 }
-.el-input-group {
+/*.el-input-group {*/
     /*width: 40%;*/
+/*}*/
+
+/* 线索表格搜索框 */
+.clueWrap .el-input-group__prepend {
+    width: 20%;
+}
+.clueWrap .el-dialog .el-select .el-input{
+    width: 100%;
+}
+.clueWrap .el-dialog .el-select{
+    width: 100%;
 }
