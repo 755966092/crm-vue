@@ -19,8 +19,20 @@ export default new Router({
                 },
                 {
                     path: '/clue',
-                    component: resolve => require(['../components/page/workbench/clue.vue'], resolve)    // 拖拽列表组件
+                    // component: resolve => require(['../components/page/workbench/clue/clueIndex.vue'], resolve),    // 拖拽列表组件
+                    component: resolve => require(['../components/page/workbench/clue.vue'], resolve),    // 拖拽列表组件
+                    children: [
+                       {
+                            path: '/', // 线索详情
+                            component: resolve => require(['../components/page/workbench/clue/clueIndex.vue'], resolve),    // 拖拽列表组件
+                       },
+                        {
+                            path: 'clueInfo', // 线索详情
+                            component: resolve => require(['../components/page/workbench/clue/clueInfo.vue'], resolve),    // 拖拽列表组件
+                        },
+                    ]
                 },
+
                 {
                     path: '/client',
                     component: resolve => require(['../components/page/workbench/Client.vue'], resolve)    // 拖拽列表组件
@@ -53,7 +65,7 @@ export default new Router({
                     path: '/Report_SalesRankings',
                     component: resolve => require(['../components/page/workbench/reportCenter/Report_SalesRankings.vue'], resolve)    // 拖拽列表组件
                 },
-                
+
 
             ]
         },

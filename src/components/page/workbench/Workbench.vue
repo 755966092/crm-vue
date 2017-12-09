@@ -199,7 +199,6 @@
                     url: 'http://localhost:8081/mock/salesBriefing',
                 })
                     .then(function (res) {
-                      console.log(JSON.stringify(res,null,4));
                       self.salesBriefing = res.data
                     })
                     .catch(function (err) {
@@ -225,7 +224,6 @@
                     url: url,
                 })
                 .then(function (res) {
-                    console.log(JSON.stringify(res,null,4));
                     self.performanceRanking = res.data
                 })
                 .catch(function (err) {
@@ -234,7 +232,6 @@
             },
             // 重新获取列表数据
             retrieveData(data) {
-                console.log(JSON.stringify(data,null,4))
                 this.getPerformanceRanking(data)
             },
             // 销售助手数据
@@ -246,7 +243,6 @@
                     url: 'http://localhost:8081/mock/salesAssistantData',
                 })
                     .then(function (res) {
-                        console.log(JSON.stringify(res,null,4));
                         self.alesAssistantData = res.data[index]
                     })
                     .catch(function (err) {

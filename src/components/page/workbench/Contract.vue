@@ -8,7 +8,7 @@
                 <div class="select rightWrap">
                     <el-cascader
                         expand-trigger="hover"
-                        :options="parentCompanyList"
+                        :options="selectedItems.parentCompanyList"
                         @change="handleChange"
                         change-on-select
                     >
@@ -359,6 +359,7 @@
         data() {
             return {
                 clueType: '学校',
+                // 选项
                 selectedItems: {
                     // 客户类型
                     clientType: '全部',
@@ -380,10 +381,11 @@
                     // 到期时间
                     maturityTime: [],
                     // 签约时间
-                    signingTime: []
+                    signingTime: [],
+                    // 范围
+                    parentCompanyList: [],
                 },
-                // 范围
-                parentCompanyList: [],
+                // 城市选择器数据
                 cityList: [],
                 // 时间选择器
                 pickerOptions2: {
@@ -413,6 +415,7 @@
                         }
                     }]
                 },
+                // 表格数据
                 tableData: [],
                 options: [{
                     label: '第一学',
@@ -424,13 +427,10 @@
                     label: '第三学',
                     value: 3
                 }],
+                // 搜索框筛选列表
                 optionsValue: 2,
+                // 搜索框内容
                 searchIptValue: '',
-                // 学校线索
-                schoolClue: {
-
-                },
-
             }
         },
         computed: {},
@@ -532,7 +532,6 @@
 
 <style scoped>
     @import "css/clue.css";
-
     .leftWrap,
     .rightWrap {
         line-height: 40px;

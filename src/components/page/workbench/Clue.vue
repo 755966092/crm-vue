@@ -1,441 +1,6 @@
 <template>
     <div class="componentsRoot clueWrap">
-        <el-row>
-            <el-col :span="3">
-                <p class="leftWrap">范围</p>
-            </el-col>
-            <el-col :span="21">
-                <div class="select rightWrap">
-                    <el-cascader
-                        expand-trigger="hover"
-                        :options="parentCompanyList"
-                        @change="handleChange"
-                        change-on-select
-                    >
-                    </el-cascader>
-                </div>
-            </el-col>
-        </el-row>
-
-        <el-row>
-            <el-col :span="3">
-                <p class="leftWrap">线索类型</p>
-            </el-col>
-            <el-col :span="21">
-                <div class="select rightWrap">
-                    <el-radio-group @change="clueTypeChange" v-model="clueType">
-                        <el-radio-button label="学校"></el-radio-button>
-                        <el-radio-button label="机构"></el-radio-button>
-                        <el-radio-button label="教师"></el-radio-button>
-                        <el-radio-button label="学生"></el-radio-button>
-                    </el-radio-group>
-                </div>
-            </el-col>
-        </el-row>
-        <template v-for="(item, index) in typeList" v-if="item.show">
-            <template v-if="index == 'followUpStatus' || index == 'source' ">
-
-            </template>
-            <template v-else>
-                <el-row>
-                    <el-col :span="3">
-                        <p class="leftWrap">{{ item.title }}</p>
-                    </el-col>
-                    <el-col :span="21">
-                        <div class="select rightWrap">
-                            <el-radio-group
-                                @change="radioChange(index)"
-                                v-model="item.key">
-                                <el-radio-button v-for="children in item.content" :value="children.value"
-                                                 :label="children.text"></el-radio-button>
-                            </el-radio-group>
-                        </div>
-                    </el-col>
-                </el-row>
-            </template>
-        </template>
-
-        <el-row v-if="typeList.followUpStatus.show">
-            <el-col :span="3">
-                <p class="leftWrap">{{ typeList.followUpStatus.title }}</p>
-            </el-col>
-            <el-col :span="21">
-                <div class="select rightWrap">
-                    <el-radio-group
-                        @change="radioChange('followUpStatus')"
-                        v-model="typeList.followUpStatus.key">
-                        <el-radio-button v-for="children in typeList.followUpStatus.content" :value="children.value"
-                                         :label="children.text"></el-radio-button>
-                    </el-radio-group>
-                </div>
-            </el-col>
-        </el-row>
-        <el-row v-if="typeList.source.show">
-            <el-col :span="3">
-                <p class="leftWrap">{{ typeList.source.title }}</p>
-            </el-col>
-            <el-col :span="21">
-                <div class="select rightWrap">
-                    <el-radio-group
-                        @change="radioChange('source')"
-                        v-model="typeList.source.key">
-                        <el-radio-button v-for="children in typeList.source.content" :value="children.value"
-                                         :label="children.text"></el-radio-button>
-                    </el-radio-group>
-                </div>
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="3">
-                <p class="leftWrap">地区</p>
-            </el-col>
-            <el-col :span="21">
-                <div class="select rightWrap">
-                    <el-cascader expand-trigger="hover" :options="cityList" @change="handleChange">
-                    </el-cascader>
-                </div>
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="3">
-                <p class="leftWrap">最后跟进时间</p>
-            </el-col>
-            <el-col :span="21">
-                <div class="select rightWrap">
-                    <div class="block">
-                        <el-date-picker
-                            v-model="lastFollowUpTime"
-                            @change="timeUpdata"
-                            type="daterange"
-                            :editable=false
-                            align="right"
-                            unlink-panels
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                            placeholder="选择起止时间"
-                            :picker-options="pickerOptions2">
-                        </el-date-picker>
-                    </div>
-                </div>
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="3">
-                <p class="leftWrap">更新时间</p>
-            </el-col>
-            <el-col :span="21">
-                <div class="select rightWrap">
-                    <div class="block">
-                        <el-date-picker
-                            v-model="updateTime"
-                            @change="timeUpdata"
-                            type="daterange"
-                            :editable=false
-                            align="right"
-                            unlink-panels
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                            placeholder="选择起止时间"
-                            :picker-options="pickerOptions2">
-                        </el-date-picker>
-                    </div>
-                </div>
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="3">
-                <p class="leftWrap">创建时间</p>
-            </el-col>
-            <el-col :span="21">
-                <div class="select rightWrap">
-                    <div class="block">
-                        <el-date-picker
-                            v-model="createTime"
-                            type="daterange"
-                            @change="timeUpdata"
-                            :editable=false
-                            align="right"
-                            :unlink-panels=false
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                            placeholder="选择起止时间"
-                            :picker-options="pickerOptions2">
-                        </el-date-picker>
-                    </div>
-                </div>
-            </el-col>
-        </el-row>
-        <!-- 数据表格 -->
-        <!-- 数据表格 -->
-        <div>
-            <div class="tableTitle">
-                <el-row>
-                    <el-col :span="8">
-                        <el-button type="text" @click="addClue">新增线索</el-button>
-                        <el-button type="text">导入线索</el-button>
-                        <el-button type="text" style="color: #999">批量转移</el-button>
-                        <el-button type="text" style="color: #999">批量删除</el-button>
-                    </el-col>
-                    <el-col :span="10" :offset="6">
-                        <el-input placeholder="请输入内容" v-model="searchIptValue" class="input-with-select">
-                            <el-select v-model="optionsValue" slot="prepend" placeholder="请选择">
-                                <el-option
-                                    v-for="item in options"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                                </el-option>
-                            </el-select>
-                            <el-button slot="append" icon="el-icon-search" class="el-icon-search"></el-button>
-                        </el-input>
-                    </el-col>
-                </el-row>
-            </div>
-            <template>
-                <div>
-                    <el-table
-                        :data="tableData"
-                        tooltip-effect="dark"
-                        style="width: 100%"
-                        border
-
-                    >
-                        <el-table-column
-                            type="selection"
-                        >
-                        </el-table-column>
-                        <el-table-column
-                            prop="ctitle"
-
-                            align="center"
-                            label="机构名称"
-                            fixed
-                            show-overflow-tooltip
-                            min-width="130"
-                        >
-                            <!--<template slot-scope="scope">-->
-                            <!--<span class="colorBlue"-->
-                            <!--@click="showModelTable(scope.$index, scope.row,'dialogVisible')">{{ scope.row.user_name }}</span>-->
-                            <!--</template>-->
-                        </el-table-column>
-                        <el-table-column
-                            prop="cadd"
-                            label="所在地区"
-                            sortable
-                            align="center"
-                            show-overflow-tooltip
-                            min-width="130"
-                        >
-                        </el-table-column>
-                        <el-table-column
-                            prop="ctype"
-                            label="机构类型"
-                            sortable
-                            min-width="120"
-                            align="center"
-                            show-overflow-tooltip>
-                        </el-table-column>
-                        <el-table-column
-                            prop="position"
-                            label="定位"
-                            sortable
-                            align="center"
-                            min-width="120"
-                            show-overflow-tooltip>
-                        </el-table-column>
-                        <el-table-column
-                            prop="canme"
-                            align="center"
-                            label="联系人姓名"
-                            min-width="130"
-                            show-overflow-tooltip>
-                        </el-table-column>
-                        <el-table-column
-                            prop="phone"
-                            label="手机号"
-                            align="center"
-                            min-width="130"
-                            show-overflow-tooltip>
-                        </el-table-column>
-                        <el-table-column
-                            prop="department"
-                            label="部门"
-                            min-width="100"
-                            align="center"
-                            show-overflow-tooltip>
-                        </el-table-column>
-                        <el-table-column
-                            prop="positionPerple"
-                            label="职务"
-                            min-width="100"
-                            align="center"
-                            show-overflow-tooltip>
-                        </el-table-column>
-                        <el-table-column
-                            prop="followUp"
-                            label="跟进状态"
-                            sortable
-                            align="center"
-                            min-width="150"
-                            show-overflow-tooltip>
-                        </el-table-column>
-                        <el-table-column
-                            prop="date"
-                            label="最后跟进时间"
-                            sortable
-                            align="center"
-                            min-width="180"
-                            show-overflow-tooltip>
-                        </el-table-column>
-                        <el-table-column
-                            label="操作"
-                            align="center"
-                            width="140"
-                        >
-                            <template slot-scope="scope">
-                                <el-button
-                                    size="mini"
-                                    @click="showModelTable(scope.$index, scope.row, 'handover')">交接
-                                </el-button>
-                                <el-button
-                                    size="mini"
-                                    type="danger"
-                                    @click="showModelTable(scope.$index, scope.row, 'deleteBtn')">删除
-                                </el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                </div>
-            </template>
-        </div>
-        <!-- 弹窗 -->
-        <!-- 新建员工 -->
-        <template>
-            <div>
-                <el-dialog
-                    title="新增线索"
-                    :visible.sync="dialogVisible"
-                >
-                    <div style="width:100%">
-                        <span class="iptName">线索类型:</span>
-                        <el-select v-model="clueType" @change="clueTypeChange" placeholder="请选择">
-                            <el-option
-                                v-for="item in clueTypeOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-                    <div style="width:100%">
-                        <span class="iptName">线索来源:</span>
-                        <el-select v-model="sourceTypeValue" placeholder="请选择">
-                            <el-option
-                                v-for="item in sourceTypeOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-
-                    <div>
-                        <span class="iptName">名称:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
-                    </div>
-                    <div style="width:100%">
-                        <span class="iptName">学制:</span>
-                        <el-select v-model="value" placeholder="请选择">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-                    <div style="width:100%">
-                        <span class="iptName">等级:</span>
-                        <el-select v-model="value" placeholder="请选择">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-                    <div style="width:100%">
-                        <span class="iptName">省:</span>
-                        <el-select v-model="value" placeholder="请选择">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-                    <div style="width:100%">
-                        <span class="iptName">市:</span>
-                        <el-select v-model="value" placeholder="请选择">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-                    <div style="width:100%">
-                        <span class="iptName">县:</span>
-                        <el-select v-model="value" placeholder="请选择">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-                    <div>
-                        <span class="iptName">地址:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
-                    </div>
-                    <div>
-                        <span class="iptName">联系人姓名:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
-                    </div>
-                    <div>
-                        <span class="iptName">职务:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
-                    </div>
-                    <div>
-                        <span class="iptName">手机:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
-                    </div>
-                    <div>
-                        <span class="iptName">微信:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
-                    </div>
-                    <div>
-                        <span class="iptName">QQ:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
-                    </div>
-                    <div>
-                        <span class="iptName">邮箱:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
-                    </div>
-                    <span slot="footer" class="dialog-footer">
-                            <el-button @click="dialogVisible = false">取 消</el-button>
-                            <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-                    </span>
-                </el-dialog>
-            </div>
-        </template>
+        <router-view></router-view>
     </div>
 </template>
 
@@ -446,11 +11,22 @@
             return {
                 value:'第一学',
                 input: '圈,',
+                // 新增线索对话框
                 dialogVisible: false,
+                selectedItems: [],
+                // 线索类型
                 clueType: '学校',
+                // 范围
                 parentCompanyList: [],
-                filterConditions: {},
+                // 最后跟进时间
+                lastFollowUpTime: '',
+                // 更新时间
+                updateTime: '',
+                // 新建时间
+                createTime: '',
+                // 城市选择器数据
                 cityList: [],
+                // 各项数据
                 typeList: {
                     // 学校等级
                     'schoolLevel': {
@@ -703,10 +279,10 @@
                         }
                     }]
                 },
-                lastFollowUpTime: '',
-                updateTime: '',
-                createTime: '',
+
+                // 表格数据
                 tableData: [],
+                // 表格搜索下拉框
                 options: [{
                     label: '第一学',
                     value: 1
@@ -717,7 +293,9 @@
                     label: '第三学',
                     value: 3
                 }],
+                // 表格搜索下拉框选择
                 optionsValue: 2,
+                // 搜索框内容
                 searchIptValue: '',
                 // 学校线索
                 schoolClue: {
@@ -762,6 +340,11 @@
         },
         computed: {},
         methods: {
+            // 线索详情
+            openClueInfo(index, data) {
+                // 跳转到线索详情的页面
+                this.$router.push({path:'/clue/clueInfo'})
+            },
             // 更新时间
             timeUpdata(data) {
                 console.log(data)
@@ -856,7 +439,7 @@
             },
             // 类型转变
             radioChange(data) {
-                // console.log(this.typeList[data].key);
+
                 for (var i = 0; i < this.typeList[data].content.length; i++) {
                     var obj = this.typeList[data].content[i];
                     if (obj.text === this.typeList[data].key) {
@@ -864,35 +447,9 @@
                         break;
                     }
                 }
-                console.log(this.typeList)
-                // for (let key in this.typeList) {
-                //     console.log("key:" + key)
-                //     for (let key2 in this.typeList[key]) {
-                //         console.log("key2:" + key2)
-                //         if (key2 === 'content') {
-                //             for (let i = 0; i < this.typeList[key].content.length; i++) {
-                //                 let obj = this.typeList[key].content[i];
-                //                 // console.log(obj)
-                //                 this.filterConditions[key].value = obj.value
-                //                 this.filterConditions[key].text = obj.text
-                //             }
-                //         }
-                //     }
-                //
-                // }
-                // console.log(this)
-                // console.log(this.typeList.schoolLevel.key)
-                // console.log(this.typeList.academicSystem.key)
-                //
-                // console.log(this.typeList.artsAndSciences.key)
-                // console.log(this.typeList.grade.key)
-                // console.log(this.typeList.organizationType.key)
-                // console.log(this.typeList.sex.key)
-                // console.log(this.typeList.sourceType.key)
-                // console.log(this.typeList.positioning.key)
-                // console.log(this.typeList.professorSubjects.key)
-                // console.log(this.typeList.source.key)
-                // console.log(this.typeList.followUpStatus.key)
+                console.log(this.typeList[data].key+":"+this.typeList[data].value);
+                console.log(this.typeList[data]);
+
             },
             // 省市县数据
             requestCity() {
@@ -997,5 +554,8 @@
     .iptName {
         display: inline-block;
         margin: 5px 0;
+    }
+    .colorBlue {
+        cursor: pointer
     }
 </style>
