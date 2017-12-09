@@ -15,7 +15,18 @@ export default new Router({
             children:[
                 {
                     path: '/',
-                    component: resolve => require(['../components/page/workbench/Workbench.vue'], resolve)    // 拖拽列表组件
+                    component: resolve => require(['../components/page/workbench/Workbench.vue'], resolve),   // 拖拽列表组件
+                    children: [
+                        {
+                            path: '/', // 线索详情
+                            component: resolve => require(['../components/page/workbench/workbench/workbenchIndex.vue'], resolve),    // 拖拽列表组件
+                        },
+                        {
+                            path: ':id', // 线索详情
+                            component: resolve => require(['../components/page/workbench/workbench/workbenchSalesBriefing.vue'], resolve),    // 拖拽列表组件
+                        },
+
+                    ]
                 },
                 {
                     path: '/clue',
@@ -45,6 +56,32 @@ export default new Router({
                     path: '/logpage',
                     component: resolve => require(['../components/page/workbench/LogPage.vue'], resolve)    // 拖拽列表组件
                 },
+                // {
+                //     path: '/report',
+                //     component: resolve => require(['../components/page/workbench/reportCenter.vue'], resolve),    // 拖拽列表组件
+                //     children: [
+                //         {
+                //             path: 'followUp',
+                //             component: resolve => require(['../components/page/workbench/reportCenter/Report_FollowUp.vue'], resolve)    // 拖拽列表组件
+                //         },
+                //         {
+                //             path: 'addBusiness',
+                //             component: resolve => require(['../components/page/workbench/reportCenter/Report_AddBusiness.vue'], resolve)    // 拖拽列表组件
+                //         },
+                //         {
+                //             path: 'contractSummary',
+                //             component: resolve => require(['../components/page/workbench/reportCenter/Report_ContractSummary.vue'], resolve)    // 拖拽列表组件
+                //         },
+                //         {
+                //             path: 'customerType',
+                //             component: resolve => require(['../components/page/workbench/reportCenter/Report_CustomerType.vue'], resolve)    // 拖拽列表组件
+                //         },
+                //         {
+                //             path: 'salesRankings',
+                //             component: resolve => require(['../components/page/workbench/reportCenter/Report_SalesRankings.vue'], resolve)    // 拖拽列表组件
+                //         },
+                //     ]
+                // },
                 {
                     path: '/Report_FollowUp',
                     component: resolve => require(['../components/page/workbench/reportCenter/Report_FollowUp.vue'], resolve)    // 拖拽列表组件
@@ -65,8 +102,6 @@ export default new Router({
                     path: '/Report_SalesRankings',
                     component: resolve => require(['../components/page/workbench/reportCenter/Report_SalesRankings.vue'], resolve)    // 拖拽列表组件
                 },
-
-
             ]
         },
         {
