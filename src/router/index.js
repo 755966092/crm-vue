@@ -7,7 +7,7 @@ export default new Router({
     routes: [
         {
             path: '/',
-            redirect: '/login'
+            // redirect: '/index'
         },
         {
             path: '/workbench',
@@ -107,6 +107,10 @@ export default new Router({
         {
             path: '/login',
             component: resolve => require(['../components/page/Login.vue'], resolve)
+        },
+        {
+            path:'/index',
+            component: resolve => require(['../components/page/index.vue'], resolve)
         },
         {
             path: '/setting',

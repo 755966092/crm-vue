@@ -1,704 +1,792 @@
 {
-    "salesBriefing": [{
-        "id": 1,
-        "url": "http://hrluwloc.lr/imr",
-        "ctitle": "正身状质斗万第为"
-    }, {
-        "id": 2,
-        "url": "http://vrxqbfben.mr/gcccjfr",
-        "ctitle": "拉代建行求证为格"
-    }, {
-        "id": 3,
-        "url": "http://gmr.gov.cn/covqwbwzn",
-        "ctitle": "观数专市传和适实"
-    }],
-    "performanceRanking": [{
-        "id": 1,
-        "contractCount": 10,
-        "conAmount": 71090,
-        "clueCount": 28,
-        "clueAmount": 43763,
-        "clientCount": 9,
-        "fullupCount": 20,
-        "canme": "刘洋"
-    }, {
-        "id": 2,
-        "contractCount": 9,
-        "conAmount": 43895,
-        "clueCount": 1,
-        "clueAmount": 20374,
-        "clientCount": 17,
-        "fullupCount": 21,
-        "canme": "唐强"
-    }, {
-        "id": 3,
-        "contractCount": 7,
-        "conAmount": 82028,
-        "clueCount": 2,
-        "clueAmount": 49655,
-        "clientCount": 13,
-        "fullupCount": 29,
-        "canme": "吕艳"
-    }, {
-        "id": 4,
-        "contractCount": 7,
-        "conAmount": 95149,
-        "clueCount": 14,
-        "clueAmount": 68011,
-        "clientCount": 16,
-        "fullupCount": 29,
-        "canme": "丁洋"
-    }, {
-        "id": 5,
-        "contractCount": 3,
-        "conAmount": 86174,
-        "clueCount": 19,
-        "clueAmount": 37449,
-        "clientCount": 13,
-        "fullupCount": 28,
-        "canme": "许超"
-    }, {
-        "id": 6,
-        "contractCount": 7,
-        "conAmount": 10548,
-        "clueCount": 12,
-        "clueAmount": 91070,
-        "clientCount": 20,
-        "fullupCount": 20,
-        "canme": "叶娜"
-    }, {
-        "id": 7,
-        "contractCount": 5,
-        "conAmount": 46393,
-        "clueCount": 26,
-        "clueAmount": 31118,
-        "clientCount": 16,
-        "fullupCount": 29,
-        "canme": "陆秀英"
-    }, {
-        "id": 8,
-        "contractCount": 3,
-        "conAmount": 18944,
-        "clueCount": 17,
-        "clueAmount": 11506,
-        "clientCount": 19,
-        "fullupCount": 22,
-        "canme": "周涛"
-    }, {
-        "id": 9,
-        "contractCount": 4,
-        "conAmount": 42804,
-        "clueCount": 20,
-        "clueAmount": 22269,
-        "clientCount": 11,
-        "fullupCount": 26,
-        "canme": "尹娜"
-    }, {
-        "id": 10,
-        "contractCount": 2,
-        "conAmount": 17407,
-        "clueCount": 6,
-        "clueAmount": 73722,
-        "clientCount": 6,
-        "fullupCount": 15,
-        "canme": "丁超"
-    }, {
-        "id": 11,
-        "contractCount": 2,
-        "conAmount": 10588,
-        "clueCount": 28,
-        "clueAmount": 63143,
-        "clientCount": 11,
-        "fullupCount": 17,
-        "canme": "侯娟"
-    }, {
-        "id": 12,
-        "contractCount": 8,
-        "conAmount": 90586,
-        "clueCount": 2,
-        "clueAmount": 15720,
-        "clientCount": 18,
-        "fullupCount": 25,
-        "canme": "刘涛"
-    }, {
-        "id": 13,
-        "contractCount": 6,
-        "conAmount": 88607,
-        "clueCount": 5,
-        "clueAmount": 84821,
-        "clientCount": 6,
-        "fullupCount": 12,
-        "canme": "邵敏"
-    }],
-    "performanceRanking2": [{
-        "id": 1,
-        "contractCount": 3,
-        "conAmount": 47592,
-        "clueCount": 3,
-        "clueAmount": 41366,
-        "clientCount": 11,
-        "fullupCount": 22,
-        "canme": "钱娜"
-    }, {
-        "id": 2,
-        "contractCount": 3,
-        "conAmount": 41322,
-        "clueCount": 18,
-        "clueAmount": 83474,
-        "clientCount": 14,
-        "fullupCount": 24,
-        "canme": "许刚"
-    }, {
-        "id": 3,
-        "contractCount": 6,
-        "conAmount": 86803,
-        "clueCount": 12,
-        "clueAmount": 14906,
-        "clientCount": 15,
-        "fullupCount": 12,
-        "canme": "任伟"
-    }, {
-        "id": 4,
-        "contractCount": 5,
-        "conAmount": 41810,
-        "clueCount": 21,
-        "clueAmount": 56320,
-        "clientCount": 18,
-        "fullupCount": 19,
-        "canme": "顾明"
-    }, {
-        "id": 5,
-        "contractCount": 3,
-        "conAmount": 59146,
-        "clueCount": 10,
-        "clueAmount": 95698,
-        "clientCount": 13,
-        "fullupCount": 18,
-        "canme": "孟敏"
-    }, {
-        "id": 6,
-        "contractCount": 9,
-        "conAmount": 34529,
-        "clueCount": 7,
-        "clueAmount": 95547,
-        "clientCount": 13,
-        "fullupCount": 10,
-        "canme": "汤勇"
-    }, {
-        "id": 7,
-        "contractCount": 2,
-        "conAmount": 69949,
-        "clueCount": 18,
-        "clueAmount": 61466,
-        "clientCount": 20,
-        "fullupCount": 13,
-        "canme": "阎勇"
-    }, {
-        "id": 8,
-        "contractCount": 8,
-        "conAmount": 10630,
-        "clueCount": 2,
-        "clueAmount": 50663,
-        "clientCount": 9,
-        "fullupCount": 29,
-        "canme": "陈杰"
-    }, {
-        "id": 9,
-        "contractCount": 5,
-        "conAmount": 60084,
-        "clueCount": 9,
-        "clueAmount": 97033,
-        "clientCount": 9,
-        "fullupCount": 29,
-        "canme": "孙艳"
-    }, {
-        "id": 10,
-        "contractCount": 2,
-        "conAmount": 64178,
-        "clueCount": 8,
-        "clueAmount": 81838,
-        "clientCount": 5,
-        "fullupCount": 25,
-        "canme": "夏磊"
-    }, {
-        "id": 11,
-        "contractCount": 8,
-        "conAmount": 43605,
-        "clueCount": 6,
-        "clueAmount": 39324,
-        "clientCount": 13,
-        "fullupCount": 22,
-        "canme": "蔡芳"
-    }, {
-        "id": 12,
-        "contractCount": 4,
-        "conAmount": 59420,
-        "clueCount": 9,
-        "clueAmount": 75274,
-        "clientCount": 7,
-        "fullupCount": 18,
-        "canme": "龙丽"
-    }, {
-        "id": 13,
-        "contractCount": 8,
-        "conAmount": 88167,
-        "clueCount": 29,
-        "clueAmount": 54962,
-        "clientCount": 8,
-        "fullupCount": 20,
-        "canme": "萧杰"
-    }],
-    "performanceRanking3": [{
-        "id": 1,
-        "contractCount": 6,
-        "conAmount": 31494,
-        "clueCount": 17,
-        "clueAmount": 71955,
-        "clientCount": 8,
-        "fullupCount": 22,
-        "canme": "邵艳"
-    }, {
-        "id": 2,
-        "contractCount": 3,
-        "conAmount": 80692,
-        "clueCount": 5,
-        "clueAmount": 93722,
-        "clientCount": 12,
-        "fullupCount": 30,
-        "canme": "李丽"
-    }, {
-        "id": 3,
-        "contractCount": 10,
-        "conAmount": 50820,
-        "clueCount": 24,
-        "clueAmount": 24879,
-        "clientCount": 10,
-        "fullupCount": 12,
-        "canme": "廖洋"
-    }, {
-        "id": 4,
-        "contractCount": 4,
-        "conAmount": 88724,
-        "clueCount": 25,
-        "clueAmount": 74761,
-        "clientCount": 7,
-        "fullupCount": 28,
-        "canme": "高娜"
-    }, {
-        "id": 5,
-        "contractCount": 6,
-        "conAmount": 16229,
-        "clueCount": 6,
-        "clueAmount": 31943,
-        "clientCount": 15,
-        "fullupCount": 11,
-        "canme": "胡磊"
-    }, {
-        "id": 6,
-        "contractCount": 2,
-        "conAmount": 53717,
-        "clueCount": 27,
-        "clueAmount": 18323,
-        "clientCount": 13,
-        "fullupCount": 19,
-        "canme": "锺勇"
-    }, {
-        "id": 7,
-        "contractCount": 2,
-        "conAmount": 32472,
-        "clueCount": 6,
-        "clueAmount": 67967,
-        "clientCount": 18,
-        "fullupCount": 26,
-        "canme": "汤霞"
-    }, {
-        "id": 8,
-        "contractCount": 2,
-        "conAmount": 42479,
-        "clueCount": 14,
-        "clueAmount": 61067,
-        "clientCount": 16,
-        "fullupCount": 15,
-        "canme": "汤敏"
-    }, {
-        "id": 9,
-        "contractCount": 6,
-        "conAmount": 72309,
-        "clueCount": 18,
-        "clueAmount": 58464,
-        "clientCount": 14,
-        "fullupCount": 19,
-        "canme": "薛超"
-    }, {
-        "id": 10,
-        "contractCount": 4,
-        "conAmount": 68450,
-        "clueCount": 28,
-        "clueAmount": 38787,
-        "clientCount": 8,
-        "fullupCount": 21,
-        "canme": "吕洋"
-    }, {
-        "id": 11,
-        "contractCount": 10,
-        "conAmount": 23920,
-        "clueCount": 30,
-        "clueAmount": 80606,
-        "clientCount": 18,
-        "fullupCount": 22,
-        "canme": "田超"
-    }, {
-        "id": 12,
-        "contractCount": 6,
-        "conAmount": 99674,
-        "clueCount": 4,
-        "clueAmount": 84989,
-        "clientCount": 9,
-        "fullupCount": 17,
-        "canme": "易明"
-    }, {
-        "id": 13,
-        "contractCount": 9,
-        "conAmount": 36107,
-        "clueCount": 19,
-        "clueAmount": 47965,
-        "clientCount": 10,
-        "fullupCount": 30,
-        "canme": "宋丽"
-    }],
-    "performanceRanking4": [{
-        "id": 1,
-        "contractCount": 9,
-        "conAmount": 41594,
-        "clueCount": 26,
-        "clueAmount": 75353,
-        "clientCount": 13,
-        "fullupCount": 19,
-        "canme": "田静"
-    }, {
-        "id": 2,
-        "contractCount": 3,
-        "conAmount": 57671,
-        "clueCount": 9,
-        "clueAmount": 86097,
-        "clientCount": 19,
-        "fullupCount": 27,
-        "canme": "程勇"
-    }, {
-        "id": 3,
-        "contractCount": 9,
-        "conAmount": 52620,
-        "clueCount": 22,
-        "clueAmount": 52357,
-        "clientCount": 13,
-        "fullupCount": 15,
-        "canme": "孙娟"
-    }, {
-        "id": 4,
-        "contractCount": 1,
-        "conAmount": 61117,
-        "clueCount": 22,
-        "clueAmount": 93006,
-        "clientCount": 15,
-        "fullupCount": 13,
-        "canme": "毛勇"
-    }, {
-        "id": 5,
-        "contractCount": 2,
-        "conAmount": 29249,
-        "clueCount": 2,
-        "clueAmount": 13825,
-        "clientCount": 10,
-        "fullupCount": 30,
-        "canme": "张静"
-    }, {
-        "id": 6,
-        "contractCount": 4,
-        "conAmount": 64275,
-        "clueCount": 16,
-        "clueAmount": 16287,
-        "clientCount": 18,
-        "fullupCount": 11,
-        "canme": "朱杰"
-    }, {
-        "id": 7,
-        "contractCount": 6,
-        "conAmount": 70245,
-        "clueCount": 29,
-        "clueAmount": 89140,
-        "clientCount": 15,
-        "fullupCount": 23,
-        "canme": "常伟"
-    }, {
-        "id": 8,
-        "contractCount": 9,
-        "conAmount": 85199,
-        "clueCount": 23,
-        "clueAmount": 61476,
-        "clientCount": 8,
-        "fullupCount": 26,
-        "canme": "郭艳"
-    }, {
-        "id": 9,
-        "contractCount": 10,
-        "conAmount": 36479,
-        "clueCount": 23,
-        "clueAmount": 14789,
-        "clientCount": 7,
-        "fullupCount": 10,
-        "canme": "叶杰"
-    }, {
-        "id": 10,
-        "contractCount": 8,
-        "conAmount": 51569,
-        "clueCount": 15,
-        "clueAmount": 56497,
-        "clientCount": 9,
-        "fullupCount": 24,
-        "canme": "汤艳"
-    }, {
-        "id": 11,
-        "contractCount": 3,
-        "conAmount": 81828,
-        "clueCount": 13,
-        "clueAmount": 51352,
-        "clientCount": 9,
-        "fullupCount": 21,
-        "canme": "郭静"
-    }, {
-        "id": 12,
-        "contractCount": 2,
-        "conAmount": 16617,
-        "clueCount": 23,
-        "clueAmount": 50740,
-        "clientCount": 6,
-        "fullupCount": 30,
-        "canme": "潘霞"
-    }, {
-        "id": 13,
-        "contractCount": 6,
-        "conAmount": 34475,
-        "clueCount": 5,
-        "clueAmount": 39464,
-        "clientCount": 11,
-        "fullupCount": 17,
-        "canme": "丁芳"
-    }],
-    "performanceRanking5": [{
-        "id": 1,
-        "contractCount": 1,
-        "conAmount": 68208,
-        "clueCount": 22,
-        "clueAmount": 18700,
-        "clientCount": 10,
-        "fullupCount": 27,
-        "canme": "吕超"
-    }, {
-        "id": 2,
-        "contractCount": 6,
-        "conAmount": 95412,
-        "clueCount": 27,
-        "clueAmount": 67515,
-        "clientCount": 11,
-        "fullupCount": 18,
-        "canme": "余娟"
-    }, {
-        "id": 3,
-        "contractCount": 6,
-        "conAmount": 35711,
-        "clueCount": 7,
-        "clueAmount": 87636,
-        "clientCount": 15,
-        "fullupCount": 15,
-        "canme": "傅丽"
-    }, {
-        "id": 4,
-        "contractCount": 7,
-        "conAmount": 88578,
-        "clueCount": 12,
-        "clueAmount": 44541,
-        "clientCount": 8,
-        "fullupCount": 13,
-        "canme": "蒋艳"
-    }, {
-        "id": 5,
-        "contractCount": 1,
-        "conAmount": 95766,
-        "clueCount": 16,
-        "clueAmount": 72471,
-        "clientCount": 5,
-        "fullupCount": 26,
-        "canme": "杨平"
-    }, {
-        "id": 6,
-        "contractCount": 4,
-        "conAmount": 47482,
-        "clueCount": 9,
-        "clueAmount": 85160,
-        "clientCount": 10,
-        "fullupCount": 29,
-        "canme": "郭军"
-    }, {
-        "id": 7,
-        "contractCount": 5,
-        "conAmount": 21482,
-        "clueCount": 21,
-        "clueAmount": 20005,
-        "clientCount": 18,
-        "fullupCount": 27,
-        "canme": "曹磊"
-    }, {
-        "id": 8,
-        "contractCount": 9,
-        "conAmount": 99763,
-        "clueCount": 3,
-        "clueAmount": 31602,
-        "clientCount": 16,
-        "fullupCount": 21,
-        "canme": "郝杰"
-    }, {
-        "id": 9,
-        "contractCount": 6,
-        "conAmount": 28250,
-        "clueCount": 13,
-        "clueAmount": 95805,
-        "clientCount": 19,
-        "fullupCount": 18,
-        "canme": "白勇"
-    }, {
-        "id": 10,
-        "contractCount": 6,
-        "conAmount": 96721,
-        "clueCount": 22,
-        "clueAmount": 83019,
-        "clientCount": 10,
-        "fullupCount": 22,
-        "canme": "康伟"
-    }, {
-        "id": 11,
-        "contractCount": 4,
-        "conAmount": 64185,
-        "clueCount": 14,
-        "clueAmount": 34724,
-        "clientCount": 7,
-        "fullupCount": 23,
-        "canme": "邱敏"
-    }, {
-        "id": 12,
-        "contractCount": 6,
-        "conAmount": 40487,
-        "clueCount": 24,
-        "clueAmount": 96297,
-        "clientCount": 15,
-        "fullupCount": 18,
-        "canme": "史强"
-    }, {
-        "id": 13,
-        "contractCount": 2,
-        "conAmount": 16214,
-        "clueCount": 23,
-        "clueAmount": 38916,
-        "clientCount": 20,
-        "fullupCount": 27,
-        "canme": "黎杰"
-    }],
-    "salesAssistantData": [{
-        "id": 1,
-        "contractCount": 1,
-        "contractAmount": 23692,
-        "RepaymentsAmount": 45857,
-        "clueCount": 10,
-        "clientCount": 18,
-        "fullUpCount": 17
-    }, {
-        "id": 2,
-        "contractCount": 6,
-        "contractAmount": 10818,
-        "RepaymentsAmount": 29513,
-        "clueCount": 22,
-        "clientCount": 11,
-        "fullUpCount": 17
-    }, {
-        "id": 3,
-        "contractCount": 8,
-        "contractAmount": 89551,
-        "RepaymentsAmount": 48830,
-        "clueCount": 18,
-        "clientCount": 12,
-        "fullUpCount": 12
-    }, {
-        "id": 4,
-        "contractCount": 4,
-        "contractAmount": 46345,
-        "RepaymentsAmount": 14956,
-        "clueCount": 27,
-        "clientCount": 19,
-        "fullUpCount": 25
-    }],
-    "clueTableData": [{
-        "id": 1,
-        "number": 10,
-        "date": "1971-05-01 22:55:45",
-        "ctitle": "论记素电消水局",
-        "ctype": "中型",
-        "position": "K12",
-        "department": "人事部",
-        "positionPerple": "推广人",
-        "followUp": "未处理",
-        "canme": "许丽",
-        "cadd": "江苏省",
-        "phone": "13856787756"
-    }, {
-        "id": 2,
-        "number": 7,
-        "date": "1992-11-19 12:56:34",
-        "ctitle": "十道与带天",
-        "ctype": "小型",
-        "position": "K12",
-        "department": "开发部",
-        "positionPerple": "负责人",
-        "followUp": "未处理",
-        "canme": "黎强",
-        "cadd": "陕西省",
-        "phone": "15539486198"
-    }, {
-        "id": 3,
-        "number": 4,
-        "date": "1999-06-26 01:00:34",
-        "ctitle": "子自代取快出化",
-        "ctype": "小型",
-        "position": "英语",
-        "department": "开发部",
-        "positionPerple": "负责人",
-        "followUp": "联系方式无效",
-        "canme": "袁丽",
-        "cadd": "甘肃省",
-        "phone": "15833329636"
-    }, {
-        "id": 4,
-        "number": 8,
-        "date": "2002-06-28 22:46:46",
-        "ctitle": "展器集常非平标北",
-        "ctype": "中型",
-        "position": "英语",
-        "department": "人事部",
-        "positionPerple": "负责人",
-        "followUp": "联系方式有效",
-        "canme": "邓洋",
-        "cadd": "北京",
-        "phone": "18281469756"
-    }, {
-        "id": 5,
-        "number": 6,
-        "date": "2013-10-09 05:57:13",
-        "ctitle": "单克展该中增石",
-        "ctype": "大型",
-        "position": "出国",
-        "department": "人事部",
-        "positionPerple": "主管",
-        "followUp": "未处理",
-        "canme": "杜芳",
-        "cadd": "西藏自治区",
-        "phone": "15155743152"
-    }]
+  "salesBriefing": [
+    {
+      "id": 1,
+      "url": "http://hrluwloc.lr/imr",
+      "ctitle": "正身状质斗万第为"
+    },
+    {
+      "id": 2,
+      "url": "http://vrxqbfben.mr/gcccjfr",
+      "ctitle": "拉代建行求证为格"
+    },
+    {
+      "id": 3,
+      "url": "http://gmr.gov.cn/covqwbwzn",
+      "ctitle": "观数专市传和适实"
+    },
+    {
+      "id": 4
+    }
+  ],
+  "performanceRanking": [
+    {
+      "id": 1,
+      "contractCount": 10,
+      "conAmount": 71090,
+      "clueCount": 28,
+      "clueAmount": 43763,
+      "clientCount": 9,
+      "fullupCount": 20,
+      "canme": "刘洋"
+    },
+    {
+      "id": 2,
+      "contractCount": 9,
+      "conAmount": 43895,
+      "clueCount": 1,
+      "clueAmount": 20374,
+      "clientCount": 17,
+      "fullupCount": 21,
+      "canme": "唐强"
+    },
+    {
+      "id": 3,
+      "contractCount": 7,
+      "conAmount": 82028,
+      "clueCount": 2,
+      "clueAmount": 49655,
+      "clientCount": 13,
+      "fullupCount": 29,
+      "canme": "吕艳"
+    },
+    {
+      "id": 4,
+      "contractCount": 7,
+      "conAmount": 95149,
+      "clueCount": 14,
+      "clueAmount": 68011,
+      "clientCount": 16,
+      "fullupCount": 29,
+      "canme": "丁洋"
+    },
+    {
+      "id": 5,
+      "contractCount": 3,
+      "conAmount": 86174,
+      "clueCount": 19,
+      "clueAmount": 37449,
+      "clientCount": 13,
+      "fullupCount": 28,
+      "canme": "许超"
+    },
+    {
+      "id": 6,
+      "contractCount": 7,
+      "conAmount": 10548,
+      "clueCount": 12,
+      "clueAmount": 91070,
+      "clientCount": 20,
+      "fullupCount": 20,
+      "canme": "叶娜"
+    },
+    {
+      "id": 7,
+      "contractCount": 5,
+      "conAmount": 46393,
+      "clueCount": 26,
+      "clueAmount": 31118,
+      "clientCount": 16,
+      "fullupCount": 29,
+      "canme": "陆秀英"
+    },
+    {
+      "id": 8,
+      "contractCount": 3,
+      "conAmount": 18944,
+      "clueCount": 17,
+      "clueAmount": 11506,
+      "clientCount": 19,
+      "fullupCount": 22,
+      "canme": "周涛"
+    },
+    {
+      "id": 9,
+      "contractCount": 4,
+      "conAmount": 42804,
+      "clueCount": 20,
+      "clueAmount": 22269,
+      "clientCount": 11,
+      "fullupCount": 26,
+      "canme": "尹娜"
+    },
+    {
+      "id": 10,
+      "contractCount": 2,
+      "conAmount": 17407,
+      "clueCount": 6,
+      "clueAmount": 73722,
+      "clientCount": 6,
+      "fullupCount": 15,
+      "canme": "丁超"
+    },
+    {
+      "id": 11,
+      "contractCount": 2,
+      "conAmount": 10588,
+      "clueCount": 28,
+      "clueAmount": 63143,
+      "clientCount": 11,
+      "fullupCount": 17,
+      "canme": "侯娟"
+    },
+    {
+      "id": 12,
+      "contractCount": 8,
+      "conAmount": 90586,
+      "clueCount": 2,
+      "clueAmount": 15720,
+      "clientCount": 18,
+      "fullupCount": 25,
+      "canme": "刘涛"
+    },
+    {
+      "id": 13,
+      "contractCount": 6,
+      "conAmount": 88607,
+      "clueCount": 5,
+      "clueAmount": 84821,
+      "clientCount": 6,
+      "fullupCount": 12,
+      "canme": "邵敏"
+    }
+  ],
+  "performanceRanking2": [
+    {
+      "id": 1,
+      "contractCount": 3,
+      "conAmount": 47592,
+      "clueCount": 3,
+      "clueAmount": 41366,
+      "clientCount": 11,
+      "fullupCount": 22,
+      "canme": "钱娜"
+    },
+    {
+      "id": 2,
+      "contractCount": 3,
+      "conAmount": 41322,
+      "clueCount": 18,
+      "clueAmount": 83474,
+      "clientCount": 14,
+      "fullupCount": 24,
+      "canme": "许刚"
+    },
+    {
+      "id": 3,
+      "contractCount": 6,
+      "conAmount": 86803,
+      "clueCount": 12,
+      "clueAmount": 14906,
+      "clientCount": 15,
+      "fullupCount": 12,
+      "canme": "任伟"
+    },
+    {
+      "id": 4,
+      "contractCount": 5,
+      "conAmount": 41810,
+      "clueCount": 21,
+      "clueAmount": 56320,
+      "clientCount": 18,
+      "fullupCount": 19,
+      "canme": "顾明"
+    },
+    {
+      "id": 5,
+      "contractCount": 3,
+      "conAmount": 59146,
+      "clueCount": 10,
+      "clueAmount": 95698,
+      "clientCount": 13,
+      "fullupCount": 18,
+      "canme": "孟敏"
+    },
+    {
+      "id": 6,
+      "contractCount": 9,
+      "conAmount": 34529,
+      "clueCount": 7,
+      "clueAmount": 95547,
+      "clientCount": 13,
+      "fullupCount": 10,
+      "canme": "汤勇"
+    },
+    {
+      "id": 7,
+      "contractCount": 2,
+      "conAmount": 69949,
+      "clueCount": 18,
+      "clueAmount": 61466,
+      "clientCount": 20,
+      "fullupCount": 13,
+      "canme": "阎勇"
+    },
+    {
+      "id": 8,
+      "contractCount": 8,
+      "conAmount": 10630,
+      "clueCount": 2,
+      "clueAmount": 50663,
+      "clientCount": 9,
+      "fullupCount": 29,
+      "canme": "陈杰"
+    },
+    {
+      "id": 9,
+      "contractCount": 5,
+      "conAmount": 60084,
+      "clueCount": 9,
+      "clueAmount": 97033,
+      "clientCount": 9,
+      "fullupCount": 29,
+      "canme": "孙艳"
+    },
+    {
+      "id": 10,
+      "contractCount": 2,
+      "conAmount": 64178,
+      "clueCount": 8,
+      "clueAmount": 81838,
+      "clientCount": 5,
+      "fullupCount": 25,
+      "canme": "夏磊"
+    },
+    {
+      "id": 11,
+      "contractCount": 8,
+      "conAmount": 43605,
+      "clueCount": 6,
+      "clueAmount": 39324,
+      "clientCount": 13,
+      "fullupCount": 22,
+      "canme": "蔡芳"
+    },
+    {
+      "id": 12,
+      "contractCount": 4,
+      "conAmount": 59420,
+      "clueCount": 9,
+      "clueAmount": 75274,
+      "clientCount": 7,
+      "fullupCount": 18,
+      "canme": "龙丽"
+    },
+    {
+      "id": 13,
+      "contractCount": 8,
+      "conAmount": 88167,
+      "clueCount": 29,
+      "clueAmount": 54962,
+      "clientCount": 8,
+      "fullupCount": 20,
+      "canme": "萧杰"
+    }
+  ],
+  "performanceRanking3": [
+    {
+      "id": 1,
+      "contractCount": 6,
+      "conAmount": 31494,
+      "clueCount": 17,
+      "clueAmount": 71955,
+      "clientCount": 8,
+      "fullupCount": 22,
+      "canme": "邵艳"
+    },
+    {
+      "id": 2,
+      "contractCount": 3,
+      "conAmount": 80692,
+      "clueCount": 5,
+      "clueAmount": 93722,
+      "clientCount": 12,
+      "fullupCount": 30,
+      "canme": "李丽"
+    },
+    {
+      "id": 3,
+      "contractCount": 10,
+      "conAmount": 50820,
+      "clueCount": 24,
+      "clueAmount": 24879,
+      "clientCount": 10,
+      "fullupCount": 12,
+      "canme": "廖洋"
+    },
+    {
+      "id": 4,
+      "contractCount": 4,
+      "conAmount": 88724,
+      "clueCount": 25,
+      "clueAmount": 74761,
+      "clientCount": 7,
+      "fullupCount": 28,
+      "canme": "高娜"
+    },
+    {
+      "id": 5,
+      "contractCount": 6,
+      "conAmount": 16229,
+      "clueCount": 6,
+      "clueAmount": 31943,
+      "clientCount": 15,
+      "fullupCount": 11,
+      "canme": "胡磊"
+    },
+    {
+      "id": 6,
+      "contractCount": 2,
+      "conAmount": 53717,
+      "clueCount": 27,
+      "clueAmount": 18323,
+      "clientCount": 13,
+      "fullupCount": 19,
+      "canme": "锺勇"
+    },
+    {
+      "id": 7,
+      "contractCount": 2,
+      "conAmount": 32472,
+      "clueCount": 6,
+      "clueAmount": 67967,
+      "clientCount": 18,
+      "fullupCount": 26,
+      "canme": "汤霞"
+    },
+    {
+      "id": 8,
+      "contractCount": 2,
+      "conAmount": 42479,
+      "clueCount": 14,
+      "clueAmount": 61067,
+      "clientCount": 16,
+      "fullupCount": 15,
+      "canme": "汤敏"
+    },
+    {
+      "id": 9,
+      "contractCount": 6,
+      "conAmount": 72309,
+      "clueCount": 18,
+      "clueAmount": 58464,
+      "clientCount": 14,
+      "fullupCount": 19,
+      "canme": "薛超"
+    },
+    {
+      "id": 10,
+      "contractCount": 4,
+      "conAmount": 68450,
+      "clueCount": 28,
+      "clueAmount": 38787,
+      "clientCount": 8,
+      "fullupCount": 21,
+      "canme": "吕洋"
+    },
+    {
+      "id": 11,
+      "contractCount": 10,
+      "conAmount": 23920,
+      "clueCount": 30,
+      "clueAmount": 80606,
+      "clientCount": 18,
+      "fullupCount": 22,
+      "canme": "田超"
+    },
+    {
+      "id": 12,
+      "contractCount": 6,
+      "conAmount": 99674,
+      "clueCount": 4,
+      "clueAmount": 84989,
+      "clientCount": 9,
+      "fullupCount": 17,
+      "canme": "易明"
+    },
+    {
+      "id": 13,
+      "contractCount": 9,
+      "conAmount": 36107,
+      "clueCount": 19,
+      "clueAmount": 47965,
+      "clientCount": 10,
+      "fullupCount": 30,
+      "canme": "宋丽"
+    }
+  ],
+  "performanceRanking4": [
+    {
+      "id": 1,
+      "contractCount": 9,
+      "conAmount": 41594,
+      "clueCount": 26,
+      "clueAmount": 75353,
+      "clientCount": 13,
+      "fullupCount": 19,
+      "canme": "田静"
+    },
+    {
+      "id": 2,
+      "contractCount": 3,
+      "conAmount": 57671,
+      "clueCount": 9,
+      "clueAmount": 86097,
+      "clientCount": 19,
+      "fullupCount": 27,
+      "canme": "程勇"
+    },
+    {
+      "id": 3,
+      "contractCount": 9,
+      "conAmount": 52620,
+      "clueCount": 22,
+      "clueAmount": 52357,
+      "clientCount": 13,
+      "fullupCount": 15,
+      "canme": "孙娟"
+    },
+    {
+      "id": 4,
+      "contractCount": 1,
+      "conAmount": 61117,
+      "clueCount": 22,
+      "clueAmount": 93006,
+      "clientCount": 15,
+      "fullupCount": 13,
+      "canme": "毛勇"
+    },
+    {
+      "id": 5,
+      "contractCount": 2,
+      "conAmount": 29249,
+      "clueCount": 2,
+      "clueAmount": 13825,
+      "clientCount": 10,
+      "fullupCount": 30,
+      "canme": "张静"
+    },
+    {
+      "id": 6,
+      "contractCount": 4,
+      "conAmount": 64275,
+      "clueCount": 16,
+      "clueAmount": 16287,
+      "clientCount": 18,
+      "fullupCount": 11,
+      "canme": "朱杰"
+    },
+    {
+      "id": 7,
+      "contractCount": 6,
+      "conAmount": 70245,
+      "clueCount": 29,
+      "clueAmount": 89140,
+      "clientCount": 15,
+      "fullupCount": 23,
+      "canme": "常伟"
+    },
+    {
+      "id": 8,
+      "contractCount": 9,
+      "conAmount": 85199,
+      "clueCount": 23,
+      "clueAmount": 61476,
+      "clientCount": 8,
+      "fullupCount": 26,
+      "canme": "郭艳"
+    },
+    {
+      "id": 9,
+      "contractCount": 10,
+      "conAmount": 36479,
+      "clueCount": 23,
+      "clueAmount": 14789,
+      "clientCount": 7,
+      "fullupCount": 10,
+      "canme": "叶杰"
+    },
+    {
+      "id": 10,
+      "contractCount": 8,
+      "conAmount": 51569,
+      "clueCount": 15,
+      "clueAmount": 56497,
+      "clientCount": 9,
+      "fullupCount": 24,
+      "canme": "汤艳"
+    },
+    {
+      "id": 11,
+      "contractCount": 3,
+      "conAmount": 81828,
+      "clueCount": 13,
+      "clueAmount": 51352,
+      "clientCount": 9,
+      "fullupCount": 21,
+      "canme": "郭静"
+    },
+    {
+      "id": 12,
+      "contractCount": 2,
+      "conAmount": 16617,
+      "clueCount": 23,
+      "clueAmount": 50740,
+      "clientCount": 6,
+      "fullupCount": 30,
+      "canme": "潘霞"
+    },
+    {
+      "id": 13,
+      "contractCount": 6,
+      "conAmount": 34475,
+      "clueCount": 5,
+      "clueAmount": 39464,
+      "clientCount": 11,
+      "fullupCount": 17,
+      "canme": "丁芳"
+    }
+  ],
+  "performanceRanking5": [
+    {
+      "id": 1,
+      "contractCount": 1,
+      "conAmount": 68208,
+      "clueCount": 22,
+      "clueAmount": 18700,
+      "clientCount": 10,
+      "fullupCount": 27,
+      "canme": "吕超"
+    },
+    {
+      "id": 2,
+      "contractCount": 6,
+      "conAmount": 95412,
+      "clueCount": 27,
+      "clueAmount": 67515,
+      "clientCount": 11,
+      "fullupCount": 18,
+      "canme": "余娟"
+    },
+    {
+      "id": 3,
+      "contractCount": 6,
+      "conAmount": 35711,
+      "clueCount": 7,
+      "clueAmount": 87636,
+      "clientCount": 15,
+      "fullupCount": 15,
+      "canme": "傅丽"
+    },
+    {
+      "id": 4,
+      "contractCount": 7,
+      "conAmount": 88578,
+      "clueCount": 12,
+      "clueAmount": 44541,
+      "clientCount": 8,
+      "fullupCount": 13,
+      "canme": "蒋艳"
+    },
+    {
+      "id": 5,
+      "contractCount": 1,
+      "conAmount": 95766,
+      "clueCount": 16,
+      "clueAmount": 72471,
+      "clientCount": 5,
+      "fullupCount": 26,
+      "canme": "杨平"
+    },
+    {
+      "id": 6,
+      "contractCount": 4,
+      "conAmount": 47482,
+      "clueCount": 9,
+      "clueAmount": 85160,
+      "clientCount": 10,
+      "fullupCount": 29,
+      "canme": "郭军"
+    },
+    {
+      "id": 7,
+      "contractCount": 5,
+      "conAmount": 21482,
+      "clueCount": 21,
+      "clueAmount": 20005,
+      "clientCount": 18,
+      "fullupCount": 27,
+      "canme": "曹磊"
+    },
+    {
+      "id": 8,
+      "contractCount": 9,
+      "conAmount": 99763,
+      "clueCount": 3,
+      "clueAmount": 31602,
+      "clientCount": 16,
+      "fullupCount": 21,
+      "canme": "郝杰"
+    },
+    {
+      "id": 9,
+      "contractCount": 6,
+      "conAmount": 28250,
+      "clueCount": 13,
+      "clueAmount": 95805,
+      "clientCount": 19,
+      "fullupCount": 18,
+      "canme": "白勇"
+    },
+    {
+      "id": 10,
+      "contractCount": 6,
+      "conAmount": 96721,
+      "clueCount": 22,
+      "clueAmount": 83019,
+      "clientCount": 10,
+      "fullupCount": 22,
+      "canme": "康伟"
+    },
+    {
+      "id": 11,
+      "contractCount": 4,
+      "conAmount": 64185,
+      "clueCount": 14,
+      "clueAmount": 34724,
+      "clientCount": 7,
+      "fullupCount": 23,
+      "canme": "邱敏"
+    },
+    {
+      "id": 12,
+      "contractCount": 6,
+      "conAmount": 40487,
+      "clueCount": 24,
+      "clueAmount": 96297,
+      "clientCount": 15,
+      "fullupCount": 18,
+      "canme": "史强"
+    },
+    {
+      "id": 13,
+      "contractCount": 2,
+      "conAmount": 16214,
+      "clueCount": 23,
+      "clueAmount": 38916,
+      "clientCount": 20,
+      "fullupCount": 27,
+      "canme": "黎杰"
+    }
+  ],
+  "salesAssistantData": [
+    {
+      "id": 1,
+      "contractCount": 1,
+      "contractAmount": 23692,
+      "RepaymentsAmount": 45857,
+      "clueCount": 10,
+      "clientCount": 18,
+      "fullUpCount": 17
+    },
+    {
+      "id": 2,
+      "contractCount": 6,
+      "contractAmount": 10818,
+      "RepaymentsAmount": 29513,
+      "clueCount": 22,
+      "clientCount": 11,
+      "fullUpCount": 17
+    },
+    {
+      "id": 3,
+      "contractCount": 8,
+      "contractAmount": 89551,
+      "RepaymentsAmount": 48830,
+      "clueCount": 18,
+      "clientCount": 12,
+      "fullUpCount": 12
+    },
+    {
+      "id": 4,
+      "contractCount": 4,
+      "contractAmount": 46345,
+      "RepaymentsAmount": 14956,
+      "clueCount": 27,
+      "clientCount": 19,
+      "fullUpCount": 25
+    }
+  ],
+  "clueTableData": [
+    {
+      "id": 1,
+      "number": 10,
+      "date": "1971-05-01 22:55:45",
+      "ctitle": "论记素电消水局",
+      "ctype": "中型",
+      "position": "K12",
+      "department": "人事部",
+      "positionPerple": "推广人",
+      "followUp": "未处理",
+      "canme": "许丽",
+      "cadd": "江苏省",
+      "phone": "13856787756"
+    },
+    {
+      "id": 2,
+      "number": 7,
+      "date": "1992-11-19 12:56:34",
+      "ctitle": "十道与带天",
+      "ctype": "小型",
+      "position": "K12",
+      "department": "开发部",
+      "positionPerple": "负责人",
+      "followUp": "未处理",
+      "canme": "黎强",
+      "cadd": "陕西省",
+      "phone": "15539486198"
+    },
+    {
+      "id": 3,
+      "number": 4,
+      "date": "1999-06-26 01:00:34",
+      "ctitle": "子自代取快出化",
+      "ctype": "小型",
+      "position": "英语",
+      "department": "开发部",
+      "positionPerple": "负责人",
+      "followUp": "联系方式无效",
+      "canme": "袁丽",
+      "cadd": "甘肃省",
+      "phone": "15833329636"
+    },
+    {
+      "id": 4,
+      "number": 8,
+      "date": "2002-06-28 22:46:46",
+      "ctitle": "展器集常非平标北",
+      "ctype": "中型",
+      "position": "英语",
+      "department": "人事部",
+      "positionPerple": "负责人",
+      "followUp": "联系方式有效",
+      "canme": "邓洋",
+      "cadd": "北京",
+      "phone": "18281469756"
+    },
+    {
+      "id": 5,
+      "number": 6,
+      "date": "2013-10-09 05:57:13",
+      "ctitle": "单克展该中增石",
+      "ctype": "大型",
+      "position": "出国",
+      "department": "人事部",
+      "positionPerple": "主管",
+      "followUp": "未处理",
+      "canme": "杜芳",
+      "cadd": "西藏自治区",
+      "phone": "15155743152"
+    }
+  ]
 }
