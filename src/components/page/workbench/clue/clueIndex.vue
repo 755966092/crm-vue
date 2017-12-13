@@ -5,6 +5,7 @@
                 <p class="leftWrap">范围</p>
             </el-col>
             <el-col :span="3">
+                <!-- 选择子公司母公司 -->
                 <div class="select rightWrap">
                     <!--<el-cascader-->
                         <!--expand-trigger="hover"-->
@@ -27,6 +28,7 @@
 
             </el-col>
             <el-col :span="6">
+                <!-- 选着子公司 -->
                 <div class="select rightWrap">
                     <el-cascader
                         expand-trigger="hover"
@@ -41,11 +43,11 @@
                 </div>
             </el-col>
             <el-col :span="6">
+                <!-- 选择部门 -->
                 <div class="select rightWrap">
                     <el-cascader
                         expand-trigger="hover"
                         :options="currentCompanyDepartment"
-                        @change="handleChange"
                         :show-all-levels=false
 
                         filterable
@@ -59,7 +61,6 @@
                     <el-cascader
                         expand-trigger="hover"
                         :options="currentDepartmentStaff"
-                        @change="handleChange"
                         :show-all-levels=false
                         filterable
                         change-on-select
@@ -516,19 +517,27 @@
                 selectRangeItem: 1,
                 // 范围
                 parentCompanyList: [],
+                // 母公司id
+                mother_id: '',
+                // 当前子公司id
+                children_id: '',
                 // 范围数据
-                rangeData: [{
-                    label: '母公司',
-                    value: 1
-                },{
-                    label: '子公司',
-                    value: 2
-                },{
-                    label: '加盟商',
-                    value: 3
-                }],
+                rangeData: [
+                        {
+                        label: '母公司',
+                        value: 1
+                    },{
+                        label: '子公司',
+                        value: 2
+                    },{
+                        label: '加盟商',
+                        value: 3
+                    }
+                ],
                 // 当前公司部门
                 currentCompanyDepartment: [],
+                // 当前公司下的部门
+                parentCompanyDepartment: [],
                 // 当前部门员工列表
                 currentDepartmentStaff: [],
                 // 最后跟进时间
@@ -820,8 +829,7 @@
                         }
                     }]
                 },
-                // 母公司id
-                mother_id: '',
+
                 // 表格数据
                 tableData: [],
                 // 表格搜索下拉框
@@ -884,7 +892,6 @@
                 ],
             }
         },
-        computed: {},
         methods: {
             // 线索详情
             openClueInfo(index, data) {
@@ -919,9 +926,62 @@
                         console.log(err);
                     });
             },
+            // 当前母公司下的所有部门
+            getDepartment() {
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/department/getChildrenDepartment',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        mother_id: self.mother_id
+                    }
+                })
+                    .then(function (res) {
+                        if (res.data.code === 200) {
+                            // 当前母公司下的部门 parentCompanyDepartment
+                            self.currentCompanyDepartment = res.data.data.list
+                        } else {
+                            alert(res.data.msg)
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            },
+            // 当前子公司下的所有部门
+            getChildrenDepartment() {
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/department/getChildrenDepartmentTo',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        mother_id: self.children_id
+                    }
+                })
+                    .then(function (res) {
+                        if (res.data.code === 200) {
+                            // 当前子公司下的部门 parentCompanyDepartment
+                            self.currentCompanyDepartment = res.data.data.list
+                        } else {
+                            alert(res.data.msg)
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            },
             // 范围选择变化触发的事件
             handleChange(data) {
-                console.log(data)
+                let children = this.children_id;
+                this.children_id = data[data.length - 1];
+                // 获取子公司所有部门
+                if (children !== this.children_id) {
+                    this.getChildrenDepartment();
+                }
             },
             // 线索类型
             clueTypeChange(data) {
@@ -1149,6 +1209,8 @@
             // 是否禁用子公司选择框
             rangeFlag() {
                 if(this.selectRangeItem == 1) {
+                    // 如果选择母公司, 禁用选公司列表, 请求母公司部门
+                    this.getDepartment();
                     return true
                 } else {
                     return false
