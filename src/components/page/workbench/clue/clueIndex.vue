@@ -179,13 +179,13 @@
         <div>
             <div class="tableTitle">
                 <el-row>
-                    <el-col :span="8">
+                    <el-col :span="10">
                         <el-button type="text" @click="addClue">新增线索</el-button>
                         <el-button type="text">导入线索</el-button>
                         <el-button type="text" style="color: #999">批量转移</el-button>
                         <el-button type="text" style="color: #999">批量删除</el-button>
                     </el-col>
-                    <el-col :span="10" :offset="6">
+                    <el-col :span="8" :offset="6">
                         <el-input placeholder="请输入内容" v-model="searchIptValue" class="input-with-select">
                             <el-select v-model="optionsValue" slot="prepend" placeholder="请选择">
                                 <el-option
@@ -802,11 +802,13 @@
                     withCredentials: false,
                     url: '/api/company/CompanyMyList',
                     data: {
-                        token: "1511328705UZVQ",
+                        token: "1513059193KHO7",
                     }
                 })
                     .then(function (res) {
-                        self.parentCompanyList = res.data.data.list
+                        console.log(res.data.data);
+                        
+                        // self.parentCompanyList = res.data.data.list
                     })
                     .catch(function (err) {
                         console.log(err);
@@ -901,7 +903,7 @@
                     withCredentials: false,
                     url: '/api/area/evepce',
                     data: {
-                        token: "1511328705UZVQ",
+                        token: localStorage.getItem('crm_token'),
                     }
                 })
                     .then(function (res) {

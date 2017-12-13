@@ -40,13 +40,18 @@ export default new Router({
                         {
                             path: 'clueInfo', // 线索详情
                             component: resolve => require(['../components/page/workbench/clue/clueInfo.vue'], resolve),    // 拖拽列表组件
-                        },
+                        }
                     ]
                 },
-
                 {
                     path: '/client',
-                    component: resolve => require(['../components/page/workbench/Client.vue'], resolve)    // 拖拽列表组件
+                    component: resolve => require(['../components/page/workbench/Client.vue'], resolve),    // 拖拽列表组件
+                    children: [
+                       {
+                            path: '/',
+                            component: resolve => require(['../components/page/workbench/clientPage/clientIndex.vue'], resolve)    // 拖拽列表组件
+                       }
+                    ]
                 },
                 {
                     path: '/contract',

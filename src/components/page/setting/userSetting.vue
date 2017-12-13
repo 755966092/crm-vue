@@ -570,7 +570,7 @@
                     withCredentials: false,
                     url: '/api/department/getChildrenDepartment',
                     data: {
-                        token: "1511328705UZVQ",
+                        token: localStorage.getItem('crm_token'),
                         mother_id: 0
                     }
                 })
@@ -595,7 +595,7 @@
                     withCredentials: false,
                     url: '/api/company/CompanyMyList',
                     data: {
-                        token: "1511328705UZVQ",
+                        token: localStorage.getItem('crm_token'),
                     }
                 })
                     .then(function (res) {
@@ -624,7 +624,7 @@
                     withCredentials: false,
                     url: '/api/department/editDepartment',
                     data: {
-                        token: "1511328705UZVQ",
+                        token: localStorage.getItem('crm_token'),
                         department_id: self.departmentId,
                         name: name
                     }
@@ -646,7 +646,7 @@
                     withCredentials: false,
                     url: '/api/department/makeAdminDepartmentList',
                     data: {
-                        token: "1511328705UZVQ",
+                        token: localStorage.getItem('crm_token'),
                         department_id: self.departmentId,
                     }
                 })
@@ -680,7 +680,7 @@
                     withCredentials: false,
                     url: '/api/department/UserDepartmentList',
                     data: {
-                        token: "1511328705UZVQ",
+                        token: localStorage.getItem('crm_token'),
                         department_id: self.departmentId,
                     }
                 })

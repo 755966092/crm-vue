@@ -87,7 +87,7 @@
                     withCredentials: false,
                     url: '/api/company/CompanyMyList',
                     data: {
-                        token: "1511328705UZVQ",
+                        token: localStorage.getItem('crm_token'),
                     }
                 })
                     .then(function (res) {
@@ -107,7 +107,7 @@
                     withCredentials: false,
                     url: '/api/area/evepce',
                     data: {
-                        token: "1511328705UZVQ",
+                        token: localStorage.getItem('crm_token'),
                     }
                 })
                     .then(function (res) {

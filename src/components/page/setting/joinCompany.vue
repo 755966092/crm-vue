@@ -541,7 +541,7 @@
                     withCredentials: false,
                     url: '/api/joiningTrader/FranchiseeList',
                     data: {
-                        token: "1511328705UZVQ",
+                        token: localStorage.getItem('crm_token'),
                     }
                 })
                 .then(function (res) {

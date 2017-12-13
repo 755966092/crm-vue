@@ -16,7 +16,7 @@
                 </div>
             </el-col>
         </el-row>
-        <!--线索类型-->
+
         <el-row>
             <el-col :span="3">
                 <p class="leftWrap">线索类型</p>
@@ -32,9 +32,9 @@
                 </div>
             </el-col>
         </el-row>
-        <!--中间筛选项-->
-        <template v-for="(item, index) in typeList" v-if="item.show" :key="index">
+        <template v-for="(item, index) in typeList" v-if="item.show">
             <template v-if="index == 'followUpStatus' || index == 'source' ">
+
             </template>
             <template v-else>
                 <el-row>
@@ -46,19 +46,15 @@
                             <el-radio-group
                                 @change="radioChange(index)"
                                 v-model="item.key">
-                                <el-radio-button 
-                                    v-for="(children, index) in item.content" 
-                                    :value="children.value"
-                                    :label="children.text"
-                                    :key="index"
-                                ></el-radio-button>
+                                <el-radio-button v-for="children in item.content" :value="children.value"
+                                                 :label="children.text"></el-radio-button>
                             </el-radio-group>
                         </div>
                     </el-col>
                 </el-row>
             </template>
         </template>
-        <!-- 跟进状态 -->
+
         <el-row v-if="typeList.followUpStatus.show">
             <el-col :span="3">
                 <p class="leftWrap">{{ typeList.followUpStatus.title }}</p>
@@ -68,17 +64,12 @@
                     <el-radio-group
                         @change="radioChange('followUpStatus')"
                         v-model="typeList.followUpStatus.key">
-                        <el-radio-button 
-                            v-for="(children, index) in typeList.followUpStatus.content" 
-                            :value="children.value"
-                            :label="children.text"
-                            :key="index"
-                        ></el-radio-button>
+                        <el-radio-button v-for="children in typeList.followUpStatus.content" :value="children.value"
+                                         :label="children.text"></el-radio-button>
                     </el-radio-group>
                 </div>
             </el-col>
         </el-row>
-        <!-- 来源 -->
         <el-row v-if="typeList.source.show">
             <el-col :span="3">
                 <p class="leftWrap">{{ typeList.source.title }}</p>
@@ -88,17 +79,12 @@
                     <el-radio-group
                         @change="radioChange('source')"
                         v-model="typeList.source.key">
-                        <el-radio-button 
-                            v-for="(children, index) in typeList.source.content" 
-                            :value="children.value"
-                            :label="children.text"
-                            :key="index"
-                        ></el-radio-button>
+                        <el-radio-button v-for="children in typeList.source.content" :value="children.value"
+                                         :label="children.text"></el-radio-button>
                     </el-radio-group>
                 </div>
             </el-col>
         </el-row>
-        <!-- 地区 -->
         <el-row>
             <el-col :span="3">
                 <p class="leftWrap">地区</p>
@@ -110,7 +96,6 @@
                 </div>
             </el-col>
         </el-row>
-        <!-- 最后跟进时间 -->
         <el-row>
             <el-col :span="3">
                 <p class="leftWrap">最后跟进时间</p>
@@ -135,7 +120,6 @@
                 </div>
             </el-col>
         </el-row>
-        <!-- 更新时间 -->
         <el-row>
             <el-col :span="3">
                 <p class="leftWrap">更新时间</p>
@@ -160,7 +144,6 @@
                 </div>
             </el-col>
         </el-row>
-        <!-- 创建时间 -->
         <el-row>
             <el-col :span="3">
                 <p class="leftWrap">创建时间</p>
@@ -186,7 +169,6 @@
             </el-col>
         </el-row>
         <!-- 数据表格 -->
-        <!-- <router-view ></router-view> -->
         <!-- 数据表格 -->
         <div>
             <div class="tableTitle">
@@ -234,11 +216,10 @@
                             show-overflow-tooltip
                             min-width="130"
                         >
-
-                            <template slot-scope="scope">
-                            <span class="colorBlue"
-                                  @click="openClueInfo(scope.$index, scope.row)">{{ scope.row.ctitle }}</span>
-                            </template>
+                            <!--<template slot-scope="scope">-->
+                            <!--<span class="colorBlue"-->
+                            <!--@click="showModelTable(scope.$index, scope.row,'dialogVisible')">{{ scope.row.user_name }}</span>-->
+                            <!--</template>-->
                         </el-table-column>
                         <el-table-column
                             prop="cadd"
@@ -331,7 +312,7 @@
             </template>
         </div>
         <!-- 弹窗 -->
-        <!-- 新建线索 -->
+        <!-- 新建员工 -->
         <template>
             <div>
                 <el-dialog
@@ -465,22 +446,11 @@
             return {
                 value:'第一学',
                 input: '圈,',
-                // 新增线索对话框
                 dialogVisible: false,
-                selectedItems: [],
-                // 线索类型
                 clueType: '学校',
-                // 范围
                 parentCompanyList: [],
-                // 最后跟进时间
-                lastFollowUpTime: '',
-                // 更新时间
-                updateTime: '',
-                // 新建时间
-                createTime: '',
-                // 城市选择器数据
+                filterConditions: {},
                 cityList: [],
-                // 各项数据
                 typeList: {
                     // 学校等级
                     'schoolLevel': {
@@ -733,10 +703,10 @@
                         }
                     }]
                 },
-
-                // 表格数据
+                lastFollowUpTime: '',
+                updateTime: '',
+                createTime: '',
                 tableData: [],
-                // 表格搜索下拉框
                 options: [{
                     label: '第一学',
                     value: 1
@@ -747,9 +717,7 @@
                     label: '第三学',
                     value: 3
                 }],
-                // 表格搜索下拉框选择
                 optionsValue: 2,
-                // 搜索框内容
                 searchIptValue: '',
                 // 学校线索
                 schoolClue: {
@@ -794,11 +762,6 @@
         },
         computed: {},
         methods: {
-            // 线索详情
-            openClueInfo(index, data) {
-                // 跳转到线索详情的页面
-                this.$router.push({path:'/clue/clueInfo'})
-            },
             // 更新时间
             timeUpdata(data) {
                 console.log(data)
@@ -826,10 +789,11 @@
             },
             // 子公司变化触发的事件
             handleChange() {
-                
+
             },
             // 线索类型
             clueTypeChange(data) {
+                console.log(data)
                 if (data === '学校' || data == 1) {
                     // 显示 学校等级, 学制
                     this.typeList.schoolLevel.show = true;
@@ -892,6 +856,7 @@
             },
             // 类型转变
             radioChange(data) {
+                // console.log(this.typeList[data].key);
                 for (var i = 0; i < this.typeList[data].content.length; i++) {
                     var obj = this.typeList[data].content[i];
                     if (obj.text === this.typeList[data].key) {
@@ -899,9 +864,35 @@
                         break;
                     }
                 }
-                console.log(this.typeList[data].key+":"+this.typeList[data].value);
-                console.log(this.typeList[data]);
-
+                console.log(this.typeList)
+                // for (let key in this.typeList) {
+                //     console.log("key:" + key)
+                //     for (let key2 in this.typeList[key]) {
+                //         console.log("key2:" + key2)
+                //         if (key2 === 'content') {
+                //             for (let i = 0; i < this.typeList[key].content.length; i++) {
+                //                 let obj = this.typeList[key].content[i];
+                //                 // console.log(obj)
+                //                 this.filterConditions[key].value = obj.value
+                //                 this.filterConditions[key].text = obj.text
+                //             }
+                //         }
+                //     }
+                //
+                // }
+                // console.log(this)
+                // console.log(this.typeList.schoolLevel.key)
+                // console.log(this.typeList.academicSystem.key)
+                //
+                // console.log(this.typeList.artsAndSciences.key)
+                // console.log(this.typeList.grade.key)
+                // console.log(this.typeList.organizationType.key)
+                // console.log(this.typeList.sex.key)
+                // console.log(this.typeList.sourceType.key)
+                // console.log(this.typeList.positioning.key)
+                // console.log(this.typeList.professorSubjects.key)
+                // console.log(this.typeList.source.key)
+                // console.log(this.typeList.followUpStatus.key)
             },
             // 省市县数据
             requestCity() {
@@ -923,10 +914,6 @@
                     .catch(function (err) {
                         console.log(err);
                     });
-            },
-            // 筛选线索
-            filterClue() {
-                console.log(this)
             },
             // 表格数据
             getTableData() {
@@ -1010,8 +997,5 @@
     .iptName {
         display: inline-block;
         margin: 5px 0;
-    }
-    .colorBlue {
-        cursor: pointer
     }
 </style>
