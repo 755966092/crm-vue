@@ -40,6 +40,7 @@
         methods: {
 
             submitForm(formName) {
+                console.log('开始登录')
                 var self = this;
                 this.$axios({
                     method: 'POST',

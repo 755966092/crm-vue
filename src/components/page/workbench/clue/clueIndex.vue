@@ -4,12 +4,64 @@
             <el-col :span="3">
                 <p class="leftWrap">范围</p>
             </el-col>
-            <el-col :span="21">
+            <el-col :span="3">
+                <div class="select rightWrap">
+                    <!--<el-cascader-->
+                        <!--expand-trigger="hover"-->
+                        <!--:options="rangeData"-->
+                        <!--@change="handleChange"-->
+                        <!--:show-all-levels=false-->
+                        <!--filterable-->
+                        <!--change-on-select-->
+                    <!--&gt;-->
+                    <!--</el-cascader>-->
+                    <el-select v-model="selectRangeItem" slot="prepend" placeholder="请选择">
+                        <el-option
+                            v-for="item in rangeData"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+
+            </el-col>
+            <el-col :span="6">
                 <div class="select rightWrap">
                     <el-cascader
                         expand-trigger="hover"
                         :options="parentCompanyList"
                         @change="handleChange"
+                        :disabled="rangeFlag"
+                        :show-all-levels=false
+                        filterable
+                        change-on-select
+                    >
+                    </el-cascader>
+                </div>
+            </el-col>
+            <el-col :span="6">
+                <div class="select rightWrap">
+                    <el-cascader
+                        expand-trigger="hover"
+                        :options="currentCompanyDepartment"
+                        @change="handleChange"
+                        :show-all-levels=false
+
+                        filterable
+                        change-on-select
+                    >
+                    </el-cascader>
+                </div>
+            </el-col>
+            <el-col :span="6">
+                <div class="select rightWrap">
+                    <el-cascader
+                        expand-trigger="hover"
+                        :options="currentDepartmentStaff"
+                        @change="handleChange"
+                        :show-all-levels=false
+                        filterable
                         change-on-select
                     >
                     </el-cascader>
@@ -24,10 +76,10 @@
             <el-col :span="21">
                 <div class="select rightWrap">
                     <el-radio-group @change="clueTypeChange" v-model="clueType">
-                        <el-radio-button label="学校"></el-radio-button>
-                        <el-radio-button label="机构"></el-radio-button>
-                        <el-radio-button label="教师"></el-radio-button>
-                        <el-radio-button label="学生"></el-radio-button>
+                        <el-radio-button label="1">学校</el-radio-button>
+                        <el-radio-button label="2">机构</el-radio-button>
+                        <el-radio-button label="3">教师</el-radio-button>
+                        <el-radio-button label="4">学生</el-radio-button>
                     </el-radio-group>
                 </div>
             </el-col>
@@ -80,7 +132,9 @@
                     <el-radio-group
                         @change="radioChange('source')"
                         v-model="typeList.source.key">
-                        <el-radio-button v-for="children in typeList.source.content" :value="children.value"
+                        <el-radio-button
+                        v-for="children in typeList.source.content"
+                        :value="children.value"
                                          :label="children.text"></el-radio-button>
                     </el-radio-group>
                 </div>
@@ -93,7 +147,7 @@
             </el-col>
             <el-col :span="21">
                 <div class="select rightWrap">
-                    <el-cascader expand-trigger="hover" :options="cityList" @change="handleChange">
+                    <el-cascader expand-trigger="hover" :value="selectCityData" :options="cityList" @change="selectCity">
                     </el-cascader>
                 </div>
             </el-col>
@@ -457,9 +511,26 @@
                 dialogVisible: false,
                 selectedItems: [],
                 // 线索类型
-                clueType: '学校',
+                clueType: 1,
+                // 范围选中内容
+                selectRangeItem: 1,
                 // 范围
                 parentCompanyList: [],
+                // 范围数据
+                rangeData: [{
+                    label: '母公司',
+                    value: 1
+                },{
+                    label: '子公司',
+                    value: 2
+                },{
+                    label: '加盟商',
+                    value: 3
+                }],
+                // 当前公司部门
+                currentCompanyDepartment: [],
+                // 当前部门员工列表
+                currentDepartmentStaff: [],
                 // 最后跟进时间
                 lastFollowUpTime: '',
                 // 更新时间
@@ -468,22 +539,24 @@
                 createTime: '',
                 // 城市选择器数据
                 cityList: [],
+                // 选中城市数据
+                selectCityData: [],
                 // 各项数据
                 typeList: {
                     // 学校等级
                     'schoolLevel': {
                         'key': '全部',
                         'title': '学校等级',
-                        'value': 'all',
+                        'value': '',
                         'show': false,
                         'content': [{
-                            value: 'all',
+                            value: '',
                             text: '全部'
                         }, {
                             value: '1',
                             text: '市重点'
                         }, {
-                            value: '3',
+                            value: '2',
                             text: '省重点'
                         }]
                     },
@@ -491,10 +564,29 @@
                     'academicSystem': {
                         'key': '全部',
                         'title': '学制',
-                        'value': 'all',
+                        'value': '',
                         'show': false,
                         'content': [{
-                            value: 'all',
+                            value: '',
+                            text: '全部'
+                        }, {
+                            value: '1',
+                            text: '初中'
+                        }, {
+                            value: '2',
+                            text: '高中'
+                        }, {
+                            value: '3',
+                            text: '初中+高中'
+                        }]
+                    },// 学制
+                    'professor_grade': {
+                        'key': '全部',
+                        'title': '教授年级',
+                        'value': '',
+                        'show': false,
+                        'content': [{
+                            value: '',
                             text: '全部'
                         }, {
                             value: '1',
@@ -511,10 +603,10 @@
                     'followUpStatus': {
                         'key': '全部',
                         'title': '跟进状态',
-                        'value': 'all',
+                        'value': '',
                         'show': true,
                         'content': [{
-                            value: 'all',
+                            value: '',
                             text: '全部'
                         }, {
                             value: '1',
@@ -532,24 +624,24 @@
                         'key': '全部',
                         'title': '来源',
                         'show': true,
-                        'value': 'all',
+                        'value': '',
                         'content': [{
-                            value: 'all',
+                            value: '',
                             text: '全部'
                         }, {
-                            value: '1',
+                            value: '高招',
                             text: '高招'
                         }, {
-                            value: '2',
+                            value: '我在',
                             text: '我在'
                         }, {
-                            value: '3',
+                            value: '搜索引擎',
                             text: '搜索引擎'
                         }, {
-                            value: '4',
+                            value: '微信',
                             text: '微信'
                         }, {
-                            value: '5',
+                            value: '客户介绍',
                             text: '客户介绍'
                         }]
                     },
@@ -558,18 +650,18 @@
                         'key': '全部',
                         'title': '机构类型',
                         'show': false,
-                        'value': 'all',
+                        'value': '',
                         'content': [{
-                            value: 'all',
+                            value: '',
                             text: '全部'
                         }, {
-                            value: '1',
+                            value: '大型',
                             text: '大型'
                         }, {
-                            value: '2',
+                            value: '中型',
                             text: '中型'
                         }, {
-                            value: '3',
+                            value: '小型',
                             text: '小型'
                         }]
                     },
@@ -577,9 +669,10 @@
                     'positioning': {
                         'key': '全部',
                         'title': '定位',
+                        'value': '',
                         'show': false,
                         'content': [{
-                            value: 'all',
+                            value: '',
                             text: '全部'
                         }, {
                             value: '1',
@@ -594,38 +687,44 @@
                     },
                     // 教授科目
                     'professorSubjects': {
-                        'key': '语文',
+                        'key': '全部',
                         'title': '教授科目',
                         'show': false,
-                        'value': 'all',
+                        'value': '',
                         'content': [{
-                            value: 'all',
+                            value: '',
+                            text: '全部'
+                        },{
+                            value: '1',
                             text: '语文'
                         }, {
-                            value: '1',
+                            value: '2',
                             text: '数学'
                         }, {
-                            value: '2',
+                            value: '3',
                             text: '外语'
                         }, {
-                            value: '3',
+                            value: '4',
                             text: '物理'
                         }, {
-                            value: '3',
+                            value: '5',
                             text: '化学'
                         }]
                     },
                     // 文理科
                     'artsAndSciences': {
-                        'key': '文科',
+                        'key': '全部',
                         'title': '文理科',
                         'show': false,
-                        'value': 'wen',
+                        'value': '',
                         'content': [{
-                            value: 'wen',
+                            value: '',
+                            text: '全部'
+                        },{
+                            value: '1',
                             text: '文科'
                         }, {
-                            value: 'li',
+                            value: '2',
                             text: '理科'
                         }]
                     },
@@ -634,9 +733,9 @@
                         'key': '全部',
                         'title': '年级',
                         'show': false,
-                        'value': 'all',
+                        'value': '',
                         'content': [{
-                            value: 'all',
+                            value: '',
                             text: '全部'
                         }, {
                             value: '1',
@@ -660,15 +759,18 @@
                     },
                     // 性别
                     'sex': {
-                        'key': '男',
+                        'key': '全部',
                         'title': '性别',
                         'show': false,
-                        'value': 'nan',
+                        'value': '',
                         'content': [{
-                            value: 'nan',
+                            value: '',
+                            text: '全部'
+                        }, {
+                            value: '1',
                             text: '男'
                         }, {
-                            value: 'nv',
+                            value: '2',
                             text: '女'
                         }]
                     },
@@ -677,18 +779,15 @@
                         'key': '全部',
                         'title': '来源类型',
                         'show': false,
-                        'value': 'all',
+                        'value': '',
                         'content': [{
-                            value: 'all',
+                            value: '',
                             text: '全部'
                         }, {
                             value: '1',
                             text: '客户'
                         }, {
                             value: '2',
-                            text: '其他线索'
-                        }, {
-                            value: '3',
                             text: '手录'
                         }]
                     }
@@ -721,7 +820,8 @@
                         }
                     }]
                 },
-
+                // 母公司id
+                mother_id: '',
                 // 表格数据
                 tableData: [],
                 // 表格搜索下拉框
@@ -745,39 +845,43 @@
                 },
                 // 来源类型
                 sourceTypeValue: '全部',
-                sourceTypeOptions: [{
-                    label: '全部',
-                    value: '1'
-                },{
-                    label: '高招',
-                    value: '2'
-                },{
-                    label: '我在',
-                    value: '3'
-                },{
-                    label: '搜索引擎',
-                    value: '4'
-                },{
-                    label: '微信',
-                    value: '5'
-                },{
-                    label: '客户介绍',
-                    value: '6'
-                }],
+                sourceTypeOptions: [
+                    {
+                        label: '全部',
+                        value: '1'
+                    },{
+                        label: '高招',
+                        value: '2'
+                    },{
+                        label: '我在',
+                        value: '3'
+                    },{
+                        label: '搜索引擎',
+                        value: '4'
+                    },{
+                        label: '微信',
+                        value: '5'
+                    },{
+                        label: '客户介绍',
+                        value: '6'
+                    }
+                ],
                 // 线索类型
-                clueTypeOptions: [{
-                    label: '学校',
-                    value: '1'
-                },{
-                    label: '机构',
-                    value: '2'
-                },{
-                    label: '老师',
-                    value: '3'
-                },{
-                    label: '学生',
-                    value: '4'
-                }],
+                clueTypeOptions: [
+                    {
+                        label: '学校',
+                        value: '1'
+                    },{
+                        label: '机构',
+                        value: '2'
+                    },{
+                        label: '老师',
+                        value: '3'
+                    },{
+                        label: '学生',
+                        value: '4'
+                    }
+                ],
             }
         },
         computed: {},
@@ -791,8 +895,9 @@
             timeUpdata(data) {
                 console.log(data)
                 console.log(this.updateTime)
-                console.log(this.lastFollowUpTime)
-                console.log(this.createTime)
+                // console.log(this.lastFollowUpTime)
+                // console.log(this.createTime)
+                this.filterClue();
             },
             // 所有子公司
             applyCompany() {
@@ -802,21 +907,21 @@
                     withCredentials: false,
                     url: '/api/company/CompanyMyList',
                     data: {
-                        token: "1513059193KHO7",
+                        token: localStorage.getItem('crm_token'),
                     }
                 })
                     .then(function (res) {
-                        console.log(res.data.data);
-                        
-                        // self.parentCompanyList = res.data.data.list
+                       // 当前用户只会有一个母公司
+                        self.parentCompanyList = res.data.data.list[0].children;
+                        self.mother_id = res.data.data.list[0].id
                     })
                     .catch(function (err) {
                         console.log(err);
                     });
             },
-            // 子公司变化触发的事件
-            handleChange() {
-
+            // 范围选择变化触发的事件
+            handleChange(data) {
+                console.log(data)
             },
             // 线索类型
             clueTypeChange(data) {
@@ -846,14 +951,16 @@
                     this.typeList.grade.show = false;
                     this.typeList.sex.show = false;
                     this.typeList.sourceType.show = false;
+                    this.typeList.professor_grade.show = false;
 
                     this.typeList.professorSubjects.show = false;
                 } else if (data === '教师' || data == 3) {
                     // 学校等级, 教授科目, 教授年级(学制)
                     this.typeList.professorSubjects.show = true;
                     this.typeList.schoolLevel.show = true;
-                    this.typeList.academicSystem.show = true;
+                    this.typeList.professor_grade.show = true;
 
+                    this.typeList.academicSystem.show = false;
                     this.typeList.positioning.show = false;
                     this.typeList.organizationType.show = false;
                     this.typeList.artsAndSciences.show = false;
@@ -875,15 +982,95 @@
                     this.typeList.positioning.show = false;
                     this.typeList.organizationType.show = false;
                     this.typeList.professorSubjects.show = false;
+                    this.typeList.professor_grade.show = false;
 
 
                 } else {
 
                 }
+                this.filterClue();
+            },
+            filterClue() {
+                // 筛选表格数据
+                // console.log(this.clueType)
+                let self = this;
+                let obj = {
+                    token: localStorage.getItem('crm_token'),
+                    page_num: "",
+                    typebig: self.selectRangeItem,
+                    followup_start: self.lastFollowUpTime[0],
+                    followup_end: self.lastFollowUpTime[1],
+                    update_start: self.updateTime[0],
+                    update_end: self.updateTime[1],
+                    create_start: self.createTime[0],
+                    create_end: self.createTime[1],
+                    children_id: "",
+                    department_id: "",
+                    user_id: "",
+                    province_id: self.selectCityData[0],
+                    city_id: self.selectCityData[1],
+                    area_id: self.selectCityData[2],
+                    cue_source: self.typeList.source.value,
+                    followup_statu: self.typeList.followUpStatus.value,
+                    cue_type: self.clueType,
+                    name: "",
+                    grade: self.typeList.schoolLevel.value,
+                    los: self.typeList.academicSystem.value,
+                    type: self.typeList.organizationType.value,
+                    location: self.typeList.positioning.value,
+                    professor_grade: self.typeList.professor_grade.value,
+                    professor_subjects: self.typeList.professorSubjects.value,
+                    the_science: self.typeList.artsAndSciences.value,
+                    student_grade: self.typeList.grade.value,
+                    sex: self.typeList.sex.value,
+                    from_type: self.typeList.sourceType.value
+                }
+                console.log(JSON.stringify(obj,null,4))
+                    // self.$axios({
+                    //    method: 'POST',
+                    //    withCredentials: false,
+                    //    url: '/api/clue/getClueList',
+                    //    data: {
+                    //         token: localStorage.getItem('crm_token'),
+                    //         page_num: "",
+                    //         type: "",
+                    //         followup_start: self.lastFollowUpTime[0],
+                    //         followup_end: self.lastFollowUpTime[1],
+                    //         update_start: self.updateTime[0],
+                    //         update_end: self.updateTime[1],
+                    //         create_start: self.createTime[0],
+                    //         create_end: self.createTime[1],
+                    //         children_id: "",
+                    //         department_id: "",
+                    //         user_id: "",
+                    //         province_id: self.selectCityData[0],
+                    //         city_id: self.selectCityData[1],
+                    //         area_id: self.selectCityData[2],
+                    //         cue_source: self.typeList.source,
+                    //        followup_statu: self.typeList.followUpStatus,
+                    //        cue_type: "1",
+                    //        name: "",
+                    //         grade: self.typeList.grade,
+                    //         los: self.typeList.academicSystem,
+                    //         type: self.typeList.organizationType,
+                    //         area_id: "",
+                    //         location: self.typeList.positioning,
+                    //         professor_grade: self.typeList.organizationType,
+                    //         professor_subjects: self.typeList.professorSubjects,
+                    //         the_science: self.typeList.artsAndSciences,
+                    //         student_grade: self.typeList.grade,
+                    //         sex: self.typeList.sex,
+                    //    }
+                    // })
+                    // .then(function(res){
+                    //     console.log(res);
+                    //     })
+                    // .catch(function(err){
+                    //     console.log(err);
+                    // });
             },
             // 类型转变
             radioChange(data) {
-
                 for (var i = 0; i < this.typeList[data].content.length; i++) {
                     var obj = this.typeList[data].content[i];
                     if (obj.text === this.typeList[data].key) {
@@ -892,8 +1079,8 @@
                     }
                 }
                 console.log(this.typeList[data].key+":"+this.typeList[data].value);
-                console.log(this.typeList[data]);
-
+                // console.log(this.typeList[data]);
+                this.filterClue();
             },
             // 省市县数据
             requestCity() {
@@ -932,9 +1119,10 @@
                         console.log(err);
                     });
             },
-            // 点击级联选择器
-            handleChange() {
-
+            // 点击级联选择器选择城市
+            selectCity(data) {
+                this.selectCityData = data;
+                this.filterClue();
             },
             // 表格按钮
             showModelTable() {
@@ -956,6 +1144,16 @@
                 console.log('无缓存')
                 this.requestCity();
             }
+        },
+        computed: {
+            // 是否禁用子公司选择框
+            rangeFlag() {
+                if(this.selectRangeItem == 1) {
+                    return true
+                } else {
+                    return false
+                }
+            }
         }
     }
 </script>
@@ -975,7 +1173,7 @@
 
     /* 省市区选着器 */
     .el-cascader {
-        width: 40%;
+        width: 95%;
     }
 
     .wrap {
