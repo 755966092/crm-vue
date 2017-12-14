@@ -34,10 +34,11 @@
         methods:{
             handleCommand(command) {
                 if(command == 'loginout'){
-                    localStorage.removeItem('crm_username')
+                    localStorage.removeItem('crm_token')
                     this.$router.push('/login');
                 }
-            }
+            },
+
         }
     }
 </script>

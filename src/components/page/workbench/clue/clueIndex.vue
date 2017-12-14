@@ -8,15 +8,20 @@
                 <!-- 选择子公司母公司 -->
                 <div class="select rightWrap">
                     <!--<el-cascader-->
-                        <!--expand-trigger="hover"-->
-                        <!--:options="rangeData"-->
-                        <!--@change="handleChange"-->
-                        <!--:show-all-levels=false-->
-                        <!--filterable-->
-                        <!--change-on-select-->
+                    <!--expand-trigger="hover"-->
+                    <!--:options="rangeData"-->
+                    <!--@change="handleChange"-->
+                    <!--:show-all-levels=false-->
+                    <!--filterable-->
+                    <!--change-on-select-->
                     <!--&gt;-->
                     <!--</el-cascader>-->
-                    <el-select v-model="selectRangeItem" slot="prepend" placeholder="请选择">
+                    <el-select
+                        v-model="selectRangeItem"
+                        slot="prepend"
+                        placeholder="请选择"
+                        @change="bigRangeChange"
+                    >
                         <el-option
                             v-for="item in rangeData"
                             :key="item.value"
@@ -38,6 +43,7 @@
                         :show-all-levels=false
                         filterable
                         change-on-select
+                        clearable
                     >
                     </el-cascader>
                 </div>
@@ -49,9 +55,10 @@
                         expand-trigger="hover"
                         :options="currentCompanyDepartment"
                         :show-all-levels=false
-
+                        @change="selectDepartment"
                         filterable
                         change-on-select
+                        clearable
                     >
                     </el-cascader>
                 </div>
@@ -134,9 +141,9 @@
                         @change="radioChange('source')"
                         v-model="typeList.source.key">
                         <el-radio-button
-                        v-for="children in typeList.source.content"
-                        :value="children.value"
-                                         :label="children.text"></el-radio-button>
+                            v-for="children in typeList.source.content"
+                            :value="children.value"
+                            :label="children.text"></el-radio-button>
                     </el-radio-group>
                 </div>
             </el-col>
@@ -146,9 +153,15 @@
             <el-col :span="3">
                 <p class="leftWrap">地区</p>
             </el-col>
-            <el-col :span="21">
+            <el-col :span="21" class="city">
                 <div class="select rightWrap">
-                    <el-cascader expand-trigger="hover" :value="selectCityData" :options="cityList" @change="selectCity">
+                    <el-cascader
+                        expand-trigger="hover"
+                        :value="selectCityData"
+                        :options="cityList"
+                        @change="selectCity"
+                        clearable
+                    >
                     </el-cascader>
                 </div>
             </el-col>
@@ -229,7 +242,7 @@
             </el-col>
         </el-row>
         <!-- 数据表格 -->
-        <router-view ></router-view>
+        <!--<router-view></router-view>-->
         <!-- 数据表格 -->
         <div>
             <div class="tableTitle">
@@ -255,8 +268,126 @@
                     </el-col>
                 </el-row>
             </div>
+            <!-- 学校表格 -->
             <template>
-                <div>
+                <div :class="{hide:schoolTable}">
+                    <el-table
+                        :data="tableData"
+                        tooltip-effect="dark"
+                        style="width: 100%"
+                        border
+                        max-height="450"
+
+                    >
+                        <el-table-column
+                            type="selection"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                            prop="clue_name"
+                            align="center"
+                            label="学校名称"
+                            fixed
+                            show-overflow-tooltip
+                            min-width="130"
+                        >
+                            <template slot-scope="scope">
+                            <span class="colorBlue"
+                                  @click="openClueInfo(scope.$index, scope.row)">{{ scope.row.clue_name }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                            prop="city_name"
+                            label="所在地区"
+                            sortable
+                            align="center"
+                            show-overflow-tooltip
+                            min-width="130"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                            prop="school_grade"
+                            label="学校等级"
+                            sortable
+                            min-width="120"
+                            align="center"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="school_los"
+                            label="学制"
+                            sortable
+                            align="center"
+                            min-width="120"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="contacts_name"
+                            align="center"
+                            label="联系人姓名"
+                            min-width="130"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="contacts_mobile"
+                            label="手机号"
+                            align="center"
+                            min-width="130"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="professor_grade"
+                            label="教授年级"
+                            min-width="100"
+                            align="center"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="professor_subjects"
+                            label="教授科目"
+                            min-width="100"
+                            align="center"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="followup_statu"
+                            label="跟进状态"
+                            sortable
+                            align="center"
+                            min-width="150"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="followup_time"
+                            label="最后跟进时间"
+                            sortable
+                            align="center"
+                            min-width="180"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            label="操作"
+                            align="center"
+                            width="140"
+                        >
+                            <template slot-scope="scope">
+                                <el-button
+                                    size="mini"
+                                    @click="showModelTable(scope.$index, scope.row, 'handover')">交接
+                                </el-button>
+                                <el-button
+                                    size="mini"
+                                    type="danger"
+                                    @click="showModelTable(scope.$index, scope.row, 'deleteBtn')">删除
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </template>
+            <!-- 机构表格 -->
+            <template>
+                <div :class="{hide:mechanismTable}">
                     <el-table
                         :data="tableData"
                         tooltip-effect="dark"
@@ -269,22 +400,20 @@
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="ctitle"
-
+                            prop="clue_name"
                             align="center"
-                            label="机构名称"
+                            label="学校名称"
                             fixed
                             show-overflow-tooltip
                             min-width="130"
                         >
-
                             <template slot-scope="scope">
                             <span class="colorBlue"
-                                  @click="openClueInfo(scope.$index, scope.row)">{{ scope.row.ctitle }}</span>
+                                  @click="openClueInfo(scope.$index, scope.row)">{{ scope.row.clue_name }}</span>
                             </template>
                         </el-table-column>
                         <el-table-column
-                            prop="cadd"
+                            prop="city_name"
                             label="所在地区"
                             sortable
                             align="center"
@@ -293,7 +422,7 @@
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="ctype"
+                            prop="type"
                             label="机构类型"
                             sortable
                             min-width="120"
@@ -301,7 +430,7 @@
                             show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column
-                            prop="position"
+                            prop="location"
                             label="定位"
                             sortable
                             align="center"
@@ -309,35 +438,35 @@
                             show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column
-                            prop="canme"
+                            prop="contacts_name"
                             align="center"
                             label="联系人姓名"
                             min-width="130"
                             show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column
-                            prop="phone"
+                            prop="contacts_mobile"
                             label="手机号"
                             align="center"
                             min-width="130"
                             show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column
-                            prop="department"
+                            prop="department_name"
                             label="部门"
                             min-width="100"
                             align="center"
                             show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column
-                            prop="positionPerple"
+                            prop="post"
                             label="职务"
                             min-width="100"
                             align="center"
                             show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column
-                            prop="followUp"
+                            prop="followup_statu"
                             label="跟进状态"
                             sortable
                             align="center"
@@ -345,7 +474,273 @@
                             show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column
-                            prop="date"
+                            prop="followup_time"
+                            label="最后跟进时间"
+                            sortable
+                            align="center"
+                            min-width="180"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            label="操作"
+                            align="center"
+                            width="140"
+                        >
+                            <template slot-scope="scope">
+                                <el-button
+                                    size="mini"
+                                    @click="showModelTable(scope.$index, scope.row, 'handover')">交接
+                                </el-button>
+                                <el-button
+                                    size="mini"
+                                    type="danger"
+                                    @click="showModelTable(scope.$index, scope.row, 'deleteBtn')">删除
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </template>
+            <!-- 教师表格 -->
+            <template>
+                <div :class="{hide:teacherTable}">
+                    <el-table
+                        :data="tableData"
+                        tooltip-effect="dark"
+                        style="width: 100%"
+                        border
+
+                    >
+                        <el-table-column
+                            type="selection"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                            prop="contacts_name"
+                            align="center"
+                            label="教师名称"
+                            fixed
+                            show-overflow-tooltip
+                            min-width="130"
+                        >
+                            <template slot-scope="scope">
+                            <span class="colorBlue"
+                                  @click="openClueInfo(scope.$index, scope.row)">{{ scope.row.contacts_name }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                            prop="contacts_mobile"
+                            label="手机号"
+                            align="center"
+                            min-width="130"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="city_name"
+                            label="学校地区"
+                            sortable
+                            align="center"
+                            show-overflow-tooltip
+                            min-width="130"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                            prop="clue_name"
+                            label="学校名称"
+                            sortable
+                            min-width="120"
+                            align="center"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="school_grade"
+                            label="学校等级"
+                            sortable
+                            align="center"
+                            min-width="120"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="school_los"
+                            label="学制"
+                            sortable
+                            align="center"
+                            min-width="120"
+                            show-overflow-tooltip>
+                        </el-table-column>
+
+                        <el-table-column
+                            prop="professor_grade"
+                            label="教授年级"
+                            min-width="150"
+                            align="center"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="professor_subjects"
+                            label="教授科目"
+                            min-width="100"
+                            align="center"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="followup_statu"
+                            label="跟进状态"
+                            sortable
+                            align="center"
+                            min-width="150"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="followup_time"
+                            label="最后跟进时间"
+                            sortable
+                            align="center"
+                            min-width="180"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            label="操作"
+                            align="center"
+                            width="140"
+                        >
+                            <template slot-scope="scope">
+                                <el-button
+                                    size="mini"
+                                    @click="showModelTable(scope.$index, scope.row, 'handover')">交接
+                                </el-button>
+                                <el-button
+                                    size="mini"
+                                    type="danger"
+                                    @click="showModelTable(scope.$index, scope.row, 'deleteBtn')">删除
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </template>
+            <!-- 学生表格 -->
+            <template>
+                <div :class="{hide:studentTable}">
+                    <el-table
+                        :data="tableData"
+                        tooltip-effect="dark"
+                        style="width: 100%"
+                        border
+
+                    >
+
+                        <el-table-column
+                            type="selection"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                            prop="is_turn"
+                            label="来源类型"
+                            sortable
+                            min-width="120"
+                            align="center"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="cue_source"
+                            label="线索来源"
+                            sortable
+                            min-width="120"
+                            align="center"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="student_name"
+                            align="center"
+                            label="学生名称"
+                            fixed
+                            show-overflow-tooltip
+                            min-width="130"
+                        >
+                            <template slot-scope="scope">
+                            <span class="colorBlue"
+                                  @click="openClueInfo(scope.$index, scope.row)">{{ scope.row.student_name }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                            prop="student_sex"
+                            label="学生性别"
+                            sortable
+                            align="center"
+                            show-overflow-tooltip
+                            min-width="120"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                            prop="contacts_name"
+                            label="家长姓名"
+                            sortable
+                            min-width="120"
+                            align="center"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="contacts_relationship"
+                            label="关系"
+                            sortable
+                            align="center"
+                            min-width="120"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="contacts_mobile"
+                            label="家长手机号"
+                            align="center"
+                            min-width="130"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="city_name"
+                            align="center"
+                            label="学校地区"
+                            min-width="130"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="school_name"
+                            label="学校名称"
+                            min-width="150"
+                            align="center"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="school_grade"
+                            label="学校等级"
+                            min-width="100"
+                            align="center"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="the_science"
+                            label="文理科"
+                            min-width="100"
+                            align="center"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="student_grade"
+                            label="年级"
+                            min-width="100"
+                            align="center"
+                            show-overflow-tooltip>
+                        </el-table-column>
+
+                        <el-table-column
+                            prop="followup_statu"
+                            label="跟进状态"
+                            sortable
+                            align="center"
+                            min-width="150"
+                            show-overflow-tooltip>
+                        </el-table-column>
+                        <el-table-column
+                            prop="followup_time"
                             label="最后跟进时间"
                             sortable
                             align="center"
@@ -506,7 +901,7 @@
         name: "clue",
         data() {
             return {
-                value:'第一学',
+                value: '第一学',
                 input: '圈,',
                 // 新增线索对话框
                 dialogVisible: false,
@@ -521,15 +916,17 @@
                 mother_id: '',
                 // 当前子公司id
                 children_id: '',
+                // 当前部门id
+                department_id: '',
                 // 范围数据
                 rangeData: [
-                        {
+                    {
                         label: '母公司',
                         value: 1
-                    },{
+                    }, {
                         label: '子公司',
                         value: 2
-                    },{
+                    }, {
                         label: '加盟商',
                         value: 3
                     }
@@ -703,7 +1100,7 @@
                         'content': [{
                             value: '',
                             text: '全部'
-                        },{
+                        }, {
                             value: '1',
                             text: '语文'
                         }, {
@@ -729,7 +1126,7 @@
                         'content': [{
                             value: '',
                             text: '全部'
-                        },{
+                        }, {
                             value: '1',
                             text: '文科'
                         }, {
@@ -833,43 +1230,43 @@
                 // 表格数据
                 tableData: [],
                 // 表格搜索下拉框
-                options: [{
-                    label: '第一学',
-                    value: 1
-                }, {
-                    label: '第二学',
-                    value: 2
-                }, {
-                    label: '第三学',
-                    value: 3
-                }],
+                options: [
+                        {
+                        label: '第一学',
+                        value: 1
+                    }, {
+                        label: '第二学',
+                        value: 2
+                    }, {
+                        label: '第三学',
+                        value: 3
+                    }
+                ],
                 // 表格搜索下拉框选择
                 optionsValue: 2,
                 // 搜索框内容
                 searchIptValue: '',
                 // 学校线索
-                schoolClue: {
-
-                },
+                schoolClue: {},
                 // 来源类型
                 sourceTypeValue: '全部',
                 sourceTypeOptions: [
                     {
                         label: '全部',
                         value: '1'
-                    },{
+                    }, {
                         label: '高招',
                         value: '2'
-                    },{
+                    }, {
                         label: '我在',
                         value: '3'
-                    },{
+                    }, {
                         label: '搜索引擎',
                         value: '4'
-                    },{
+                    }, {
                         label: '微信',
                         value: '5'
-                    },{
+                    }, {
                         label: '客户介绍',
                         value: '6'
                     }
@@ -879,24 +1276,35 @@
                     {
                         label: '学校',
                         value: '1'
-                    },{
+                    }, {
                         label: '机构',
                         value: '2'
-                    },{
+                    }, {
                         label: '老师',
                         value: '3'
-                    },{
+                    }, {
                         label: '学生',
                         value: '4'
                     }
                 ],
+                // 学校等级解析数组
+                schoolLevelArr: ['省重点','市重点'],
+                // 学制解析数组, 教授年级解析数组
+                academicSystemArr: ['初中','高中','初中+高中'],
+                // 定位解析数组
+                positionArr:['K12','英语','出国'],
+                // 教授科目解析数组
+                professorSubjectsArr: ['语文','英语','数学','物理','化学'],
+                // 年级解析数组
+                studentGradeArr: ['初一','初二', '初三', '高一', '高二', '高三']
+
             }
         },
         methods: {
             // 线索详情
             openClueInfo(index, data) {
                 // 跳转到线索详情的页面
-                this.$router.push({path:'/clue/clueInfo'})
+                this.$router.push({path: '/clue/clueInfo'})
             },
             // 更新时间
             timeUpdata(data) {
@@ -918,7 +1326,7 @@
                     }
                 })
                     .then(function (res) {
-                       // 当前用户只会有一个母公司
+                        // 当前用户只会有一个母公司
                         self.parentCompanyList = res.data.data.list[0].children;
                         self.mother_id = res.data.data.list[0].id
                     })
@@ -974,14 +1382,37 @@
                         console.log(err);
                     });
             },
-            // 范围选择变化触发的事件
+            // 子公司变化
             handleChange(data) {
                 let children = this.children_id;
                 this.children_id = data[data.length - 1];
                 // 获取子公司所有部门
                 if (children !== this.children_id) {
                     this.getChildrenDepartment();
+                    this.filterClue();
                 }
+            },
+            // 子公司/ 母公司/ 加盟商修改
+            bigRangeChange(data) {
+                this.selectRangeItem = data;
+                if (data === 2) {
+                    // 获取子公司
+                    this.applyCompany();
+                }
+                this.filterClue();
+            },
+            // 选择部门
+            selectDepartment(data) {
+                // department_id
+                console.log(data);
+                let department = this.department_id;
+                this.department_id = data[data.length - 1];
+                // 获取部门所有员工
+                if (department !== this.department_id) {
+                    // this.getChildrenDepartment();
+                    this.filterClue()
+                }
+
             },
             // 线索类型
             clueTypeChange(data) {
@@ -1054,80 +1485,189 @@
                 // 筛选表格数据
                 // console.log(this.clueType)
                 let self = this;
+                let token = localStorage.getItem('crm_token');
                 let obj = {
-                    token: localStorage.getItem('crm_token'),
-                    page_num: "",
-                    typebig: self.selectRangeItem,
-                    followup_start: self.lastFollowUpTime[0],
-                    followup_end: self.lastFollowUpTime[1],
-                    update_start: self.updateTime[0],
-                    update_end: self.updateTime[1],
-                    create_start: self.createTime[0],
-                    create_end: self.createTime[1],
-                    children_id: "",
-                    department_id: "",
-                    user_id: "",
-                    province_id: self.selectCityData[0],
-                    city_id: self.selectCityData[1],
-                    area_id: self.selectCityData[2],
-                    cue_source: self.typeList.source.value,
-                    followup_statu: self.typeList.followUpStatus.value,
-                    cue_type: self.clueType,
-                    name: "",
-                    grade: self.typeList.schoolLevel.value,
-                    los: self.typeList.academicSystem.value,
-                    type: self.typeList.organizationType.value,
-                    location: self.typeList.positioning.value,
-                    professor_grade: self.typeList.professor_grade.value,
-                    professor_subjects: self.typeList.professorSubjects.value,
-                    the_science: self.typeList.artsAndSciences.value,
-                    student_grade: self.typeList.grade.value,
-                    sex: self.typeList.sex.value,
-                    from_type: self.typeList.sourceType.value
+                    // token: localStorage.getItem('crm_token'),
+                    // page_num: "",
+                    // type: "",
+                    // followup_start: self.lastFollowUpTime[0],
+                    // followup_end: self.lastFollowUpTime[1],
+                    // update_start: self.updateTime[0],
+                    // update_end: self.updateTime[1],
+                    // create_start: self.createTime[0],
+                    // create_end: self.createTime[1],
+                    // children_id: "",
+                    // department_id: "",
+                    // user_id: "",
+                    // province_id: self.selectCityData[0],
+                    // city_id: self.selectCityData[1],
+                    // area_id: self.selectCityData[2],
+                    // cue_source: self.typeList.source,
+                    // followup_statu: self.typeList.followUpStatus,
+                    // cue_type: "1",
+                    // name: "",
+                    // grade: self.typeList.grade,
+                    // los: self.typeList.academicSystem,
+                    // type: self.typeList.organizationType,
+                    // area_id: "",
+                    // location: self.typeList.positioning,
+                    // professor_grade: self.typeList.organizationType,
+                    // professor_subjects: self.typeList.professorSubjects,
+                    // the_science: self.typeList.artsAndSciences,
+                    // student_grade: self.typeList.grade,
+                    // sex: self.typeList.sex,
+                };
+                if (self.clueType == 1) {
+                    // 学校   学校等级, 学制, 跟进状态, 来源
+                    obj = {
+                        token: token,
+                        page_num: "",
+                        typebig: self.selectRangeItem,
+                        followup_start: self.lastFollowUpTime[0],
+                        followup_end: self.lastFollowUpTime[1],
+                        update_start: self.updateTime[0],
+                        update_end: self.updateTime[1],
+                        create_start: self.createTime[0],
+                        create_end: self.createTime[1],
+                        children_id: self.children_id,
+                        department_id: self.department_id,
+                        user_id: "",
+                        province_id: self.selectCityData[0],
+                        city_id: self.selectCityData[1],
+                        area_id: self.selectCityData[2],
+                        cue_type: self.clueType,
+                        name: "",
+
+                        cue_source: self.typeList.source.value,
+                        followup_statu: self.typeList.followUpStatus.value,
+                        grade: self.typeList.schoolLevel.value,
+                        los: self.typeList.academicSystem.value,
+                    }
+                } else if (self.clueType == 2) {
+                    // 机构   机构类型, 定位, 跟进状态, 来源
+                    obj = {
+                        token: token,
+                        page_num: "",
+                        typebig: self.selectRangeItem,
+                        followup_start: self.lastFollowUpTime[0],
+                        followup_end: self.lastFollowUpTime[1],
+                        update_start: self.updateTime[0],
+                        update_end: self.updateTime[1],
+                        create_start: self.createTime[0],
+                        create_end: self.createTime[1],
+                        children_id: self.children_id,
+                        department_id: self.department_id,
+                        user_id: "",
+                        province_id: self.selectCityData[0],
+                        city_id: self.selectCityData[1],
+                        area_id: self.selectCityData[2],
+                        cue_type: self.clueType,
+                        name: "",
+
+                        cue_source: self.typeList.source.value,
+                        followup_statu: self.typeList.followUpStatus.value,
+                        type: self.typeList.organizationType.value,
+                        location: self.typeList.positioning.value,
+
+                    }
+                } else if (self.clueType == 3) {
+                    // 教师   学校等级, 教授年级, 教授科目, 跟进状态, 来源
+                    obj = {
+                        token: token,
+                        page_num: "",
+                        typebig: self.selectRangeItem,
+                        followup_start: self.lastFollowUpTime[0],
+                        followup_end: self.lastFollowUpTime[1],
+                        update_start: self.updateTime[0],
+                        update_end: self.updateTime[1],
+                        create_start: self.createTime[0],
+                        create_end: self.createTime[1],
+                        children_id: self.children_id,
+                        department_id: self.department_id,
+                        user_id: "",
+                        province_id: self.selectCityData[0],
+                        city_id: self.selectCityData[1],
+                        area_id: self.selectCityData[2],
+                        cue_type: self.clueType,
+                        name: "",
+
+                        cue_source: self.typeList.source.value,
+                        followup_statu: self.typeList.followUpStatus.value,
+                        grade: self.typeList.schoolLevel.value,
+                        professor_grade: self.typeList.professor_grade.value,
+                        professor_subjects: self.typeList.professorSubjects.value,
+
+
+                    }
+                } else if (self.clueType == 4) {
+                    // 学生   学校等级, 文理科, 年级, 性别, 来源类型, 跟进状态 来源
+                    obj = {
+                        token: token,
+                        page_num: "",
+                        typebig: self.selectRangeItem,
+                        followup_start: self.lastFollowUpTime[0],
+                        followup_end: self.lastFollowUpTime[1],
+                        update_start: self.updateTime[0],
+                        update_end: self.updateTime[1],
+                        create_start: self.createTime[0],
+                        create_end: self.createTime[1],
+                        children_id: self.children_id,
+                        department_id: self.department_id,
+                        user_id: "",
+                        province_id: self.selectCityData[0],
+                        city_id: self.selectCityData[1],
+                        area_id: self.selectCityData[2],
+                        cue_type: self.clueType,
+                        name: "",
+
+                        cue_source: self.typeList.source.value,
+                        followup_statu: self.typeList.followUpStatus.value,
+                        grade: self.typeList.schoolLevel.value,
+                        the_science: self.typeList.artsAndSciences.value,
+                        student_grade: self.typeList.grade.value,
+                        sex: self.typeList.sex.value,
+                        from_type: self.typeList.sourceType.value
+                    }
+                } else {
+
                 }
-                console.log(JSON.stringify(obj,null,4))
-                    // self.$axios({
-                    //    method: 'POST',
-                    //    withCredentials: false,
-                    //    url: '/api/clue/getClueList',
-                    //    data: {
-                    //         token: localStorage.getItem('crm_token'),
-                    //         page_num: "",
-                    //         type: "",
-                    //         followup_start: self.lastFollowUpTime[0],
-                    //         followup_end: self.lastFollowUpTime[1],
-                    //         update_start: self.updateTime[0],
-                    //         update_end: self.updateTime[1],
-                    //         create_start: self.createTime[0],
-                    //         create_end: self.createTime[1],
-                    //         children_id: "",
-                    //         department_id: "",
-                    //         user_id: "",
-                    //         province_id: self.selectCityData[0],
-                    //         city_id: self.selectCityData[1],
-                    //         area_id: self.selectCityData[2],
-                    //         cue_source: self.typeList.source,
-                    //        followup_statu: self.typeList.followUpStatus,
-                    //        cue_type: "1",
-                    //        name: "",
-                    //         grade: self.typeList.grade,
-                    //         los: self.typeList.academicSystem,
-                    //         type: self.typeList.organizationType,
-                    //         area_id: "",
-                    //         location: self.typeList.positioning,
-                    //         professor_grade: self.typeList.organizationType,
-                    //         professor_subjects: self.typeList.professorSubjects,
-                    //         the_science: self.typeList.artsAndSciences,
-                    //         student_grade: self.typeList.grade,
-                    //         sex: self.typeList.sex,
-                    //    }
-                    // })
-                    // .then(function(res){
-                    //     console.log(res);
-                    //     })
-                    // .catch(function(err){
-                    //     console.log(err);
-                    // });
+                console.log('请求参数:'+JSON.stringify(obj,null,4))
+                self.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/clue/getClueList',
+                    data: obj
+                })
+                    .then(function (res) {
+                        if (res.data.code === 200) {
+                            console.log('返回参数:'+JSON.stringify(res.data,null,4));
+                            for (var i = 0; i < res.data.data.list.length; i++) {
+                                var obj = res.data.data.list[i];
+                                obj.school_grade = self.schoolLevelArr[obj.school_grade-1]
+                                obj.school_los = self.academicSystemArr[obj.school_los-1]
+
+                                obj.location = self.positionArr[obj.location-1]
+
+                                obj.professor_grade = self.academicSystemArr[obj.professor_grade-1]
+                                obj.professor_subjects = self.professorSubjectsArr[obj.professor_subjects-1]
+                                obj.student_grade = self.studentGradeArr[obj.student_grade-1]
+                                obj.student_sex = obj.student_sex === 1 ? "男" : "女";
+                                obj.is_turn = obj.is_turn === 1 ? "客户" : "手录";
+                                obj.the_science = obj.the_science === 1 ? "文科" : "理科";
+                                for(let key in obj) {
+                                    if(obj[key] == null) {
+                                        obj[key] = '-'
+                                    }
+                                }
+                            }
+                            self.tableData = res.data.data.list
+                        } else {
+                            alert(res.data.msg)
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
             },
             // 类型转变
             radioChange(data) {
@@ -1138,7 +1678,7 @@
                         break;
                     }
                 }
-                console.log(this.typeList[data].key+":"+this.typeList[data].value);
+                console.log(this.typeList[data].key + ":" + this.typeList[data].value);
                 // console.log(this.typeList[data]);
                 this.filterClue();
             },
@@ -1154,26 +1694,10 @@
                     }
                 })
                     .then(function (res) {
-                        var arr = [];
+                        objrr = [];
                         self.cityList = res.data.data.list;
                         localStorage.setItem('cityData', JSON.stringify(res.data.data.list))
                         // console.log(JSON.stringify(res.data.data.list));
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-            // 表格数据
-            getTableData() {
-                var self = this;
-                self.$axios({
-                    method: 'GET',
-                    withCredentials: false,
-                    url: 'http://localhost:8081/mock/clueTableData',
-                })
-                    .then(function (res) {
-                        // console.log(JSON.stringify(res,null,4));
-                        self.tableData = res.data
                     })
                     .catch(function (err) {
                         console.log(err);
@@ -1193,8 +1717,8 @@
             }
         },
         created() {
-            this.getTableData();
-            this.applyCompany();
+            this.filterClue();
+
             this.typeList.schoolLevel.show = true;
             this.typeList.academicSystem.show = true;
             if (localStorage.getItem('cityData')) {
@@ -1208,14 +1732,45 @@
         computed: {
             // 是否禁用子公司选择框
             rangeFlag() {
-                if(this.selectRangeItem == 1) {
+                if (this.selectRangeItem == 1) {
                     // 如果选择母公司, 禁用选公司列表, 请求母公司部门
                     this.getDepartment();
                     return true
                 } else {
                     return false
                 }
-            }
+            },
+            // 显示哪一个表格
+            schoolTable() {
+                if (this.clueType == 1) {
+                    // 学校表格显示
+                    return false
+                } else {
+                    return true
+                }
+            },
+            mechanismTable() {
+                if (this.clueType == 2) {
+                    // 学校表格显示
+                    return false
+                } else {
+                    return true
+                }
+            },teacherTable() {
+                if (this.clueType == 3) {
+                    // 学校表格显示
+                    return false
+                } else {
+                    return true
+                }
+            },studentTable() {
+                if (this.clueType == 4) {
+                    // 学校表格显示
+                    return false
+                } else {
+                    return true
+                }
+            },
         }
     }
 </script>
@@ -1259,7 +1814,14 @@
         display: inline-block;
         margin: 5px 0;
     }
+
     .colorBlue {
         cursor: pointer
+    }
+    .select .el-select {
+        width: 90%;
+    }
+    .hide {
+        display: none;
     }
 </style>

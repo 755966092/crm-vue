@@ -1,6 +1,12 @@
 .clueWrap .el-select .el-input {
     width: 100px;
 }
+.select .el-select .el-input {
+    width: 95%;
+}
+.city {
+    width: 30%;
+}
 .clueWrap .input-with-select .el-input-group__prepend {
     background-color: #fff;
 }
