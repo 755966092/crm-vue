@@ -63,16 +63,22 @@
                     </el-cascader>
                 </div>
             </el-col>
+            <!-- 当前部门与昂 -->
             <el-col :span="6">
                 <div class="select rightWrap">
-                    <el-cascader
-                        expand-trigger="hover"
-                        :options="currentDepartmentStaff"
-                        :show-all-levels=false
-                        filterable
-                        change-on-select
+                    <el-select
+                        v-model="employees_id"
+                        slot="prepend"
+                        placeholder="请选择"
+                        @change="selectEmployees"
                     >
-                    </el-cascader>
+                        <el-option
+                            v-for="item in currentDepartmentStaff"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
                 </div>
             </el-col>
         </el-row>
@@ -918,6 +924,10 @@
                 children_id: '',
                 // 当前部门id
                 department_id: '',
+                // 当前员工id
+                employees_id: '',
+                // 当前员工姓名
+                employees_id: '',
                 // 范围数据
                 rangeData: [
                     {
@@ -1326,9 +1336,13 @@
                     }
                 })
                     .then(function (res) {
-                        // 当前用户只会有一个母公司
-                        self.parentCompanyList = res.data.data.list[0].children;
-                        self.mother_id = res.data.data.list[0].id
+                        if(res.data.code == 200) {
+                            // 当前用户只会有一个母公司
+                            self.parentCompanyList = res.data.data.list[0].children;
+                            self.mother_id = res.data.data.list[0].id
+                        } else {
+                            alert(res.data.msg)
+                        }
                     })
                     .catch(function (err) {
                         console.log(err);
@@ -1349,6 +1363,8 @@
                     .then(function (res) {
                         if (res.data.code === 200) {
                             // 当前母公司下的部门 parentCompanyDepartment
+                            console.log(JSON.stringify(res.data.data,null,4))
+                            console.log(self.mother_id)
                             self.currentCompanyDepartment = res.data.data.list
                         } else {
                             alert(res.data.msg)
@@ -1395,10 +1411,10 @@
             // 子公司/ 母公司/ 加盟商修改
             bigRangeChange(data) {
                 this.selectRangeItem = data;
-                if (data === 2) {
-                    // 获取子公司
-                    this.applyCompany();
-                }
+                // if (data === 2) {
+                //     // 获取子公司
+                //     this.applyCompany();
+                // }
                 this.filterClue();
             },
             // 选择部门
@@ -1409,10 +1425,49 @@
                 this.department_id = data[data.length - 1];
                 // 获取部门所有员工
                 if (department !== this.department_id) {
-                    // this.getChildrenDepartment();
+                    this.getDepartmentEmployees();
                     this.filterClue()
                 }
 
+            },
+            // 获取部门所有员工
+            getDepartmentEmployees() {
+                console.log('获取部门所有员工')
+                let self = this;
+                self.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/department/makeAdminDepartmentList',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        department_id: self.department_id
+                    }
+                })
+                    .then(function (res) {
+                        if(res.data.code == 200) {
+                            console.log('获取部门所有员工:'+self.department_id)
+
+                            for (var i = 0; i < res.data.data.list.length; i++) {
+                                var obj = res.data.data.list[i];
+                                obj.label = obj.user_name
+                                obj.value = obj.user_id
+                            }
+                            console.log('获取部门所有员工数据:'+JSON.stringify(res.data,null,4))
+                            self.currentDepartmentStaff = res.data.data.list
+                        } else {
+                            alert(res.data.msg)
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            },
+            // selectEmployees 选择员工
+            selectEmployees(data) {
+                console.log(this.employees_id)
+                console.log(data);
+                // this.employees_id =
+                this.filterClue();
             },
             // 线索类型
             clueTypeChange(data) {
@@ -1531,7 +1586,7 @@
                         create_end: self.createTime[1],
                         children_id: self.children_id,
                         department_id: self.department_id,
-                        user_id: "",
+                        user_id: self.employees_id,
                         province_id: self.selectCityData[0],
                         city_id: self.selectCityData[1],
                         area_id: self.selectCityData[2],
@@ -1557,7 +1612,7 @@
                         create_end: self.createTime[1],
                         children_id: self.children_id,
                         department_id: self.department_id,
-                        user_id: "",
+                        user_id: self.employees_id,
                         province_id: self.selectCityData[0],
                         city_id: self.selectCityData[1],
                         area_id: self.selectCityData[2],
@@ -1584,7 +1639,7 @@
                         create_end: self.createTime[1],
                         children_id: self.children_id,
                         department_id: self.department_id,
-                        user_id: "",
+                        user_id: self.employees_id,
                         province_id: self.selectCityData[0],
                         city_id: self.selectCityData[1],
                         area_id: self.selectCityData[2],
@@ -1613,7 +1668,7 @@
                         create_end: self.createTime[1],
                         children_id: self.children_id,
                         department_id: self.department_id,
-                        user_id: "",
+                        user_id: self.employees_id,
                         province_id: self.selectCityData[0],
                         city_id: self.selectCityData[1],
                         area_id: self.selectCityData[2],
@@ -1631,7 +1686,7 @@
                 } else {
 
                 }
-                console.log('请求参数:'+JSON.stringify(obj,null,4))
+                // console.log('请求参数:'+JSON.stringify(obj,null,4))
                 self.$axios({
                     method: 'POST',
                     withCredentials: false,
@@ -1640,7 +1695,7 @@
                 })
                     .then(function (res) {
                         if (res.data.code === 200) {
-                            console.log('返回参数:'+JSON.stringify(res.data,null,4));
+                            // console.log('返回参数:'+JSON.stringify(res.data,null,4));
                             for (var i = 0; i < res.data.data.list.length; i++) {
                                 var obj = res.data.data.list[i];
                                 obj.school_grade = self.schoolLevelArr[obj.school_grade-1]
@@ -1717,6 +1772,7 @@
             }
         },
         created() {
+            this.applyCompany();
             this.filterClue();
 
             this.typeList.schoolLevel.show = true;
