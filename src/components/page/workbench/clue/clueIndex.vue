@@ -775,7 +775,7 @@
             </template>
         </div>
         <!-- 弹窗 -->
-        <!-- 新建员工 -->
+        <!-- 添加线索 -->
         <template>
             <div class="dialogWrap">
                 <el-dialog
@@ -783,17 +783,17 @@
                     :visible.sync="dialogVisible"
                 >
                     <div style="width:100%">
-                       <el-row>
-                           <span class="iptName">线索来源:</span>
-                           <el-select v-model="addClueData.sourceTypeValue" placeholder="请选择">
-                               <el-option
-                                   v-for="item in sourceTypeOptions"
-                                   :key="item.value"
-                                   :label="item.label"
-                                   :value="item.value">
-                               </el-option>
-                           </el-select>
-                       </el-row>
+                        <el-row>
+                            <span class="iptName">线索来源:</span>
+                            <el-select v-model="addClueData.sourceTypeValue" placeholder="请选择">
+                                <el-option
+                                    v-for="item in sourceTypeOptions"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-row>
                     </div>
                     <div style="width:100%">
                         <span class="iptName">线索类型:</span>
@@ -810,38 +810,38 @@
                     <!-- 自定义内容 -->
 
                     <!-- 学校显示 -->
-                   <div :class="{hide:schoolTable}">
-                       <div>
-                           <span class="iptName">学校名称:</span>
-                           <el-input v-model="addClueData.schoolName" placeholder="请输入内容"></el-input>
-                       </div>
-                       <div style="width:100%">
-                           <span class="iptName">学制:</span>
-                           <el-select v-model="addClueData.academicSystem" placeholder="请选择">
-                               <el-option
-                                   v-for="item in typeList.academicSystem.content"
-                                   :key="item.value"
-                                   :label="item.label"
-                                   :value="item.value">
-                               </el-option>
-                           </el-select>
-                       </div>
-                       <div style="width:100%">
-                           <span class="iptName">等级:</span>
-                           <el-select v-model="addClueData.schoolLevel" placeholder="请选择">
-                               <el-option
-                                   v-for="item in typeList.schoolLevel.content"
-                                   :key="item.value"
-                                   :label="item.label"
-                                   :value="item.value">
-                               </el-option>
-                           </el-select>
-                       </div>
-                   </div>
+                    <div :class="{hide:addClueData.schoolTable}">
+                        <div>
+                            <span class="iptName">学校名称:</span>
+                            <el-input v-model="addClueData.schoolName" placeholder="请输入内容"></el-input>
+                        </div>
+                        <div style="width:100%">
+                            <span class="iptName">学制:</span>
+                            <el-select v-model="addClueData.academicSystem" placeholder="请选择">
+                                <el-option
+                                    v-for="item in typeList.academicSystem.content"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                        <div style="width:100%">
+                            <span class="iptName">等级:</span>
+                            <el-select v-model="addClueData.schoolLevel" placeholder="请选择">
+                                <el-option
+                                    v-for="item in typeList.schoolLevel.content"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
 
                     <!-- 机构显示 -->
-                    <div :class="{hide:mechanismTable}">
-                        <div >
+                    <div :class="{hide:addClueData.mechanismTable}">
+                        <div>
                             <span class="iptName">机构名称:</span>
                             <el-input v-model="addClueData.schoolName" placeholder="请输入内容"></el-input>
                         </div>
@@ -869,16 +869,20 @@
                         </div>
                     </div>
                     <!-- 教师显示 -->
-                    <div :class="{hide:teacherTable}">
-                        <div >
+                    <div :class="{hide:addClueData.teacherTable}">
+                        <div>
                             <span class="iptName">教师名称:</span>
+                            <el-input v-model="addClueData.teacherName" placeholder="请输入内容"></el-input>
+                        </div>
+                        <div>
+                            <span class="iptName">学校名称:</span>
                             <el-input v-model="addClueData.schoolName" placeholder="请输入内容"></el-input>
                         </div>
                         <div style="width:100%">
-                            <span class="iptName">类型:</span>
-                            <el-select v-model="addClueData.organizationType" placeholder="请选择">
+                            <span class="iptName">教授年级:</span>
+                            <el-select v-model="addClueData.grade" placeholder="请选择">
                                 <el-option
-                                    v-for="item in typeList.organizationType.content"
+                                    v-for="item in typeList.grade.content"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value">
@@ -886,10 +890,32 @@
                             </el-select>
                         </div>
                         <div style="width:100%">
-                            <span class="iptName">定位:</span>
-                            <el-select v-model="addClueData.positioning" placeholder="请选择">
+                            <span class="iptName">教授科目:</span>
+                            <el-select v-model="addClueData.professorSubjects" placeholder="请选择">
                                 <el-option
-                                    v-for="item in typeList.positioning.content"
+                                    v-for="item in typeList.professorSubjects.content"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                        <div style="width:100%">
+                            <span class="iptName">学校等级:</span>
+                            <el-select v-model="addClueData.schoolLevel" placeholder="请选择">
+                                <el-option
+                                    v-for="item in typeList.schoolLevel.content"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                        <div style="width:100%">
+                            <span class="iptName">学制:</span>
+                            <el-select v-model="addClueData.academicSystem" placeholder="请选择">
+                                <el-option
+                                    v-for="item in typeList.academicSystem.content"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value">
@@ -898,16 +924,20 @@
                         </div>
                     </div>
                     <!-- 学生显示 -->
-                    <div :class="{hide:studentTable}">
-                        <div >
+                    <div :class="{hide:addClueData.studentTable}">
+                        <div>
                             <span class="iptName">学生名称:</span>
+                            <el-input v-model="addClueData.studentName" placeholder="请输入内容"></el-input>
+                        </div>
+                        <div>
+                            <span class="iptName">学校名称:</span>
                             <el-input v-model="addClueData.schoolName" placeholder="请输入内容"></el-input>
                         </div>
                         <div style="width:100%">
-                            <span class="iptName">类型:</span>
-                            <el-select v-model="addClueData.organizationType" placeholder="请选择">
+                            <span class="iptName">性别:</span>
+                            <el-select v-model="addClueData.sex" placeholder="请选择">
                                 <el-option
-                                    v-for="item in typeList.organizationType.content"
+                                    v-for="item in typeList.sex.content"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value">
@@ -915,10 +945,32 @@
                             </el-select>
                         </div>
                         <div style="width:100%">
-                            <span class="iptName">定位:</span>
-                            <el-select v-model="addClueData.positioning" placeholder="请选择">
+                            <span class="iptName">文理科:</span>
+                            <el-select v-model="addClueData.artsAndSciences" placeholder="请选择">
                                 <el-option
-                                    v-for="item in typeList.positioning.content"
+                                    v-for="item in typeList.artsAndSciences.content"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                        <div style="width:100%">
+                            <span class="iptName">年级:</span>
+                            <el-select v-model="addClueData.grade" placeholder="请选择">
+                                <el-option
+                                    v-for="item in typeList.grade.content"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                        <div style="width:100%">
+                            <span class="iptName">学校等级:</span>
+                            <el-select v-model="addClueData.schoolLevel" placeholder="请选择">
+                                <el-option
+                                    v-for="item in typeList.schoolLevel.content"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value">
@@ -995,7 +1047,7 @@
                     academicSystem: '全部',
                     schoolLevel: '全部',
                     selectCityData: [],
-                    address:'',
+                    address: '',
                     contactName: '',
                     contactPosition: '',
                     contactPhone: '',
@@ -1007,7 +1059,23 @@
                     organizationType: '',
                     // 定位
                     positioning: '',
+                    teacherName: '',
+                    // 教授科目
+                    professorSubjects: '',
+                    // 教授年级
+                    grade: '',
+                    // 学制
+                    academicSystem: '',
+                    // 学校等级
+                    schoolLevel: '',
+                    // 文理科
+                    artsAndSciences: '',
+                    sex: '',
 
+                    schoolTable: false,
+                    mechanismTable: true,
+                    teacherTable: true,
+                    studentTable: true
 
                 },
                 dialogShow: {
@@ -1350,7 +1418,7 @@
                 tableData: [],
                 // 表格搜索下拉框
                 options: [
-                        {
+                    {
                         label: '第一学',
                         value: 1
                     }, {
@@ -1407,21 +1475,47 @@
                     }
                 ],
                 // 学校等级解析数组
-                schoolLevelArr: ['省重点','市重点'],
+                schoolLevelArr: ['省重点', '市重点'],
                 // 学制解析数组, 教授年级解析数组
-                academicSystemArr: ['初中','高中','初中+高中'],
+                academicSystemArr: ['初中', '高中', '初中+高中'],
                 // 定位解析数组
-                positionArr:['K12','英语','出国'],
+                positionArr: ['K12', '英语', '出国'],
                 // 教授科目解析数组
-                professorSubjectsArr: ['语文','英语','数学','物理','化学'],
+                professorSubjectsArr: ['语文', '英语', '数学', '物理', '化学'],
                 // 年级解析数组
-                studentGradeArr: ['初一','初二', '初三', '高一', '高二', '高三']
+                studentGradeArr: ['初一', '初二', '初三', '高一', '高二', '高三']
 
             }
         },
         methods: {
             addClueTypeChange(data) {
                 this.addClueData.clueType = data;
+                console.log('g更新数据:' + data);
+                if (data == 1) {
+                    // 学校
+                    this.addClueData.schoolTable = false
+                    this.addClueData.mechanismTable = true
+                    this.addClueData.teacherTable = true
+                    this.addClueData.studentTable = true
+                } else if (data == 2) {
+                    // 机构
+                    this.addClueData.schoolTable = true
+                    this.addClueData.mechanismTable = false
+                    this.addClueData.teacherTable = true
+                    this.addClueData.studentTable = true
+                } else if (data == 3) {
+                    // 教师
+                    this.addClueData.schoolTable = true
+                    this.addClueData.mechanismTable = true
+                    this.addClueData.teacherTable = false
+                    this.addClueData.studentTable = true
+                } else {
+                    // 学生
+                    this.addClueData.schoolTable = true
+                    this.addClueData.mechanismTable = true
+                    this.addClueData.teacherTable = true
+                    this.addClueData.studentTable = false
+                }
             },
             showAddClue() {
                 this.dialogBox.demo = true;
@@ -1451,7 +1545,7 @@
                     }
                 })
                     .then(function (res) {
-                        if(res.data.code == 200) {
+                        if (res.data.code == 200) {
                             // 当前用户只会有一个母公司
                             self.parentCompanyList = res.data.data.list[0].children;
                             self.mother_id = res.data.data.list[0].id
@@ -1559,15 +1653,15 @@
                     }
                 })
                     .then(function (res) {
-                        if(res.data.code == 200) {
-                            console.log('获取部门所有员工:'+self.department_id)
+                        if (res.data.code == 200) {
+                            console.log('获取部门所有员工:' + self.department_id)
 
                             for (var i = 0; i < res.data.data.list.length; i++) {
                                 var obj = res.data.data.list[i];
                                 obj.label = obj.user_name
                                 obj.value = obj.user_id
                             }
-                            console.log('获取部门所有员工数据:'+JSON.stringify(res.data,null,4))
+                            console.log('获取部门所有员工数据:' + JSON.stringify(res.data, null, 4))
                             self.currentDepartmentStaff = res.data.data.list
                         } else {
                             alert(res.data.msg)
@@ -1813,19 +1907,19 @@
                             // console.log('返回参数:'+JSON.stringify(res.data,null,4));
                             for (var i = 0; i < res.data.data.list.length; i++) {
                                 var obj = res.data.data.list[i];
-                                obj.school_grade = self.schoolLevelArr[obj.school_grade-1]
-                                obj.school_los = self.academicSystemArr[obj.school_los-1]
+                                obj.school_grade = self.schoolLevelArr[obj.school_grade - 1]
+                                obj.school_los = self.academicSystemArr[obj.school_los - 1]
 
-                                obj.location = self.positionArr[obj.location-1]
+                                obj.location = self.positionArr[obj.location - 1]
 
-                                obj.professor_grade = self.academicSystemArr[obj.professor_grade-1]
-                                obj.professor_subjects = self.professorSubjectsArr[obj.professor_subjects-1]
-                                obj.student_grade = self.studentGradeArr[obj.student_grade-1]
+                                obj.professor_grade = self.academicSystemArr[obj.professor_grade - 1]
+                                obj.professor_subjects = self.professorSubjectsArr[obj.professor_subjects - 1]
+                                obj.student_grade = self.studentGradeArr[obj.student_grade - 1]
                                 obj.student_sex = obj.student_sex === 1 ? "男" : "女";
                                 obj.is_turn = obj.is_turn === 1 ? "客户" : "手录";
                                 obj.the_science = obj.the_science === 1 ? "文科" : "理科";
-                                for(let key in obj) {
-                                    if(obj[key] == null) {
+                                for (let key in obj) {
+                                    if (obj[key] == null) {
                                         obj[key] = '-'
                                     }
                                 }
@@ -1914,31 +2008,43 @@
             // 显示哪一个表格
             schoolTable() {
                 if (this.clueType == 1) {
+                    this.addClueData.clueType = "1"
+                    this.addClueData.schoolTable = false
                     // 学校表格显示
                     return false
                 } else {
+                    this.addClueData.schoolTable = true
                     return true
                 }
             },
             mechanismTable() {
                 if (this.clueType == 2) {
                     // 学校表格显示
+                    this.addClueData.clueType = "2"
+                    this.addClueData.mechanismTable = false
                     return false
                 } else {
+                    this.addClueData.mechanismTable = true
                     return true
                 }
-            },teacherTable() {
+            }, teacherTable() {
                 if (this.clueType == 3) {
                     // 学校表格显示
+                    this.addClueData.clueType = "3"
+                    this.addClueData.teacherTable = false
                     return false
                 } else {
+                    this.addClueData.teacherTable = true
                     return true
                 }
-            },studentTable() {
+            }, studentTable() {
                 if (this.clueType == 4) {
                     // 学校表格显示
+                    this.addClueData.clueType = "4"
+                    this.addClueData.studentTable = false
                     return false
                 } else {
+                    this.addClueData.studentTable = false
                     return true
                 }
             },
@@ -1963,8 +2069,9 @@
     .el-cascader {
         width: 95%;
     }
+
     /* 新增线索选着 */
-    .dialogWrap  .el-cascader {
+    .dialogWrap .el-cascader {
         width: 100%;
     }
 
@@ -1993,9 +2100,11 @@
     .colorBlue {
         cursor: pointer
     }
+
     .select .el-select {
         width: 90%;
     }
+
     .hide {
         display: none;
     }
