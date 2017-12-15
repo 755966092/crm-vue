@@ -113,7 +113,7 @@
                                 @change="radioChange(index)"
                                 v-model="item.key">
                                 <el-radio-button v-for="children in item.content" :value="children.value"
-                                                 :label="children.text"></el-radio-button>
+                                                 :label="children.label"></el-radio-button>
                             </el-radio-group>
                         </div>
                     </el-col>
@@ -131,7 +131,7 @@
                         @change="radioChange('followUpStatus')"
                         v-model="typeList.followUpStatus.key">
                         <el-radio-button v-for="children in typeList.followUpStatus.content" :value="children.value"
-                                         :label="children.text"></el-radio-button>
+                                         :label="children.label"></el-radio-button>
                     </el-radio-group>
                 </div>
             </el-col>
@@ -149,7 +149,7 @@
                         <el-radio-button
                             v-for="children in typeList.source.content"
                             :value="children.value"
-                            :label="children.text"></el-radio-button>
+                            :label="children.label"></el-radio-button>
                     </el-radio-group>
                 </div>
             </el-col>
@@ -255,7 +255,7 @@
                 <el-row>
                     <el-col :span="10">
                         <el-button type="text" @click="addClue">新增线索</el-button>
-                        <el-button type="text">导入线索</el-button>
+                        <el-button type="text" @click="showAddClue">导入线索</el-button>
                         <el-button type="text" style="color: #999">批量转移</el-button>
                         <el-button type="text" style="color: #999">批量删除</el-button>
                     </el-col>
@@ -777,14 +777,27 @@
         <!-- 弹窗 -->
         <!-- 新建员工 -->
         <template>
-            <div>
+            <div class="dialogWrap">
                 <el-dialog
                     title="新增线索"
                     :visible.sync="dialogVisible"
                 >
                     <div style="width:100%">
+                       <el-row>
+                           <span class="iptName">线索来源:</span>
+                           <el-select v-model="addClueData.sourceTypeValue" placeholder="请选择">
+                               <el-option
+                                   v-for="item in sourceTypeOptions"
+                                   :key="item.value"
+                                   :label="item.label"
+                                   :value="item.value">
+                               </el-option>
+                           </el-select>
+                       </el-row>
+                    </div>
+                    <div style="width:100%">
                         <span class="iptName">线索类型:</span>
-                        <el-select v-model="clueType" @change="clueTypeChange" placeholder="请选择">
+                        <el-select v-model="addClueData.clueType" @change="addClueTypeChange" placeholder="请选择">
                             <el-option
                                 v-for="item in clueTypeOptions"
                                 :key="item.value"
@@ -793,104 +806,172 @@
                             </el-option>
                         </el-select>
                     </div>
-                    <div style="width:100%">
-                        <span class="iptName">线索来源:</span>
-                        <el-select v-model="sourceTypeValue" placeholder="请选择">
-                            <el-option
-                                v-for="item in sourceTypeOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
 
-                    <div>
-                        <span class="iptName">名称:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
+                    <!-- 自定义内容 -->
+
+                    <!-- 学校显示 -->
+                   <div :class="{hide:schoolTable}">
+                       <div>
+                           <span class="iptName">学校名称:</span>
+                           <el-input v-model="addClueData.schoolName" placeholder="请输入内容"></el-input>
+                       </div>
+                       <div style="width:100%">
+                           <span class="iptName">学制:</span>
+                           <el-select v-model="addClueData.academicSystem" placeholder="请选择">
+                               <el-option
+                                   v-for="item in typeList.academicSystem.content"
+                                   :key="item.value"
+                                   :label="item.label"
+                                   :value="item.value">
+                               </el-option>
+                           </el-select>
+                       </div>
+                       <div style="width:100%">
+                           <span class="iptName">等级:</span>
+                           <el-select v-model="addClueData.schoolLevel" placeholder="请选择">
+                               <el-option
+                                   v-for="item in typeList.schoolLevel.content"
+                                   :key="item.value"
+                                   :label="item.label"
+                                   :value="item.value">
+                               </el-option>
+                           </el-select>
+                       </div>
+                   </div>
+
+                    <!-- 机构显示 -->
+                    <div :class="{hide:mechanismTable}">
+                        <div >
+                            <span class="iptName">机构名称:</span>
+                            <el-input v-model="addClueData.schoolName" placeholder="请输入内容"></el-input>
+                        </div>
+                        <div style="width:100%">
+                            <span class="iptName">类型:</span>
+                            <el-select v-model="addClueData.organizationType" placeholder="请选择">
+                                <el-option
+                                    v-for="item in typeList.organizationType.content"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                        <div style="width:100%">
+                            <span class="iptName">定位:</span>
+                            <el-select v-model="addClueData.positioning" placeholder="请选择">
+                                <el-option
+                                    v-for="item in typeList.positioning.content"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
                     </div>
-                    <div style="width:100%">
-                        <span class="iptName">学制:</span>
-                        <el-select v-model="value" placeholder="请选择">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
+                    <!-- 教师显示 -->
+                    <div :class="{hide:teacherTable}">
+                        <div >
+                            <span class="iptName">教师名称:</span>
+                            <el-input v-model="addClueData.schoolName" placeholder="请输入内容"></el-input>
+                        </div>
+                        <div style="width:100%">
+                            <span class="iptName">类型:</span>
+                            <el-select v-model="addClueData.organizationType" placeholder="请选择">
+                                <el-option
+                                    v-for="item in typeList.organizationType.content"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                        <div style="width:100%">
+                            <span class="iptName">定位:</span>
+                            <el-select v-model="addClueData.positioning" placeholder="请选择">
+                                <el-option
+                                    v-for="item in typeList.positioning.content"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
                     </div>
-                    <div style="width:100%">
-                        <span class="iptName">等级:</span>
-                        <el-select v-model="value" placeholder="请选择">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
+                    <!-- 学生显示 -->
+                    <div :class="{hide:studentTable}">
+                        <div >
+                            <span class="iptName">学生名称:</span>
+                            <el-input v-model="addClueData.schoolName" placeholder="请输入内容"></el-input>
+                        </div>
+                        <div style="width:100%">
+                            <span class="iptName">类型:</span>
+                            <el-select v-model="addClueData.organizationType" placeholder="请选择">
+                                <el-option
+                                    v-for="item in typeList.organizationType.content"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                        <div style="width:100%">
+                            <span class="iptName">定位:</span>
+                            <el-select v-model="addClueData.positioning" placeholder="请选择">
+                                <el-option
+                                    v-for="item in typeList.positioning.content"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
                     </div>
+                    <!-- 自定义内容 -->
+
+
+                    <!-- 以下为固定内容, 每个类型的线索都应该填写 -->
                     <div style="width:100%">
-                        <span class="iptName">省:</span>
-                        <el-select v-model="value" placeholder="请选择">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-                    <div style="width:100%">
-                        <span class="iptName">市:</span>
-                        <el-select v-model="value" placeholder="请选择">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-                    <div style="width:100%">
-                        <span class="iptName">县:</span>
-                        <el-select v-model="value" placeholder="请选择">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
+                        <span class="iptName">所在地:</span>
+                        <el-cascader
+                            expand-trigger="hover"
+                            :value="addClueData.selectCityData"
+                            :options="cityList"
+                            @change="selectCity"
+                            clearable
+                        >
+                        </el-cascader>
                     </div>
                     <div>
                         <span class="iptName">地址:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
+                        <el-input v-model="addClueData.address" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">联系人姓名:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
+                        <el-input v-model="addClueData.contactName" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">职务:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
+                        <el-input v-model="addClueData.contactPosition" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">手机:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
+                        <el-input v-model="addClueData.contactPhone" placeholder="请输入内容"></el-input>
+                    </div>
+                    <div>
+                        <span class="iptName">电话:</span>
+                        <el-input v-model="addClueData.contactTel" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">微信:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
+                        <el-input v-model="addClueData.contactWeixin" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">QQ:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
+                        <el-input v-model="addClueData.contactQq" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">邮箱:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
+                        <el-input v-model="addClueData.contactEmail" placeholder="请输入内容"></el-input>
                     </div>
                     <span slot="footer" class="dialog-footer">
                             <el-button @click="dialogVisible = false">取 消</el-button>
@@ -907,6 +988,34 @@
         name: "clue",
         data() {
             return {
+                addClueData: {
+                    clueType: '教师',
+                    sourceTypeValue: '全部',
+                    schoolName: '',
+                    academicSystem: '全部',
+                    schoolLevel: '全部',
+                    selectCityData: [],
+                    address:'',
+                    contactName: '',
+                    contactPosition: '',
+                    contactPhone: '',
+                    contactTel: '',
+                    contactWeixin: '',
+                    contactQq: '',
+                    contactEmail: '',
+                    // 机构类型
+                    organizationType: '',
+                    // 定位
+                    positioning: '',
+
+
+                },
+                dialogShow: {
+                    schoolShow: false,
+                    organizationShow: true,
+                    teacherShow: true,
+                    studentShow: true,
+                },
                 value: '第一学',
                 input: '圈,',
                 // 新增线索对话框
@@ -967,13 +1076,13 @@
                         'show': false,
                         'content': [{
                             value: '',
-                            text: '全部'
+                            label: '全部'
                         }, {
                             value: '1',
-                            text: '市重点'
+                            label: '市重点'
                         }, {
                             value: '2',
-                            text: '省重点'
+                            label: '省重点'
                         }]
                     },
                     // 学制
@@ -984,16 +1093,16 @@
                         'show': false,
                         'content': [{
                             value: '',
-                            text: '全部'
+                            label: '全部'
                         }, {
                             value: '1',
-                            text: '初中'
+                            label: '初中'
                         }, {
                             value: '2',
-                            text: '高中'
+                            label: '高中'
                         }, {
                             value: '3',
-                            text: '初中+高中'
+                            label: '初中+高中'
                         }]
                     },// 学制
                     'professor_grade': {
@@ -1003,16 +1112,16 @@
                         'show': false,
                         'content': [{
                             value: '',
-                            text: '全部'
+                            label: '全部'
                         }, {
                             value: '1',
-                            text: '初中'
+                            label: '初中'
                         }, {
                             value: '2',
-                            text: '高中'
+                            label: '高中'
                         }, {
                             value: '3',
-                            text: '初中+高中'
+                            label: '初中+高中'
                         }]
                     },
                     // 跟进状态
@@ -1023,16 +1132,16 @@
                         'show': true,
                         'content': [{
                             value: '',
-                            text: '全部'
+                            label: '全部'
                         }, {
                             value: '1',
-                            text: '未处理'
+                            label: '未处理'
                         }, {
                             value: '2',
-                            text: '联系方式有效'
+                            label: '联系方式有效'
                         }, {
                             value: '3',
-                            text: '联系方式无效'
+                            label: '联系方式无效'
                         }]
                     },
                     // 来源
@@ -1043,22 +1152,22 @@
                         'value': '',
                         'content': [{
                             value: '',
-                            text: '全部'
+                            label: '全部'
                         }, {
                             value: '高招',
-                            text: '高招'
+                            label: '高招'
                         }, {
                             value: '我在',
-                            text: '我在'
+                            label: '我在'
                         }, {
                             value: '搜索引擎',
-                            text: '搜索引擎'
+                            label: '搜索引擎'
                         }, {
                             value: '微信',
-                            text: '微信'
+                            label: '微信'
                         }, {
                             value: '客户介绍',
-                            text: '客户介绍'
+                            label: '客户介绍'
                         }]
                     },
                     // 机构类型
@@ -1069,16 +1178,16 @@
                         'value': '',
                         'content': [{
                             value: '',
-                            text: '全部'
+                            label: '全部'
                         }, {
                             value: '大型',
-                            text: '大型'
+                            label: '大型'
                         }, {
                             value: '中型',
-                            text: '中型'
+                            label: '中型'
                         }, {
                             value: '小型',
-                            text: '小型'
+                            label: '小型'
                         }]
                     },
                     // 定位
@@ -1089,16 +1198,16 @@
                         'show': false,
                         'content': [{
                             value: '',
-                            text: '全部'
+                            label: '全部'
                         }, {
                             value: '1',
-                            text: 'K12'
+                            label: 'K12'
                         }, {
                             value: '2',
-                            text: '英语'
+                            label: '英语'
                         }, {
                             value: '3',
-                            text: '出国'
+                            label: '出国'
                         }]
                     },
                     // 教授科目
@@ -1109,22 +1218,22 @@
                         'value': '',
                         'content': [{
                             value: '',
-                            text: '全部'
+                            label: '全部'
                         }, {
                             value: '1',
-                            text: '语文'
+                            label: '语文'
                         }, {
                             value: '2',
-                            text: '数学'
+                            label: '数学'
                         }, {
                             value: '3',
-                            text: '外语'
+                            label: '外语'
                         }, {
                             value: '4',
-                            text: '物理'
+                            label: '物理'
                         }, {
                             value: '5',
-                            text: '化学'
+                            label: '化学'
                         }]
                     },
                     // 文理科
@@ -1135,13 +1244,13 @@
                         'value': '',
                         'content': [{
                             value: '',
-                            text: '全部'
+                            label: '全部'
                         }, {
                             value: '1',
-                            text: '文科'
+                            label: '文科'
                         }, {
                             value: '2',
-                            text: '理科'
+                            label: '理科'
                         }]
                     },
                     // 年级
@@ -1152,25 +1261,25 @@
                         'value': '',
                         'content': [{
                             value: '',
-                            text: '全部'
+                            label: '全部'
                         }, {
                             value: '1',
-                            text: '初一'
+                            label: '初一'
                         }, {
                             value: '2',
-                            text: '初二'
+                            label: '初二'
                         }, {
                             value: '3',
-                            text: '初三'
+                            label: '初三'
                         }, {
                             value: '4',
-                            text: '高一'
+                            label: '高一'
                         }, {
                             value: '5',
-                            text: '高二'
+                            label: '高二'
                         }, {
                             value: '6',
-                            text: '高三'
+                            label: '高三'
                         }]
                     },
                     // 性别
@@ -1181,13 +1290,13 @@
                         'value': '',
                         'content': [{
                             value: '',
-                            text: '全部'
+                            label: '全部'
                         }, {
                             value: '1',
-                            text: '男'
+                            label: '男'
                         }, {
                             value: '2',
-                            text: '女'
+                            label: '女'
                         }]
                     },
                     // 来源类型
@@ -1198,13 +1307,13 @@
                         'value': '',
                         'content': [{
                             value: '',
-                            text: '全部'
+                            label: '全部'
                         }, {
                             value: '1',
-                            text: '客户'
+                            label: '客户'
                         }, {
                             value: '2',
-                            text: '手录'
+                            label: '手录'
                         }]
                     }
                 },
@@ -1290,7 +1399,7 @@
                         label: '机构',
                         value: '2'
                     }, {
-                        label: '老师',
+                        label: '教师',
                         value: '3'
                     }, {
                         label: '学生',
@@ -1311,6 +1420,12 @@
             }
         },
         methods: {
+            addClueTypeChange(data) {
+                this.addClueData.clueType = data;
+            },
+            showAddClue() {
+                this.dialogBox.demo = true;
+            },
             // 线索详情
             openClueInfo(index, data) {
                 // 跳转到线索详情的页面
@@ -1318,8 +1433,8 @@
             },
             // 更新时间
             timeUpdata(data) {
-                console.log(data)
-                console.log(this.updateTime)
+                // console.log(data)
+                // console.log(this.updateTime)
                 // console.log(this.lastFollowUpTime)
                 // console.log(this.createTime)
                 this.filterClue();
@@ -1363,8 +1478,8 @@
                     .then(function (res) {
                         if (res.data.code === 200) {
                             // 当前母公司下的部门 parentCompanyDepartment
-                            console.log(JSON.stringify(res.data.data,null,4))
-                            console.log(self.mother_id)
+                            // console.log(JSON.stringify(res.data.data,null,4))
+                            // console.log(self.mother_id)
                             self.currentCompanyDepartment = res.data.data.list
                         } else {
                             alert(res.data.msg)
@@ -1847,6 +1962,10 @@
     /* 省市区选着器 */
     .el-cascader {
         width: 95%;
+    }
+    /* 新增线索选着 */
+    .dialogWrap  .el-cascader {
+        width: 100%;
     }
 
     .wrap {
