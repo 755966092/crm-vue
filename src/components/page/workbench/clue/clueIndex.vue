@@ -255,7 +255,7 @@
                 <el-row>
                     <el-col :span="10">
                         <el-button type="text" @click="addClue">新增线索</el-button>
-                        <el-button type="text" @click="showAddClue">导入线索</el-button>
+                        <el-button type="text" >导入线索</el-button>
                         <el-button type="text" style="color: #999">批量转移</el-button>
                         <el-button type="text" style="color: #999">批量删除</el-button>
                     </el-col>
@@ -787,7 +787,7 @@
                             <span class="iptName">线索来源:</span>
                             <el-select v-model="addClueData.sourceTypeValue" placeholder="请选择">
                                 <el-option
-                                    v-for="item in sourceTypeOptions"
+                                    v-for="item in typeList.source.content"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value">
@@ -1027,7 +1027,7 @@
                     </div>
                     <span slot="footer" class="dialog-footer">
                             <el-button @click="dialogVisible = false">取 消</el-button>
-                            <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                            <el-button type="primary" @click="submitClue">确 定</el-button>
                     </span>
                 </el-dialog>
             </div>
@@ -1041,7 +1041,7 @@
         data() {
             return {
                 addClueData: {
-                    clueType: '教师',
+                    clueType: '1',
                     sourceTypeValue: '全部',
                     schoolName: '',
                     academicSystem: '全部',
@@ -1150,7 +1150,7 @@
                             label: '市重点'
                         }, {
                             value: '2',
-                            label: '省重点'
+                            label: '区重点'
                         }]
                     },
                     // 学制
@@ -1475,7 +1475,7 @@
                     }
                 ],
                 // 学校等级解析数组
-                schoolLevelArr: ['省重点', '市重点'],
+                schoolLevelArr: ['市重点', '区重点'],
                 // 学制解析数组, 教授年级解析数组
                 academicSystemArr: ['初中', '高中', '初中+高中'],
                 // 定位解析数组
@@ -1490,7 +1490,6 @@
         methods: {
             addClueTypeChange(data) {
                 this.addClueData.clueType = data;
-                console.log('g更新数据:' + data);
                 if (data == 1) {
                     // 学校
                     this.addClueData.schoolTable = false
@@ -1517,9 +1516,6 @@
                     this.addClueData.studentTable = false
                 }
             },
-            showAddClue() {
-                this.dialogBox.demo = true;
-            },
             // 线索详情
             openClueInfo(index, data) {
                 // 跳转到线索详情的页面
@@ -1527,10 +1523,6 @@
             },
             // 更新时间
             timeUpdata(data) {
-                // console.log(data)
-                // console.log(this.updateTime)
-                // console.log(this.lastFollowUpTime)
-                // console.log(this.createTime)
                 this.filterClue();
             },
             // 所有子公司
@@ -1746,6 +1738,7 @@
                 this.filterClue();
             },
             filterClue() {
+                console.log('筛选表格数据')
                 // 筛选表格数据
                 // console.log(this.clueType)
                 let self = this;
@@ -1895,7 +1888,7 @@
                 } else {
 
                 }
-                // console.log('请求参数:'+JSON.stringify(obj,null,4))
+                console.log('请求参数:'+JSON.stringify(obj,null,4))
                 self.$axios({
                     method: 'POST',
                     withCredentials: false,
@@ -1904,7 +1897,8 @@
                 })
                     .then(function (res) {
                         if (res.data.code === 200) {
-                            // console.log('返回参数:'+JSON.stringify(res.data,null,4));
+                            // console.log('返回参数:');
+                            console.log('返回参数:'+JSON.stringify(res.data,null,4));
                             for (var i = 0; i < res.data.data.list.length; i++) {
                                 var obj = res.data.data.list[i];
                                 obj.school_grade = self.schoolLevelArr[obj.school_grade - 1]
@@ -1937,13 +1931,12 @@
             radioChange(data) {
                 for (var i = 0; i < this.typeList[data].content.length; i++) {
                     var obj = this.typeList[data].content[i];
-                    if (obj.text === this.typeList[data].key) {
+                    if (obj.label == this.typeList[data].key) {
                         this.typeList[data].value = obj.value
                         break;
                     }
                 }
-                console.log(this.typeList[data].key + ":" + this.typeList[data].value);
-                // console.log(this.typeList[data]);
+                console.log('更改选项:'+this.typeList[data].key + ":" + this.typeList[data].value);
                 this.filterClue();
             },
             // 省市县数据
@@ -1969,15 +1962,75 @@
             },
             // 点击级联选择器选择城市
             selectCity(data) {
-                this.selectCityData = data;
-                this.filterClue();
+                console.log(data)
+                if (this.dialogVisible) {
+                    // 如果dialogVisible === true 说明, 对话框显示, 是新增线索,
+                    // 否者就是筛选线索
+                    this.addClueData.selectCityData = data
+                } else {
+                    this.selectCityData = data;
+                    this.filterClue();
+                }
             },
+            //
             // 表格按钮
             showModelTable() {
 
             },
+            // 新增线索按钮
             addClue() {
                 this.dialogVisible = true;
+                console.log(JSON.stringify(this.addClueData,null,4))
+            },
+            // 提交线索
+            submitClue() {
+                this.dialogVisible = false
+                console.log('新增线索')
+                let paramObj = {};
+                let self = this;
+                // 判断当前线索类型
+                if (this.addClueData.clueType = "1") {
+                    paramObj = {
+                        token: '1513230655X0CZ',
+                        cue_source: self.addClueData.sourceTypeValue,
+                        cue_type: self.addClueData.clueType,
+                        name: self.addClueData.schoolName,
+                        los: self.addClueData.academicSystem,
+                        grade: self.addClueData.schoolLevel,
+                        province_id: self.addClueData.selectCityData[0],
+                        city_id: self.addClueData.selectCityData[1],
+                        area_id: self.addClueData.selectCityData[2],
+                        address: self.addClueData.address,
+                        contacts_name: self.addClueData.contactName,
+                        contacts_post: self.addClueData.contactPosition,
+                        contacts_mobile: self.addClueData.contactPhone,
+                        contacts_telephone: self.addClueData.contactTel,
+                        contacts_wechat: self.addClueData.contactWeixin,
+                        contacts_qq: self.addClueData.contactQq,
+                        contacts_email: self.addClueData.contactEmail,
+                    }
+                } else if (this.addClueData.clueType = "2"){
+                } else if (this.addClueData.clueType = "3"){
+                } else {
+
+                }
+                console.log(JSON.stringify(paramObj,null,4))
+                self.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/clue/applyClue',
+                    data: paramObj
+                })
+                    .then(function (res) {
+                        if (res.data.code == 200) {
+                            console.log('提交成功:'+ res.data.data.list.clue_id +'-'+ res.data.data.list.update_time)
+                        } else {
+                            alert(res.data.msg)
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
             }
         },
         created() {
@@ -2044,7 +2097,7 @@
                     this.addClueData.studentTable = false
                     return false
                 } else {
-                    this.addClueData.studentTable = false
+                    this.addClueData.studentTable = true
                     return true
                 }
             },
