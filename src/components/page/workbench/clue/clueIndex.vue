@@ -837,6 +837,14 @@
                                 </el-option>
                             </el-select>
                         </div>
+                        <div>
+                            <span class="iptName">联系人姓名:</span>
+                            <el-input v-model="addClueData.contactName" placeholder="请输入内容"></el-input>
+                        </div>
+                        <div>
+                            <span class="iptName">职务:</span>
+                            <el-input v-model="addClueData.contactPosition" placeholder="请输入内容"></el-input>
+                        </div>
                     </div>
 
                     <!-- 机构显示 -->
@@ -866,6 +874,14 @@
                                     :value="item.value">
                                 </el-option>
                             </el-select>
+                        </div>
+                        <div>
+                            <span class="iptName">联系人姓名:</span>
+                            <el-input v-model="addClueData.contactName" placeholder="请输入内容"></el-input>
+                        </div>
+                        <div>
+                            <span class="iptName">职务:</span>
+                            <el-input v-model="addClueData.contactPosition" placeholder="请输入内容"></el-input>
                         </div>
                     </div>
                     <!-- 教师显示 -->
@@ -977,6 +993,14 @@
                                 </el-option>
                             </el-select>
                         </div>
+                        <div>
+                            <span class="iptName">家长姓名:</span>
+                            <el-input v-model="addClueData.contactName" placeholder="请输入内容"></el-input>
+                        </div>
+                        <div>
+                            <span class="iptName">家长职务:</span>
+                            <el-input v-model="addClueData.contactPosition" placeholder="请输入内容"></el-input>
+                        </div>
                     </div>
                     <!-- 自定义内容 -->
 
@@ -997,14 +1021,7 @@
                         <span class="iptName">地址:</span>
                         <el-input v-model="addClueData.address" placeholder="请输入内容"></el-input>
                     </div>
-                    <div>
-                        <span class="iptName">联系人姓名:</span>
-                        <el-input v-model="addClueData.contactName" placeholder="请输入内容"></el-input>
-                    </div>
-                    <div>
-                        <span class="iptName">职务:</span>
-                        <el-input v-model="addClueData.contactPosition" placeholder="请输入内容"></el-input>
-                    </div>
+
                     <div>
                         <span class="iptName">手机:</span>
                         <el-input v-model="addClueData.contactPhone" placeholder="请输入内容"></el-input>
@@ -1071,7 +1088,8 @@
                     // 文理科
                     artsAndSciences: '',
                     sex: '',
-
+                    // 学生姓名
+                    studentName: '',
                     schoolTable: false,
                     mechanismTable: true,
                     teacherTable: true,
@@ -1989,7 +2007,7 @@
                 let paramObj = {};
                 let self = this;
                 // 判断当前线索类型
-                if (this.addClueData.clueType = "1") {
+                if (this.addClueData.clueType == "1") {
                     paramObj = {
                         token: '1513230655X0CZ',
                         cue_source: self.addClueData.sourceTypeValue,
@@ -2009,12 +2027,81 @@
                         contacts_qq: self.addClueData.contactQq,
                         contacts_email: self.addClueData.contactEmail,
                     }
-                } else if (this.addClueData.clueType = "2"){
-                } else if (this.addClueData.clueType = "3"){
-                } else {
+                } else if (this.addClueData.clueType == "2"){
+                    paramObj = {
+                        token: '1513230655X0CZ',
+                        cue_source: self.addClueData.sourceTypeValue,
+                        cue_type: self.addClueData.clueType,
+                        name: self.addClueData.schoolName,
+                        type: self.addClueData.organizationType,
+                        location: self.addClueData.positioning,
 
+                        province_id: self.addClueData.selectCityData[0],
+                        city_id: self.addClueData.selectCityData[1],
+                        area_id: self.addClueData.selectCityData[2],
+                        address: self.addClueData.address,
+                        contacts_name: self.addClueData.contactName,
+                        contacts_post: self.addClueData.contactPosition,
+                        contacts_mobile: self.addClueData.contactPhone,
+                        contacts_telephone: self.addClueData.contactTel,
+                        contacts_wechat: self.addClueData.contactWeixin,
+                        contacts_qq: self.addClueData.contactQq,
+                        contacts_email: self.addClueData.contactEmail,
+                    }
+                } else if (this.addClueData.clueType == "3"){
+                    paramObj = {
+                        token: '1513230655X0CZ',
+                        cue_source: self.addClueData.sourceTypeValue,
+                        cue_type: self.addClueData.clueType,
+                        name: self.addClueData.schoolName,
+
+
+                        los: self.addClueData.academicSystem,
+                        grade: self.addClueData.schoolLevel,
+
+                        contacts_professor_grade: self.addClueData.grade,
+                        contacts_professor_subjects: self.addClueData.professorSubjects,
+
+                        province_id: self.addClueData.selectCityData[0],
+                        city_id: self.addClueData.selectCityData[1],
+                        area_id: self.addClueData.selectCityData[2],
+                        address: self.addClueData.address,
+                        contacts_name: self.addClueData.contactName,
+                        contacts_post: self.addClueData.contactPosition,
+                        contacts_mobile: self.addClueData.contactPhone,
+                        contacts_telephone: self.addClueData.contactTel,
+                        contacts_wechat: self.addClueData.contactWeixin,
+                        contacts_qq: self.addClueData.contactQq,
+                        contacts_email: self.addClueData.contactEmail,
+                    }
+                } else {
+                    paramObj = {
+                        token: '1513230655X0CZ',
+                        cue_source: self.addClueData.sourceTypeValue,
+                        cue_type: self.addClueData.clueType,
+                        name: self.addClueData.studentName,
+                        the_science: self.addClueData.artsAndSciences,
+                        sex: self.addClueData.sex,
+                        school_name: self.addClueData.schoolName,
+
+                        los: self.addClueData.academicSystem,
+                        grade: self.addClueData.schoolLevel,
+
+
+                        province_id: self.addClueData.selectCityData[0],
+                        city_id: self.addClueData.selectCityData[1],
+                        area_id: self.addClueData.selectCityData[2],
+                        address: self.addClueData.address,
+                        contacts_name: self.addClueData.contactName,
+                        contacts_post: self.addClueData.contactPosition,
+                        contacts_mobile: self.addClueData.contactPhone,
+                        contacts_telephone: self.addClueData.contactTel,
+                        contacts_wechat: self.addClueData.contactWeixin,
+                        contacts_qq: self.addClueData.contactQq,
+                        contacts_email: self.addClueData.contactEmail,
+                    }
                 }
-                console.log(JSON.stringify(paramObj,null,4))
+                console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
                 self.$axios({
                     method: 'POST',
                     withCredentials: false,
