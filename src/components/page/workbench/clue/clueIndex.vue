@@ -63,7 +63,7 @@
                     </el-cascader>
                 </div>
             </el-col>
-            <!-- 当前部门与昂 -->
+            <!-- 当前部门员工 -->
             <el-col :span="6">
                 <div class="select rightWrap">
                     <el-select
@@ -641,7 +641,7 @@
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="is_turn"
+                            prop="from_type"
                             label="来源类型"
                             sortable
                             min-width="120"
@@ -1396,11 +1396,14 @@
                             label: '全部'
                         }, {
                             value: '1',
-                            label: '客户'
+                            label: '线索'
                         }, {
-                            value: '2',
-                            label: '手录'
-                        }]
+                             value: '2',
+                             label: '客户'
+                         }, {
+                              value: '3',
+                              label: '手录'
+                          }]
                     }
                 },
                 // 时间选择器
@@ -1928,7 +1931,16 @@
                                 obj.professor_subjects = self.professorSubjectsArr[obj.professor_subjects - 1]
                                 obj.student_grade = self.studentGradeArr[obj.student_grade - 1]
                                 obj.student_sex = obj.student_sex === 1 ? "男" : "女";
-                                obj.is_turn = obj.is_turn === 1 ? "客户" : "手录";
+                                 if (obj.of_level === 1)
+                                  {
+                                         obj.from_type =  "手录"
+                                   }else{
+                                        if (obj.sourceType === 1) {
+                                          obj.from_type =  "线索"
+                                        }else if(obj.sourceType === 2) {
+                                          obj.from_type =  "客户"
+                                        }
+                                   }
                                 obj.the_science = obj.the_science === 1 ? "文科" : "理科";
                                 for (let key in obj) {
                                     if (obj[key] == null) {
@@ -1991,10 +2003,33 @@
                 }
             },
             //
-            // 表格按钮
-            showModelTable() {
-
-            },
+             // 单选删除线索
+             showModelTable() {
+                console.log(self);
+                let paramObj = {};
+                let self = this;
+                   paramObj = {
+                     token: localStorage.getItem('crm_token'),
+                     clue_id: 107,
+                     }
+              console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
+                     self.$axios({
+                         method: 'POST',
+                         withCredentials: false,
+                         url: '/api/clue/deleteClue',
+                         data: paramObj
+                     })
+                         .then(function (res) {
+                             if (res.data.code == 200) {
+                                 console.log('删除成功:'+ res.data.data.list.clue_id +'-'+ res.data.data.list.update_time)
+                             } else {
+                                 alert(res.data.msg)
+                             }
+                         })
+                         .catch(function (err) {
+                             console.log(err);
+                         });
+             },
             // 新增线索按钮
             addClue() {
                 this.dialogVisible = true;
@@ -2009,7 +2044,7 @@
                 // 判断当前线索类型
                 if (this.addClueData.clueType == "1") {
                     paramObj = {
-                        token: '1513230655X0CZ',
+                        token: localStorage.getItem('crm_token'),
                         cue_source: self.addClueData.sourceTypeValue,
                         cue_type: self.addClueData.clueType,
                         name: self.addClueData.schoolName,
@@ -2029,7 +2064,7 @@
                     }
                 } else if (this.addClueData.clueType == "2"){
                     paramObj = {
-                        token: '1513230655X0CZ',
+                         token: localStorage.getItem('crm_token'),
                         cue_source: self.addClueData.sourceTypeValue,
                         cue_type: self.addClueData.clueType,
                         name: self.addClueData.schoolName,
@@ -2050,7 +2085,7 @@
                     }
                 } else if (this.addClueData.clueType == "3"){
                     paramObj = {
-                        token: '1513230655X0CZ',
+                       token: localStorage.getItem('crm_token'),
                         cue_source: self.addClueData.sourceTypeValue,
                         cue_type: self.addClueData.clueType,
                         name: self.addClueData.schoolName,
@@ -2076,7 +2111,7 @@
                     }
                 } else {
                     paramObj = {
-                        token: '1513230655X0CZ',
+                       token: localStorage.getItem('crm_token'),
                         cue_source: self.addClueData.sourceTypeValue,
                         cue_type: self.addClueData.clueType,
                         name: self.addClueData.studentName,
