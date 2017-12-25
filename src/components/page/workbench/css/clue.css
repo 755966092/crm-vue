@@ -24,3 +24,6 @@
 .clueWrap .el-dialog .el-select{
     width: 100%;
 }
+.logTableWrap .el-input-group__prepend {
+    width: 80px;
+}
