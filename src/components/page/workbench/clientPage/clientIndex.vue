@@ -85,7 +85,7 @@
         <!--线索类型-->
         <el-row>
             <el-col :span="3">
-                <p class="leftWrap">线索类型</p>
+                <p class="leftWrap">客户类型</p>
             </el-col>
             <el-col :span="21">
                 <div class="select rightWrap">
@@ -100,7 +100,7 @@
         </el-row>
         <!--中间筛选项-->
         <template v-for="(item, index) in typeList" v-if="item.show">
-            <template v-if="index == 'followUpStatus' || index == 'source' ">
+            <template v-if="index == 'followUpStatus' || index == 'source'  || index == 'serviceUser'   || index == 'businessStatu'   || index == 'paymentStatu' ">
             </template>
             <template v-else>
                 <el-row>
@@ -120,22 +120,42 @@
                 </el-row>
             </template>
         </template>
-        <!-- 跟进状态 -->
-        <el-row v-if="typeList.followUpStatus.show">
-            <el-col :span="3">
-                <p class="leftWrap">{{ typeList.followUpStatus.title }}</p>
-            </el-col>
-            <el-col :span="21">
-                <div class="select rightWrap">
-                    <el-radio-group
-                        @change="radioChange('followUpStatus')"
-                        v-model="typeList.followUpStatus.key">
-                        <el-radio-button v-for="children in typeList.followUpStatus.content" :value="children.value"
-                                         :label="children.label"></el-radio-button>
-                    </el-radio-group>
-                </div>
-            </el-col>
-        </el-row>
+           <!-- 业务状态 -->
+          <el-row v-if="typeList.businessStatu.show">
+              <el-col :span="3">
+                  <p class="leftWrap">{{ typeList.businessStatu.title }}</p>
+              </el-col>
+              <el-col :span="21">
+                  <div class="select rightWrap">
+                      <el-radio-group
+                          @change="radioChange('businessStatu')"
+                          v-model="typeList.businessStatu.key">
+                          <el-radio-button
+                              v-for="children in typeList.businessStatu.content"
+                              :value="children.value"
+                              :label="children.label"></el-radio-button>
+                      </el-radio-group>
+                  </div>
+              </el-col>
+          </el-row>
+           <!-- 回款状态 -->
+      <el-row v-if="typeList.paymentStatu.show">
+          <el-col :span="3">
+              <p class="leftWrap">{{ typeList.paymentStatu.title }}</p>
+          </el-col>
+          <el-col :span="21">
+              <div class="select rightWrap">
+                  <el-radio-group
+                      @change="radioChange('paymentStatu')"
+                      v-model="typeList.paymentStatu.key">
+                      <el-radio-button
+                          v-for="children in typeList.paymentStatu.content"
+                          :value="children.value"
+                          :label="children.label"></el-radio-button>
+                  </el-radio-group>
+              </div>
+          </el-col>
+      </el-row>
         <!-- 来源 -->
         <el-row v-if="typeList.source.show">
             <el-col :span="3">
@@ -154,6 +174,22 @@
                 </div>
             </el-col>
         </el-row>
+                <!-- 负责类型 -->
+                <el-row v-if="typeList.serviceUser.show">
+                    <el-col :span="3">
+                        <p class="leftWrap">{{ typeList.serviceUser.title }}</p>
+                    </el-col>
+                    <el-col :span="21">
+                        <div class="select rightWrap">
+                            <el-radio-group
+                                @change="radioChange('serviceUser')"
+                                v-model="typeList.serviceUser.key">
+                                <el-radio-button v-for="children in typeList.serviceUser.content" :value="children.value"
+                                                 :label="children.label"></el-radio-button>
+                            </el-radio-group>
+                        </div>
+                    </el-col>
+                </el-row>
         <!-- 地区 -->
         <el-row>
             <el-col :span="3">
@@ -1230,6 +1266,46 @@
                             label: '联系方式无效'
                         }]
                     },
+                     // 业务状态
+                    'businessStatu': {
+                        'key': '全部',
+                        'title': '业务状态',
+                        'value': '',
+                        'show': true,
+                        'content': [{
+                            value: '',
+                            label: '全部'
+                        }, {
+                            value: '1',
+                            label: '进行中'
+                        }, {
+                            value: '2',
+                            label: '已完结'
+                        }]
+                    },
+                      // 回款状态
+                    'paymentStatu': {
+                        'key': '全部',
+                        'title': '回款状态',
+                        'value': '',
+                        'show': true,
+                        'content': [{
+                            value: '',
+                            label: '全部'
+                        }, {
+                            value: '1',
+                            label: '待付款'
+                        }, {
+                             value: '2',
+                             label: '部分结算'
+                         }, {
+                            value: '3',
+                            label: '全部结清'
+                        }, {
+                           value: '4',
+                           label: '没有合同'
+                       }]
+                    },
                     // 来源
                     'source': {
                         'key': '全部',
@@ -1256,6 +1332,23 @@
                             label: '客户介绍'
                         }]
                     },
+                        // 负责类型
+                        'serviceUser': {
+                            'key': '全部',
+                            'title': '负责类型',
+                            'value': '',
+                            'show': true,
+                            'content': [{
+                                value: '',
+                                label: '全部'
+                            }, {
+                                value: '1',
+                                label: '服务'
+                            }, {
+                                 value: '2',
+                                 label: '售后'
+                             }]
+                        },
                     // 机构类型
                     'organizationType': {
                         'key': '全部',
@@ -1386,25 +1479,25 @@
                         }]
                     },
                     // 来源类型
-                    'sourceType': {
-                        'key': '全部',
-                        'title': '来源类型',
-                        'show': false,
-                        'value': '',
-                        'content': [{
-                            value: '',
-                            label: '全部'
+                 'sourceType': {
+                       'key': '全部',
+                       'title': '来源类型',
+                       'show': false,
+                       'value': '',
+                       'content': [{
+                           value: '',
+                           label: '全部'
+                       }, {
+                           value: '1',
+                           label: '线索'
+                       }, {
+                            value: '2',
+                            label: '客户'
                         }, {
-                            value: '1',
-                            label: '线索'
-                        }, {
-                             value: '2',
-                             label: '客户'
-                         }, {
-                              value: '3',
-                              label: '手录'
-                          }]
-                    }
+                             value: '3',
+                             label: '手录'
+                         }]
+                   }
                 },
                 // 时间选择器
                 pickerOptions2: {
@@ -1905,6 +1998,7 @@
                         student_grade: self.typeList.grade.value,
                         sex: self.typeList.sex.value,
                         from_type: self.typeList.sourceType.value
+
                     }
                 } else {
 
@@ -1913,7 +2007,7 @@
                 self.$axios({
                     method: 'POST',
                     withCredentials: false,
-                    url: '/api/clue/getClueList',
+                    url: '/api/customer/getCustomerList',
                     data: obj
                 })
                     .then(function (res) {
@@ -1931,16 +2025,16 @@
                                 obj.professor_subjects = self.professorSubjectsArr[obj.professor_subjects - 1]
                                 obj.student_grade = self.studentGradeArr[obj.student_grade - 1]
                                 obj.student_sex = obj.student_sex === 1 ? "男" : "女";
-                                 if (obj.of_level === 1)
-                                  {
-                                         obj.from_type =  "手录"
-                                   }else{
-                                        if (obj.sourceType === 1) {
-                                          obj.from_type =  "线索"
-                                        }else if(obj.sourceType === 2) {
-                                          obj.from_type =  "客户"
-                                        }
-                                   }
+                               if (obj.of_level === 1)
+                                {
+                                       obj.from_type =  "手录"
+                                 }else{
+                                      if (obj.sourceType === 1) {
+                                        obj.from_type =  "线索"
+                                      }else if(obj.sourceType === 2) {
+                                        obj.from_type =  "客户"
+                                      }
+                                 }
                                 obj.the_science = obj.the_science === 1 ? "文科" : "理科";
                                 for (let key in obj) {
                                     if (obj[key] == null) {
@@ -2003,33 +2097,33 @@
                 }
             },
             //
-             // 单选删除线索
-             showModelTable() {
-                console.log(self);
-                let paramObj = {};
-                let self = this;
-                   paramObj = {
-                     token: localStorage.getItem('crm_token'),
-                     clue_id: 107,
-                     }
-              console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
-                     self.$axios({
-                         method: 'POST',
-                         withCredentials: false,
-                         url: '/api/clue/deleteClue',
-                         data: paramObj
-                     })
-                         .then(function (res) {
-                             if (res.data.code == 200) {
-                                 console.log('删除成功:'+ res.data.data.list.clue_id +'-'+ res.data.data.list.update_time)
-                             } else {
-                                 alert(res.data.msg)
-                             }
-                         })
-                         .catch(function (err) {
-                             console.log(err);
-                         });
-             },
+            // 单选删除线索
+            showModelTable() {
+               console.log(self);
+               let paramObj = {};
+               let self = this;
+                  paramObj = {
+                    token: localStorage.getItem('crm_token'),
+                    clue_id: 107,
+                    }
+             console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
+                    self.$axios({
+                        method: 'POST',
+                        withCredentials: false,
+                        url: '/api/clue/deleteClue',
+                        data: paramObj
+                    })
+                        .then(function (res) {
+                            if (res.data.code == 200) {
+                                console.log('删除成功:'+ res.data.data.list.clue_id +'-'+ res.data.data.list.update_time)
+                            } else {
+                                alert(res.data.msg)
+                            }
+                        })
+                        .catch(function (err) {
+                            console.log(err);
+                        });
+            },
             // 新增线索按钮
             addClue() {
                 this.dialogVisible = true;
