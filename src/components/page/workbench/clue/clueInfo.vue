@@ -159,15 +159,15 @@
                     <div class="remarks">
                         <el-row class="title">
                             <el-col :span="6"><p class="remarksTitle">联系人1(默认)</p></el-col>
-                            <el-col :span="2" :offset="14"><p class="editBtn" @click="contactIptStatus">编辑</p></el-col>
-                            <el-col :span="2" ><p class="editBtn" @click="schoolIptStatus">删除</p></el-col>
+                            <el-col :span="3" :offset="14"><p class="editBtn" @click="contactIptStatus">编辑</p></el-col>
+                            <el-col :span="3" ><p class="editBtn" @click="schoolIptStatus">删除</p></el-col>
                         </el-row>
                         <div class="school" :class="{schoolColor:contactIptDis}">
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>姓名：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                     <el-input
                                         v-model="contacts.name"
                                         :disabled="contactIptDis"
@@ -175,10 +175,10 @@
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>部门：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                     <el-input
                                         v-model="contacts.department"
                                         :disabled="contactIptDis"
@@ -186,10 +186,10 @@
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>职务：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                     <el-input
                                         v-model="contacts.post"
                                         :disabled="contactIptDis"
@@ -197,10 +197,10 @@
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>教授科目：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                     <template>
                                         <el-select 
                                             v-model="contacts.professor_subjects" 
@@ -217,10 +217,10 @@
                                 </el-col>
                             </el-row>
                              <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>教授年级：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                     <template>
                                         <el-select 
                                             v-model="contacts.professor_grade" 
@@ -237,10 +237,10 @@
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>手机：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                     <el-input
                                         v-model="contacts.mobile"
                                         :disabled="contactIptDis"
@@ -248,10 +248,10 @@
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>电话：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                     <el-input
                                         v-model="contacts.telephone"
                                         :disabled="contactIptDis"
@@ -259,10 +259,10 @@
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>微信：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                     <el-input
                                         v-model="contacts.wechat"
                                         :disabled="contactIptDis"
@@ -270,10 +270,10 @@
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>QQ：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                     <el-input
                                         v-model="contacts.qq"
                                         :disabled="contactIptDis"
@@ -281,10 +281,10 @@
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>邮箱：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                     <el-input
                                         v-model="contacts.email"
                                         :disabled="contactIptDis"
@@ -292,10 +292,10 @@
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>地区：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                    <div class="select rightWrap">
                                         <el-cascader
                                             expand-trigger="hover"
@@ -311,10 +311,10 @@
                                 </el-col>
                             </el-row>
                              <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>地址：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                     <el-input
                                         v-model="contacts.address"
                                         :disabled="contactIptDis"
@@ -330,50 +330,50 @@
                         </el-row>
                         <div class="school schoolColor" >
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>来源：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                    <p class="infoLabel">{{details.cue_source}}</p>
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>所属机构：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                    <p class="infoLabel">{{details.company_name}}</p>
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>负责人：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                    <p class="infoLabel">{{details.user_name}}</p>
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>前负责人：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                    <p class="infoLabel">{{details.user_before_name|| '无'}}</p>
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>创建时间：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                    <p class="infoLabel">{{details.create_time}}</p>
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="2">
+                                <el-col :span="3">
                                     <p>更新时间：</p>
                                 </el-col>
-                                <el-col :span="22">
+                                <el-col :span="21">
                                    <p class="infoLabel">{{details.update_time}}</p>
                                 </el-col>
                             </el-row>
@@ -384,35 +384,51 @@
                 <el-tab-pane label="跟进日志">
                     <div>
                         <span>新增日志</span>
-                        <span>删除</span>
+                        <span class="delBtn" @click="delLogItem">删除</span>
                     </div>
-                    <template class="logTable">
+                    <div class="logTable">
                         <el-table
-                            :data="tableData"
+                            ref="logList"
+                            border
+                            @selection-change="changeFun"
+                            :data="logTableData"
                             style="width: 100%">
                             <el-table-column
-                            prop="date"
-                            label="日期"
-                            width="180">
+                                type="selection"
+                            >
+                            </el-table-column>
+                            <el-table-column
+                            prop="update_time"
+                            label="时间"
+                            min-width="110">
                             </el-table-column>
                             <el-table-column
                             prop="name"
-                            label="姓名"
-                            width="180">
+                            label="跟进人"
+                            align="center"
+                            min-width="60">
                             </el-table-column>
-                            <el-table-column label="操作">
+                             <el-table-column
+                            prop="contact_ifmt"
+                            label="联系方式"
+                            align="center"
+                            min-width="65">
+                            </el-table-column>
+                             </el-table-column>
+                             <el-table-column
+                            prop="content"
+                            label="内容"
+                            min-width="180">
+                            </el-table-column>
+                            <el-table-column min-width="60" label="操作">
                                 <template slot-scope="scope">
                                     <el-button
                                     size="mini"
                                     @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                                    <el-button
-                                    size="mini"
-                                    type="danger"
-                                    @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
-                        </template>
+                        </div>
                 </el-tab-pane>
             </el-tabs>
          </div> 
@@ -603,31 +619,36 @@
                     remake: null
                 },
                 // 日志表格
-                tableData: [{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                    }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                    }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                    }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                    }]
+                logTableData: [],
+                // 选中行
+                multipleSelection: [],
             }
         },
         
         methods: {
+            // 删除日志
+            delLogItem() {
+                for (let i = 0; i < this.multipleSelection.length; i++) {
+                    this.logTableData = this.logTableData.filter((value) => {
+                        return value.id != this.multipleSelection[i].id
+                    })
+                }
+            },
+            //复选框状态改变
+            changeFun(val) {
+                this.multipleSelection = val;
+            },
+            // 编辑按钮
+            handleEdit(index,data) {
+                // index 所在行数, 从0开始
+                // data 当前行数据
+                console.log(index);
+                console.log(data);
+                
+            },
             // 选择默认联系人
             selectDefaultContact(data) {
                 console.log(data);
-                
                 this.defaultContact = data
             },
             // 线索详情
@@ -661,6 +682,7 @@
                             self.selCityList = [data.list.province_id,data.list.city_id,data.list.area_id]
                             console.log(self.selCityList);
                             self.school = data.list;
+                            self.logTableData = data.followup;
                             // console.log('Data返回:'+JSON.stringify(self.clueInfoData));
 
                         } else {
@@ -748,7 +770,8 @@
         line-height: 30px;
     }
     /* 编辑按钮 */
-    .editBtn {
+    .editBtn,
+    .delBtn {
         cursor: pointer
     }
     /* 学校 */
