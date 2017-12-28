@@ -1540,7 +1540,7 @@
             // 线索详情
             openClueInfo(index, data) {
                 // 跳转到线索详情的页面
-                this.$router.push({path: '/clue/clueInfo'})
+                this.$router.push({path: '/clue/clueInfo',query:data})
             },
             // 更新时间
             timeUpdata(data) {
@@ -1560,6 +1560,9 @@
                     .then(function (res) {
                         if (res.data.code == 200) {
                             // 当前用户只会有一个母公司
+                            console.log('报错数据:'+JSON.stringify(res.data.data.list));
+                            console.log('数据格式:'+ typeof res.data.data.list);
+                            
                             self.parentCompanyList = res.data.data.list[0].children;
                             self.mother_id = res.data.data.list[0].id
                         } else {
@@ -2012,7 +2015,7 @@
                      token: localStorage.getItem('crm_token'),
                      clue_id: 109,
                      }
-              console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
+                    console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
                      self.$axios({
                          method: 'POST',
                          withCredentials: false,

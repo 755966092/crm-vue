@@ -207,7 +207,16 @@ export default {
       performanceRanking: [],
       // 销售简报数据
       alesAssistantData: {
-
+            "deal": {
+                "count": 0,
+                "sum_money": null,
+                "hui": 0
+            },
+            "addList": {
+                "clue": 0,
+                "customer": 0
+            },
+            "followup": 0
       },
       // 销售简报选择value
       assistantValue: "1",
@@ -243,18 +252,18 @@ export default {
       //     console.log(err);
       // });
     },
-     filterClue() {
-        console.log('筛选表格数据')
+    filterClue() {
+        // console.log('筛选表格数据')
         // 筛选表格数据
         // console.log(this.clueType)
         let self = this;
-        let token = '1514255017UHQZ';
+        
         let obj = {
-        token: token,
+        token: localStorage.getItem('crm_token'),
         statu: self.performanceRankingValue,
         };
 
-        console.log('请求参数:'+JSON.stringify(obj,null,4))
+        // console.log('请求参数:'+JSON.stringify(obj,null,4))
         self.$axios({
             method: 'POST',
             withCredentials: false,
@@ -264,8 +273,8 @@ export default {
             .then(function (res) {
                 if (res.data.code === 200) {
                     // console.log('返回参数:');
-                    console.log(res);
-                    console.log('返回参数:'+JSON.stringify(res.data,null,4));
+                    // console.log(res);
+                    // console.log('返回参数:'+JSON.stringify(res.data,null,4));
                     for (var i = 0; i < res.data.data.list.length; i++) {
 
                         for (let key in obj) {
@@ -276,7 +285,7 @@ export default {
                     }
 
                     self.tableData = res.data.data.list
-                    console.log(JSON.stringify(self.tableData,null,4))
+                    // console.log(JSON.stringify(self.tableData,null,4))
                     //self.tableDataAll = res.data.data
                 } else {
                     alert(res.data.msg)
@@ -286,65 +295,60 @@ export default {
                 console.log(err);
             });
     },
-     saleskit() {
-            console.log('筛选表格数据')
-            // 筛选表格数据
-            // console.log(this.clueType)
-            let self = this;
-            let token = '1514255017UHQZ';
-            let obj = {
-            token: token,
+    saleskit() {
+        // console.log('筛选表格数据')
+        // 筛选表格数据
+        let self = this;
+        let obj = {
+            token: localStorage.getItem('crm_token'),
             statu: self.assistantValue,
-            };
+        };
 
-            console.log('请求参数:'+JSON.stringify(obj,null,4))
-            self.$axios({
-                method: 'POST',
-                withCredentials: false,
-                url: '/api/workbench/saleskit',
-                data: obj
+        // console.log('请求参数:'+JSON.stringify(obj,null,4))
+        self.$axios({
+            method: 'POST',
+            withCredentials: false,
+            url: '/api/workbench/saleskit',
+            data: obj
+        })
+            .then(function (res) {
+                if (res.data.code === 200) {
+                    // console.log('返回参数:');
+                    // for (var i = 0; i < 3; i++) {
+                    //     for (let key in obj) {
+                    //         if (obj[key] == null) {
+                    //             obj[key] = '-'
+                    //         }
+                    //     }
+                    // }
+
+                    self.alesAssistantData = res.data.data
+                    // console.log('销售简报'+JSON.stringify(self.alesAssistantData,null,4))
+                    //self.tableDataAll = res.data.data
+                } else {
+                    alert(res.data.msg)
+                }
             })
-                .then(function (res) {
-                    if (res.data.code === 200) {
-                        // console.log('返回参数:');
-                        console.log(res);
-                        console.log('返回参数:'+JSON.stringify(res.data,null,4));
-                        for (var i = 0; i < 3; i++) {
-
-                            for (let key in obj) {
-                                if (obj[key] == null) {
-                                    obj[key] = '-'
-                                }
-                            }
-                        }
-
-                        self.alesAssistantData = res.data.data
-                        console.log(JSON.stringify(self.alesAssistantData,null,4))
-                        //self.tableDataAll = res.data.data
-                    } else {
-                        alert(res.data.msg)
-                    }
-                })
-                .catch(function (err) {
-                    console.log(err);
-                });
+            .catch(function (err) {
+                console.log(err);
+            });
         },
-    // 重新获取列表数据
-    retrieveData(data) {
-      this.filterClue();
-    },
+        // 重新获取列表数据
+        retrieveData(data) {
+        this.filterClue();
+        },
 
-    // 销售简报条件筛选数据
-    assistantValueChange() {
-      this.saleskit();
+        // 销售简报条件筛选数据
+        assistantValueChange() {
+            this.saleskit();
+        },
+        // 销售助手跳转
+        newPage() {}
     },
-    // 销售助手跳转
-    newPage() {}
-  },
-  created() {
-    this.filterClue();
-    this.saleskit();
-  }
+    created() {
+        this.saleskit();
+        this.filterClue();
+    },
 };
 </script>
 
