@@ -101,10 +101,10 @@
         <!-- 柱状图 -->
         <div id="myChart"></div>
         <p>
-            <span>总跟进次数: 36</span>
-            <span>跟进线索次数: 12</span>
-            <span>跟进客户次数: 12</span>
-            <span>跟进合同次数: 12</span>
+            <span>总跟进次数: {{tableDataAll.Allcount}}</span>
+            <span>跟进线索次数: {{tableDataAll.Cluecount}}</span>
+            <span>跟进客户次数: {{tableDataAll.Customercount}}</span>
+            <span>跟进合同次数: {{tableDataAll.Contractcount}}</span>
             <span class="btn">
                 <el-button @click="exportData" type="success">导出</el-button>
             </span>
@@ -116,43 +116,38 @@
                 :data="tableData"
                 style="width: 100%">
                     <el-table-column
-                        prop="date"
+                        prop="time"
                         label="时间"
                         min-width="130"
                         align="center">
                     </el-table-column>
                     <el-table-column
-                        prop="logs"
+                        prop="all_count"
                         label="日志总数"
                         min-width="130"
                         align="center">
                     </el-table-column>
                     <el-table-column
-                        prop="earlyFollowup"
+                        prop="first_count"
                         label="前期跟进次数"
                         min-width="130"
                         align="center">
                     </el-table-column>
                     <el-table-column
-                        prop="saleFollowup"
+                        prop="center_count"
                         label="售中跟进次数"
                         min-width="130"
                         align="center">
                     </el-table-column>
-                    <el-table-column
-                        prop="earlyServices"
-                        label="售中服务次数"
-                        min-width="130"
-                        align="center">
-                    </el-table-column>
-                    <el-table-column
-                        prop="aftermarketFollwup"
+
+                   <el-table-column
+                        prop="before_follow_count"
                         label="售后跟进次数"
                         min-width="130"
                         align="center">
                     </el-table-column>
                     <el-table-column
-                        prop="aftermarketServices"
+                        prop="before_serve_count"
                         label="售后服务次数"
                         min-width="130"
                         align="center">
@@ -247,23 +242,11 @@
                     contractFrequency: [1, 4, 5, 2, 7, 4],
                 },
                 // 表格数据
-                tableData: [{
-                    date: '2017-05',
-                    logs: 44,
-                    earlyFollowup: 23,
-                    saleFollowup: 22,
-                    earlyServices: 12,
-                    aftermarketFollwup: 16,
-                    aftermarketServices: 14
-                },{
-                    date: '2017-06',
-                    logs: 44,
-                    earlyFollowup: 23,
-                    saleFollowup: 22,
-                    earlyServices: 12,
-                    aftermarketFollwup: 16,
-                    aftermarketServices: 14
-                }]
+               tableData: [],
+               //列表上页(总)
+               tableDataAll: [],
+                // 图形数据
+               tableDataTu: [],
             }
         },
         methods: {
@@ -324,6 +307,7 @@
                 // 获取子公司所有部门
                 if (children !== this.children_id) {
                     this.getChildrenDepartment();
+                    this.filterClue()
                 }
             },
             // 子公司/ 母公司/ 加盟商修改
@@ -332,6 +316,7 @@
                 if (data === 2) {
                     // 获取子公司
                     this.applyCompany();
+                    this.filterClue()
                 }
             },
              // 所有子公司
@@ -367,9 +352,61 @@
                 // 获取部门所有员工
                 if (department !== this.department_id) {
                     this.getDepartmentEmployees();
+                    this.filterClue()
                 }
 
             },
+             filterClue() {
+                        console.log('筛选表格数据')
+                        // 筛选表格数据
+                        // console.log(this.clueType)
+                        let self = this;
+                        let token = '1514255017UHQZ';
+                        let obj = {
+                        type: self.selectRangeItem,
+                        token: token,
+                        statu:'',
+                         create_start: self.lastFollowUpTime[0],
+                         create_end: self.lastFollowUpTime[1],
+                         children_id: self.children_id,
+                         department_id: self.department_id,
+                         user_id: self.employees_id,
+                          name: "",
+                        };
+
+                        console.log('请求参数:'+JSON.stringify(obj,null,4))
+                        self.$axios({
+                            method: 'POST',
+                            withCredentials: false,
+                            url: '/api/reportCenter/journaling',
+                            data: obj
+                        })
+                            .then(function (res) {
+                                if (res.data.code === 200) {
+                                    // console.log('返回参数:');
+                                    console.log(res);
+                                    console.log('返回参数:'+JSON.stringify(res.data,null,4));
+                                    for (var i = 0; i < res.data.data.list.length; i++) {
+
+                                        for (let key in obj) {
+                                            if (obj[key] == null) {
+                                                obj[key] = '-'
+                                            }
+                                        }
+                                    }
+                                    console.log(JSON.stringify(res.data.data.list,null,4))
+                                    self.tableData = res.data.data.list
+                                    self.tableDataTu = res.data.data.listTu
+                                    console.log(typeof self.tableDataTu.timeday);
+                                    self.tableDataAll = res.data.data
+                                } else {
+                                    alert(res.data.msg)
+                                }
+                            })
+                            .catch(function (err) {
+                                console.log(err);
+                            });
+                    },
             // 获取部门所有员工
             getDepartmentEmployees() {
                 console.log('获取部门所有员工')
@@ -411,10 +448,46 @@
             },
               // 更新时间
             timeUpdata(data) {
+              this.filterClue();
             },
             // 导出
             exportData() {
-                alert('导出成功')
+              console.log('导出筛选数据')
+            // 导出筛选数据
+            // console.log(this.clueType)
+            let self = this;
+            let token = '1514255017UHQZ';
+            let obj = {
+            type: self.selectRangeItem,
+            token: token,
+             statu:1,
+             followup_start: self.lastFollowUpTime[0],
+             followup_end: self.lastFollowUpTime[1],
+             children_id: self.children_id,
+             department_id: self.department_id,
+             user_id: self.employees_id,
+              name: "",
+            };
+
+            console.log('请求参数:'+JSON.stringify(obj,null,4))
+            self.$axios({
+                method: 'POST',
+                withCredentials: false,
+                url: '/api/reportCenter/journaling',
+                data: obj
+            })
+                .then(function (res) {
+                    if (res.data.code === 200) {
+                        // console.log('返回参数:');
+                        console.log(res);
+                       alert('打印成功')
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+                .catch(function (err) {
+                    console.log(err);
+                });
             },
             drawLine() {
                 let self = this;
@@ -430,7 +503,7 @@
                         }
                     },
                     legend: {
-                        data:['跟进线索次数','跟进客户次数','跟进合同次数']
+                        data:['日志总数','前期跟进次数','售中跟进次数','售后跟进次数','售后服务次数']
                     },
                     grid: {
                         left: '3%',
@@ -441,7 +514,7 @@
                     xAxis : [
                         {
                             type : 'category',
-                            data : self.histogramDate
+                            data : self.tableDataTu.timeday
                         }
                     ],
                     yAxis : [
@@ -451,20 +524,31 @@
                     ],
                     series : [
                         {
-                            name:'跟进线索次数',
+                            name:'日志总数',
                             type:'bar',
-                            data: self.histogramData.clueFrequency
+                            data: self.tableDataTu.clueCount
                         },
                         {
-                            name:'跟进客户次数',
+                            name:'前期跟进次数',
                             type:'bar',
-                            data: self.histogramData.clientFrequency
+                            data: self.tableDataTu.first_count
                         },
                         {
-                            name:'跟进合同次数',
+                            name:'售中跟进次数',
                             type:'bar',
-                            data: self.histogramData.contractFrequency
-                        }
+                            data: self.tableDataTu.center_count
+                        },
+                        {
+                            name:'售后跟进次数',
+                            type:'bar',
+                            data: self.tableDataTu.before_follow_count
+                        },{
+                             name:'售后服务次数',
+                             type:'bar',
+                             data: self.tableDataTu.before_serve_count
+                          },
+
+
                     ]
                 });
             }
@@ -483,6 +567,17 @@
          },
         mounted() {
             this.drawLine()
+        },
+        created() {
+            this.applyCompany();
+            this.filterClue();
+            if (localStorage.getItem('cityData')) {
+                console.log('有缓存')
+                this.cityList = JSON.parse(localStorage.getItem('cityData'))
+            } else {
+                console.log('无缓存')
+                this.requestCity();
+            }
         }
     }
 </script>

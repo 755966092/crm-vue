@@ -1691,7 +1691,7 @@
                 // this.employees_id =
                 this.filterClue();
             },
-            // 线索类型
+            // 线索类型--筛查条件
             clueTypeChange(data) {
                 console.log(data)
                 if (data === '学校' || data == 1) {
@@ -2004,13 +2004,13 @@
             },
             //
              // 单选删除线索
-             showModelTable() {
-                console.log(self);
+             showModelTable(data) {
                 let paramObj = {};
+                console.log();
                 let self = this;
                    paramObj = {
                      token: localStorage.getItem('crm_token'),
-                     clue_id: 107,
+                     clue_id: 109,
                      }
               console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
                      self.$axios({

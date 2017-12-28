@@ -102,7 +102,7 @@
         <!-- 柱状图 -->
         <div id="myChart"></div>
         <p>
-            <span>合同总金额: 12000</span>
+            <span>合同总金额: {{tableDataAll.CustomerMoney}}</span>
             <span class="btn">
                 <el-button @click="exportData" type="success">导出</el-button>
             </span>
@@ -120,13 +120,13 @@
                         align="center">
                     </el-table-column>
                     <el-table-column
-                        prop="logs"
+                        prop="user_name"
                         label="姓名"
                         min-width="200"
                         align="center">
                     </el-table-column>
                     <el-table-column
-                        prop="earlyFollowup"
+                        prop="contract_money"
                         label="合同总金额"
                         min-width="200"
                         align="center">
@@ -238,23 +238,9 @@
                     clientFrequency: [50000, 60000, 30000, 60000, 30000, 40000],
                 },
                 // 表格数据
-                tableData: [{
-                    date: '2017-05',
-                    logs: 44,
-                    earlyFollowup: 23,
-                    saleFollowup: 22,
-                    earlyServices: 12,
-                    aftermarketFollwup: 16,
-                    aftermarketServices: 14
-                },{
-                    date: '2017-06',
-                    logs: 44,
-                    earlyFollowup: 23,
-                    saleFollowup: 22,
-                    earlyServices: 12,
-                    aftermarketFollwup: 16,
-                    aftermarketServices: 14
-                }]
+                tableData: [],
+                 //列表上页(总)
+                tableDataAll:[]
             }
         },
         methods: {
@@ -320,6 +306,7 @@
                 // 获取子公司所有部门
                 if (children !== this.children_id) {
                     this.getChildrenDepartment();
+                    this.filterClue()
                 }
             },
             // 子公司/ 母公司/ 加盟商修改
@@ -328,6 +315,7 @@
                 if (data === 2) {
                     // 获取子公司
                     this.applyCompany();
+                    this.filterClue()
                 }
             },
              // 所有子公司
@@ -363,6 +351,7 @@
                 // 获取部门所有员工
                 if (department !== this.department_id) {
                     this.getDepartmentEmployees();
+                    this.filterClue()
                 }
 
             },
@@ -398,6 +387,7 @@
                         console.log(err);
                     });
             },
+
             // selectEmployees 选择员工
             selectEmployees(data) {
                 console.log(this.employees_id)
@@ -407,7 +397,58 @@
             },
               // 更新时间
             timeUpdata(data) {
+                this.filterClue()
             },
+           filterClue() {
+                    console.log('筛选表格数据')
+                    // 筛选表格数据
+                    // console.log(this.clueType)
+                    let self = this;
+                    let token = '1514255017UHQZ';
+                    let obj = {
+                    type: self.selectRangeItem,
+                    token: token,
+                    statu:'',
+                     create_start: self.lastFollowUpTime[0],
+                     create_end: self.lastFollowUpTime[1],
+                     children_id: self.children_id,
+                     department_id: self.department_id,
+                     user_id: self.employees_id,
+                      name: "",
+                    };
+
+                    console.log('请求参数:'+JSON.stringify(obj,null,4))
+                    self.$axios({
+                        method: 'POST',
+                        withCredentials: false,
+                        url: '/api/reportCenter/RtfJournaling',
+                        data: obj
+                    })
+                        .then(function (res) {
+                            if (res.data.code === 200) {
+                                // console.log('返回参数:');
+                                console.log(res);
+                                console.log('返回参数:'+JSON.stringify(res.data,null,4));
+                                for (var i = 0; i < res.data.data.list.length; i++) {
+
+                                    for (let key in obj) {
+                                        if (obj[key] == null) {
+                                            obj[key] = '-'
+                                        }
+                                    }
+                                }
+                                console.log(JSON.stringify(res.data.data.list,null,4))
+                                self.tableData = res.data.data.list
+                                self.tableDataAll = res.data.data
+                            } else {
+                                alert(res.data.msg)
+                            }
+                        })
+                        .catch(function (err) {
+                            console.log(err);
+                        });
+                },
+
             // 导出
             exportData() {
                 alert('导出成功')
@@ -474,7 +515,18 @@
          },
         mounted() {
             this.drawLine()
-        }
+        },
+       created() {
+           this.applyCompany();
+           this.filterClue();
+           if (localStorage.getItem('cityData')) {
+               console.log('有缓存')
+               this.cityList = JSON.parse(localStorage.getItem('cityData'))
+           } else {
+               console.log('无缓存')
+               this.requestCity();
+           }
+       }
     }
 </script>
 

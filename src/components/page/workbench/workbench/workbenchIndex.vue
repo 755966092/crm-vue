@@ -90,54 +90,54 @@
                 </div>
                 <template>
                     <el-table
-                        :data="performanceRanking"
+                        :data="tableData"
                         :default-sort = "{prop: 'clueAmount', order: 'descending'}"
                     >
                         <el-table-column
                             fixed
-                            prop="canme"
+                            prop="name"
                             label="姓名"
                             sortable
                             min-width="130">
                         </el-table-column>
                         <el-table-column
-                            prop="contractCount"
+                            prop="contracts_count"
                             label="合同数"
                             sortable
                             min-width="130">
                         </el-table-column>
                         <el-table-column
-                            prop="conAmount"
+                            prop="contracts_money"
                             min-width="130"
                             sortable
                             label="合同金额">
                             <template slot-scope="scope">
-                                <span style="margin-left: 10px">$ {{ scope.row.conAmount }}</span>
+                                <span style="margin-left: 10px">$ {{ scope.row.contracts_money }}</span>
                             </template>
                         </el-table-column>
                         <el-table-column
-                            prop="clueAmount"
+                            prop="fund_money"
                             min-width="130"
                             sortable
                             label="已回款金额">
                             <template slot-scope="scope">
-                                <span style="margin-left: 10px">$ {{ scope.row.clueAmount }}</span>
+                                <span style="margin-left: 10px">$ {{ scope.row.fund_money }}</span>
                             </template>
                         </el-table-column>
                         <el-table-column
-                            prop="clueCount"
+                            prop="clue_count"
                             min-width="130"
                             sortable
                             label="新增线索数">
                         </el-table-column>
                         <el-table-column
-                            prop="clientCount"
+                            prop="customer_count"
                             min-width="130"
                             sortable
                             label="新增客户数">
                         </el-table-column>
                         <el-table-column
-                            prop="fullupCount"
+                            prop="followup_count"
                             min-width="130"
                             sortable
                             label="跟进次数">
@@ -198,22 +198,16 @@ export default {
           label: "去年"
         }
       ],
+      // 表格数据（业绩排行）
+      tableData: [],
+      tableData2: [],
       // 业绩排行筛选选中数据
       performanceRankingValue: "1",
       // 业绩排行表格数据
       performanceRanking: [],
       // 销售简报数据
       alesAssistantData: {
-        deal: {
-          count: 0,
-          sum_money: 0,
-          hui: 0
-        },
-        addList: {
-          clue: 0,
-          customer: 0
-        },
-        followup: 0
+
       },
       // 销售简报选择value
       assistantValue: "1",
@@ -249,92 +243,107 @@ export default {
       //     console.log(err);
       // });
     },
-    // 获取业绩排行
-    getPerformanceRanking() {
-      var self = this;
-      // 假数据
-      // let url = 'http://localhost:8081/mock/performanceRanking';
-      // if (self.performanceRankingValue == 1) {
-      //     url = 'http://localhost:8081/mock/performanceRanking2';
-      // } else if (self.performanceRankingValue == 2) {
-      //     url = 'http://localhost:8081/mock/performanceRanking3';
-      // } else if (self.performanceRankingValue == 3) {
-      //     url = 'http://localhost:8081/mock/performanceRanking4';
-      // } else {
-      //     url = 'http://localhost:8081/mock/performanceRanking5';
-      // }
+     filterClue() {
+        console.log('筛选表格数据')
+        // 筛选表格数据
+        // console.log(this.clueType)
+        let self = this;
+        let token = '1514255017UHQZ';
+        let obj = {
+        token: token,
+        statu: self.performanceRankingValue,
+        };
 
-      // self.$axios({
-      //     method: 'GET',
-      //     withCredentials: false,
-      //     url: url,
-      // })
-      //     .then(function (res) {
-      //         self.performanceRanking = res.data
-      //     })
-      //     .catch(function (err) {
-      //         console.log(err);
-      //     });
+        console.log('请求参数:'+JSON.stringify(obj,null,4))
+        self.$axios({
+            method: 'POST',
+            withCredentials: false,
+            url: '/api/workbench/performance',
+            data: obj
+        })
+            .then(function (res) {
+                if (res.data.code === 200) {
+                    // console.log('返回参数:');
+                    console.log(res);
+                    console.log('返回参数:'+JSON.stringify(res.data,null,4));
+                    for (var i = 0; i < res.data.data.list.length; i++) {
 
-      // 真数据
-      self
-        .$axios({
-          method: "POST",
-          withCredentials: false,
-          url: "/api/Workbench/performance",
-          data: {
-            token: localStorage.getItem('crm_token'),
-            statu: self.performanceRankingValue
-          }
-        })
-        .then(function(res) {
-          console.log("请求成功" + self.performanceRankingValue);
-          self.performanceRanking = res.data.data.list;
-        })
-        .catch(function(err) {
-          console.log(err);
-        });
+                        for (let key in obj) {
+                            if (obj[key] == null) {
+                                obj[key] = '-'
+                            }
+                        }
+                    }
+
+                    self.tableData = res.data.data.list
+                    console.log(JSON.stringify(self.tableData,null,4))
+                    //self.tableDataAll = res.data.data
+                } else {
+                    alert(res.data.msg)
+                }
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
     },
+     saleskit() {
+            console.log('筛选表格数据')
+            // 筛选表格数据
+            // console.log(this.clueType)
+            let self = this;
+            let token = '1514255017UHQZ';
+            let obj = {
+            token: token,
+            statu: self.assistantValue,
+            };
+
+            console.log('请求参数:'+JSON.stringify(obj,null,4))
+            self.$axios({
+                method: 'POST',
+                withCredentials: false,
+                url: '/api/workbench/saleskit',
+                data: obj
+            })
+                .then(function (res) {
+                    if (res.data.code === 200) {
+                        // console.log('返回参数:');
+                        console.log(res);
+                        console.log('返回参数:'+JSON.stringify(res.data,null,4));
+                        for (var i = 0; i < 3; i++) {
+
+                            for (let key in obj) {
+                                if (obj[key] == null) {
+                                    obj[key] = '-'
+                                }
+                            }
+                        }
+
+                        self.alesAssistantData = res.data.data
+                        console.log(JSON.stringify(self.alesAssistantData,null,4))
+                        //self.tableDataAll = res.data.data
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+                .catch(function (err) {
+                    console.log(err);
+                });
+        },
     // 重新获取列表数据
     retrieveData(data) {
-      this.getPerformanceRanking(data);
+      this.filterClue();
     },
-    // 销售简报数据
-    getAlesAssistantData() {
-      var self = this;
-      self
-        .$axios({
-          method: "POST",
-          withCredentials: false,
-          url: "/api/Workbench/saleskit",
-          data: {
-            token: localStorage.getItem('crm_token'),
-            statu: self.assistantValue
-          }
-        })
-        .then(function(res) {
-          if (res.status === 200 && res.data.code === 200) {
-            // 请求成功
 
-            self.alesAssistantData = res.data.data;
-          } else {
-            alert(res.data.msg);
-          }
-        })
-        .catch(function(err) {
-          console.log(err);
-        });
-    },
     // 销售简报条件筛选数据
     assistantValueChange() {
-      this.getAlesAssistantData();
+      this.saleskit();
     },
     // 销售助手跳转
     newPage() {}
   },
   created() {
-    this.getAlesAssistantData();
-    this.getPerformanceRanking();
+    this.filterClue();
+    this.saleskit();
   }
 };
 </script>

@@ -2097,7 +2097,7 @@
                 }
             },
             //
-            // 单选删除线索
+            // 单选删除客户
             showModelTable() {
                console.log(self);
                let paramObj = {};
@@ -2106,7 +2106,7 @@
                     token: localStorage.getItem('crm_token'),
                     clue_id: 107,
                     }
-             console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
+             console.log('提交客户参数:'+JSON.stringify(paramObj,null,4))
                     self.$axios({
                         method: 'POST',
                         withCredentials: false,

@@ -99,30 +99,27 @@
             </el-col>
         </el-row>
         <!-- 客户类型 -->
-        <el-row>
-            <el-col :span="3">
-                <p class="leftWrap">客户类型</p>
-            </el-col>
-            <el-col :span="21">
-                <div class="select rightWrap">
-                    <el-radio-group
-                        @change="radioChange"
-                        v-model="clientTypeData">
-                        <el-radio-button
-                            v-for="children in clientType"
-                            :name="children.value"
-                            :label="children.label"
-                            >
-                        </el-radio-button>
-                    </el-radio-group>
-                </div>
-            </el-col>
-        </el-row>
+          <el-row>
+                <el-col :span="3">
+                    <p class="leftWrap">模块</p>
+                </el-col>
+                <el-col :span="21">
+                    <div class="select rightWrap">
+                        <el-radio-group @change="radioChange" v-model="clientTypeData">
+                            <el-radio-button label="">全部</el-radio-button>
+                            <el-radio-button label="1">学校</el-radio-button>
+                            <el-radio-button label="2">机构</el-radio-button>
+                            <el-radio-button label="3">教师</el-radio-button>
+                            <el-radio-button label="4">学生</el-radio-button>
+                        </el-radio-group>
+                    </div>
+                </el-col>
+            </el-row>
         <!-- 柱状图 -->
         <div id="myChart"></div>
         <p>
-            <span>合同数量: 12</span>
-            <span>合同总金额: 12000</span>
+            <span>合同数量: {{tableDataAll.ContractCount}}</span>
+            <span>合同总金额: {{tableDataAll.CustomerMoney}}</span>
             <span class="btn">
                 <el-button @click="exportData" type="success">导出</el-button>
             </span>
@@ -134,25 +131,25 @@
                 :data="tableData"
                 style="width: 100%">
                     <el-table-column
-                        prop="date"
+                        prop="time"
                         label="时间"
                         min-width="130"
                         align="center">
                     </el-table-column>
                     <el-table-column
-                        prop="logs"
+                        prop="contract_count"
                         label="合同数量"
                         min-width="130"
                         align="center">
                     </el-table-column>
                     <el-table-column
-                        prop="earlyFollowup"
+                        prop="contract_money"
                         label="合同总金额"
                         min-width="130"
                         align="center">
                     </el-table-column>
                     <el-table-column
-                        prop="saleFollowup"
+                        prop="self_money"
                         label="均客单价"
                         min-width="130"
                         align="center">
@@ -190,25 +187,8 @@
                         value: 3
                     }
                 ],
-                clientType: [
-                    {
-                        value: '0',
-                        label: '全部'
-                    }, {
-                        value: '1',
-                        label: '学校'
-                    }, {
-                        value: '2',
-                        label: '机构'
-                    }, {
-                        value: '3',
-                        label: '教师'
-                    }, {
-                        value: '4',
-                        label: '学生'
-                    }
-                ],
-                clientTypeData: '全部',
+
+                clientTypeData: '',
                 // 当前公司部门
                 currentCompanyDepartment: [],
                 // 当前公司下的部门
@@ -266,23 +246,9 @@
                     clientFrequency: [50000, 60000, 30000, 60000, 30000, 40000],
                 },
                 // 表格数据
-                tableData: [{
-                    date: '2017-05',
-                    logs: 44,
-                    earlyFollowup: 23,
-                    saleFollowup: 22,
-                    earlyServices: 12,
-                    aftermarketFollwup: 16,
-                    aftermarketServices: 14
-                },{
-                    date: '2017-06',
-                    logs: 44,
-                    earlyFollowup: 23,
-                    saleFollowup: 22,
-                    earlyServices: 12,
-                    aftermarketFollwup: 16,
-                    aftermarketServices: 14
-                }]
+                tableData: [],
+                //列表上页(总)
+                tableDataAll:[]
             }
         },
         methods: {
@@ -290,6 +256,7 @@
             radioChange(data) {
                 console.log(data)
                 console.log(this.clientTypeData)
+                this.filterClue()
             },
              // 当前母公司下的所有部门
             getDepartment() {
@@ -348,6 +315,7 @@
                 // 获取子公司所有部门
                 if (children !== this.children_id) {
                     this.getChildrenDepartment();
+                    this.filterClue()
                 }
             },
             // 子公司/ 母公司/ 加盟商修改
@@ -356,6 +324,7 @@
                 if (data === 2) {
                     // 获取子公司
                     this.applyCompany();
+                    this.filterClue()
                 }
             },
              // 所有子公司
@@ -391,6 +360,7 @@
                 // 获取部门所有员工
                 if (department !== this.department_id) {
                     this.getDepartmentEmployees();
+                    this.filterClue()
                 }
 
             },
@@ -433,8 +403,59 @@
                 // this.employees_id =
                 this.filterClue();
             },
+          filterClue() {
+                        console.log('筛选表格数据')
+                        // 筛选表格数据
+                        // console.log(this.clueType)
+                        let self = this;
+                        let token = '1514255017UHQZ';
+                        let obj = {
+                        type: self.selectRangeItem,
+                        token: token,
+                        statu:'',
+                        cue_type:self.clientTypeData,
+                         create_start: self.lastFollowUpTime[0],
+                         create_end: self.lastFollowUpTime[1],
+                         children_id: self.children_id,
+                         department_id: self.department_id,
+                         user_id: self.employees_id,
+                          name: "",
+                        };
+
+                        console.log('请求参数:'+JSON.stringify(obj,null,4))
+                        self.$axios({
+                            method: 'POST',
+                            withCredentials: false,
+                            url: '/api/reportCenter/contractJournaling',
+                            data: obj
+                        })
+                            .then(function (res) {
+                                if (res.data.code === 200) {
+                                    // console.log('返回参数:');
+                                    console.log(res);
+                                    console.log('返回参数:'+JSON.stringify(res.data,null,4));
+                                    for (var i = 0; i < res.data.data.list.length; i++) {
+
+                                        for (let key in obj) {
+                                            if (obj[key] == null) {
+                                                obj[key] = '-'
+                                            }
+                                        }
+                                    }
+                                    console.log(JSON.stringify(res.data.data.list,null,4))
+                                    self.tableData = res.data.data.list
+                                    self.tableDataAll = res.data.data
+                                } else {
+                                    alert(res.data.msg)
+                                }
+                            })
+                            .catch(function (err) {
+                                console.log(err);
+                            });
+                    },
               // 更新时间
             timeUpdata(data) {
+                    this.filterClue();
             },
             // 导出
             exportData() {
@@ -508,7 +529,18 @@
          },
         mounted() {
             this.drawLine()
-        }
+        },
+      created() {
+          this.applyCompany();
+          this.filterClue();
+          if (localStorage.getItem('cityData')) {
+              console.log('有缓存')
+              this.cityList = JSON.parse(localStorage.getItem('cityData'))
+          } else {
+              console.log('无缓存')
+              this.requestCity();
+          }
+      }
     }
 </script>
 
