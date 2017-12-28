@@ -64,15 +64,19 @@
                         </el-input>
                     </div>
                     <!-- 学校 -->
-                    <div class="remarks">
+                    <div class="remarks" v-if="clueType != 4">
                         <el-row class="title">
-                            <el-col :span="6"><p class="remarksTitle">学校</p></el-col>
+                            <el-col :span="6">
+                                <p  class="remarksTitle" v-if="clueType == 1">学校</p>
+                                <p  class="remarksTitle" v-else-if="clueType == 2">机构</p>
+                                <p  class="remarksTitle" v-else-if="clueType == 3">教师</p>
+                            </el-col>
                             <el-col :span="2" :offset="16"><p class="editBtn" @click="schoolIptStatus">编辑</p></el-col>
                         </el-row>
                         <div class="school" :class="{schoolColor:schoolIptDis}">
                             <el-row>
                                 <el-col :span="2">
-                                    <p>学校：</p>
+                                    <p>名称</p>
                                 </el-col>
                                 <el-col :span="22">
                                     <el-input
@@ -83,11 +87,26 @@
                             </el-row>
                             <el-row>
                                 <el-col :span="2">
-                                    <p>学制：</p>
+                                    <p v-if="clueType == 2">类型：</p>
+                                    <p v-else>学制：</p>
                                 </el-col>
                                 <el-col :span="22">
-                                    <template>
+                                    <template v-if="clueType == 2">
+                                       
                                         <el-select 
+                                            v-model="school.los" 
+                                            placeholder="请选择"
+                                            :disabled="schoolIptDis">
+                                            <el-option
+                                            v-for="item in mechanismTypeArr"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                            </el-option>
+                                        </el-select>
+                                    </template>
+                                    <template v-else>
+                                         <el-select 
                                             v-model="school.los" 
                                             placeholder="请选择"
                                             :disabled="schoolIptDis">
@@ -95,7 +114,6 @@
                                             v-for="item in academicSystemArr"
                                             :key="item.value"
                                             :label="item.label"
-                                            
                                             :value="item.value">
                                             </el-option>
                                         </el-select>
@@ -104,10 +122,25 @@
                             </el-row>
                             <el-row>
                                 <el-col :span="2">
-                                    <p>等级：</p>
+                                    <p v-if="clueType == 2">定位：</p>
+                                    <p v-else>等级：</p>
                                 </el-col>
                                 <el-col :span="22">
-                                    <template>
+                                    <template v-if="clueType == 2">
+                                        <el-select 
+                                        v-model="school.grade" 
+                                        placeholder="请选择"
+                                        :disabled="schoolIptDis">
+                                            <el-option
+                                            v-for="item in mechanismPositioningArr"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            
+                                            :value="item.value">
+                                            </el-option>
+                                        </el-select>
+                                    </template>
+                                    <template v-else>
                                         <el-select 
                                         v-model="school.grade" 
                                         placeholder="请选择"
@@ -116,7 +149,6 @@
                                             v-for="item in schoolLevelArr"
                                             :key="item.value"
                                             :label="item.label"
-                                            
                                             :value="item.value">
                                             </el-option>
                                         </el-select>
@@ -159,8 +191,8 @@
                     <div class="remarks">
                         <el-row class="title">
                             <el-col :span="6"><p class="remarksTitle">联系人1(默认)</p></el-col>
-                            <el-col :span="3" :offset="14"><p class="editBtn" @click="contactIptStatus">编辑</p></el-col>
-                            <el-col :span="3" ><p class="editBtn" @click="schoolIptStatus">删除</p></el-col>
+                            <el-col :span="2" :offset="14"><p class="editBtn" @click="contactIptStatus">编辑</p></el-col>
+                            <el-col :span="2" ><p class="editBtn" @click="schoolIptStatus">删除</p></el-col>
                         </el-row>
                         <div class="school" :class="{schoolColor:contactIptDis}">
                             <el-row>
@@ -440,6 +472,7 @@
         name: "clue-info",
         data() {
             return {
+                clueType: '',
                 defaultContact: '王老师',
                 clueInfoData: {
                     
@@ -581,6 +614,36 @@
                         label: '高三'
                     }
                 ],
+                // 机构定位
+                mechanismPositioningArr: [
+                    {
+                        value: 1,
+                        label: 'K12'
+                    },
+                    {
+                        value: 2,
+                        label: '英语'
+                    },
+                    {
+                        value: 3,
+                        label: '出国'
+                    },
+                ],
+                // 机构类型
+                mechanismTypeArr: [
+                    {
+                        value: 1,
+                        label: '大型'
+                    },
+                    {
+                        value: 2,
+                        label: '中型'
+                    },
+                    {
+                        value: 3,
+                        label: '小型'
+                    },
+                ],
                 // 联系人信息
                 contactIptDis: true,
                 // 所有联系人
@@ -660,7 +723,7 @@
                     url: '/api/clue/detailsClue',
                     data: {
                         token: localStorage.getItem('crm_token'),
-                        clue_id: self.$route.query.clue_id
+                        clue_id: self.$route.query.data.clue_id
                     }
                 })
                     .then(function (res) {
@@ -733,13 +796,12 @@
         },
         created() {
              // 传来的参数
-            // console.log(this.$route)
+            console.log(this.$route)
+            this.clueType = this.$route.query.clueType;
             this.clueDetails();
             if (localStorage.getItem('cityData')) {
-                console.log('有缓存')
                 this.cityList = JSON.parse(localStorage.getItem('cityData'))
             } else {
-                console.log('无缓存')
                 this.requestCity();
             }
         }

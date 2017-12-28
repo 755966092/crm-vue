@@ -1540,7 +1540,7 @@
             // 线索详情
             openClueInfo(index, data) {
                 // 跳转到线索详情的页面
-                this.$router.push({path: '/clue/clueInfo',query:data})
+                this.$router.push({path: '/clue/clueInfo',query:{data:data,clueType:this.clueType}})
             },
             // 更新时间
             timeUpdata(data) {
