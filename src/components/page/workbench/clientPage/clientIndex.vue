@@ -293,7 +293,7 @@
                         <el-button type="text" @click="addClue">新增线索</el-button>
                         <el-button type="text" >导入线索</el-button>
                         <el-button type="text" style="color: #999">批量转移</el-button>
-                        <el-button type="text" style="color: #999">批量删除</el-button>
+                        <el-button type="text" style="color: #999"  @click="delLogItem">批量删除</el-button>
                     </el-col>
                     <el-col :span="8" :offset="6">
                         <el-input placeholder="请输入内容" v-model="searchIptValue" class="input-with-select">
@@ -313,7 +313,8 @@
             <!-- 学校表格 -->
             <template>
                 <div :class="{hide:schoolTable}">
-                    <el-table
+                  <el-table
+                         @selection-change="changeFun"
                         :data="tableData"
                         tooltip-effect="dark"
                         style="width: 100%"
@@ -430,16 +431,18 @@
             <!-- 机构表格 -->
             <template>
                 <div :class="{hide:mechanismTable}">
-                    <el-table
-                        :data="tableData"
-                        tooltip-effect="dark"
-                        style="width: 100%"
-                        border
+                          <el-table
+                             @selection-change="changeFun"
+                            :data="tableData"
+                            tooltip-effect="dark"
+                            style="width: 100%"
+                            border
+                            max-height="450"
 
-                    >
-                        <el-table-column
-                            type="selection"
                         >
+                            <el-table-column
+                                type="selection"
+                            >
                         </el-table-column>
                         <el-table-column
                             prop="clue_name"
@@ -546,16 +549,18 @@
             <!-- 教师表格 -->
             <template>
                 <div :class="{hide:teacherTable}">
-                    <el-table
-                        :data="tableData"
-                        tooltip-effect="dark"
-                        style="width: 100%"
-                        border
+                     <el-table
+                        @selection-change="changeFun"
+                       :data="tableData"
+                       tooltip-effect="dark"
+                       style="width: 100%"
+                       border
+                       max-height="450"
 
-                    >
-                        <el-table-column
-                            type="selection"
-                        >
+                   >
+                       <el-table-column
+                           type="selection"
+                       >
                         </el-table-column>
                         <el-table-column
                             prop="contacts_name"
@@ -664,17 +669,18 @@
             <!-- 学生表格 -->
             <template>
                 <div :class="{hide:studentTable}">
-                    <el-table
-                        :data="tableData"
-                        tooltip-effect="dark"
-                        style="width: 100%"
-                        border
+               <el-table
+                          @selection-change="changeFun"
+                         :data="tableData"
+                         tooltip-effect="dark"
+                         style="width: 100%"
+                         border
+                         max-height="450"
 
-                    >
-
-                        <el-table-column
-                            type="selection"
-                        >
+                     >
+                         <el-table-column
+                             type="selection"
+                         >
                         </el-table-column>
                         <el-table-column
                             prop="from_type"
@@ -1129,8 +1135,9 @@
                     schoolTable: false,
                     mechanismTable: true,
                     teacherTable: true,
-                    studentTable: true
-
+                    studentTable: true,
+                  // 选中行
+                    multipleSelection: []
                 },
                 dialogShow: {
                     schoolShow: false,
@@ -1598,10 +1605,45 @@
                 professorSubjectsArr: ['语文', '英语', '数学', '物理', '化学'],
                 // 年级解析数组
                 studentGradeArr: ['初一', '初二', '初三', '高一', '高二', '高三']
-
             }
         },
         methods: {
+           // 删除客户
+                delLogItem() {
+                     let arr = [];
+                     for (let i = 0; i < this.multipleSelection.length; i++) {
+                            this.tableData = this.tableData.filter((value) => {
+                                return value.clue_id != this.multipleSelection[i].clue_id
+                            })
+                            arr.push(this.multipleSelection[i].clue_id)
+                        }
+
+                       this.$axios({
+                                   method: 'POST',
+                                   withCredentials: false,
+                                   url: '/api/clue/deleteStudentClues',
+                                   data: {
+                                       token: localStorage.getItem('crm_token'),
+                                       clueIds: JSON.stringify(arr),
+                                   }
+                               })
+                                   .then(function (res) {
+                                       if (res.data.code == 200) {
+
+                                       } else {
+                                           alert(res.data.msg)
+                                       }
+                                   })
+                                   .catch(function (err) {
+                                       console.log(err);
+                                   });
+
+                },
+                  //复选框状态改变
+                changeFun(val) {
+                    this.multipleSelection = val;
+                },
+
             addClueTypeChange(data) {
                 this.addClueData.clueType = data;
                 if (data == 1) {
@@ -2098,31 +2140,36 @@
             },
             //
             // 单选删除客户
-            showModelTable() {
-               console.log(self);
+            showModelTable(index,data,flag) {
+              if(flag == 'deleteBtn'){
                let paramObj = {};
-               let self = this;
-                  paramObj = {
-                    token: localStorage.getItem('crm_token'),
-                    clue_id: 107,
-                    }
-             console.log('提交客户参数:'+JSON.stringify(paramObj,null,4))
-                    self.$axios({
-                        method: 'POST',
-                        withCredentials: false,
-                        url: '/api/clue/deleteClue',
-                        data: paramObj
-                    })
-                        .then(function (res) {
-                            if (res.data.code == 200) {
-                                console.log('删除成功:'+ res.data.data.list.clue_id +'-'+ res.data.data.list.update_time)
-                            } else {
-                                alert(res.data.msg)
-                            }
-                        })
-                        .catch(function (err) {
-                            console.log(err);
-                        });
+                 let self = this;
+                    paramObj = {
+                      token: localStorage.getItem('crm_token'),
+                      clue_id: data.clue_id,
+                         }
+                         console.log('提交客户参数:'+JSON.stringify(paramObj,null,4))
+                      self.$axios({
+                          method: 'POST',
+                          withCredentials: false,
+                          url: '/api/clue/deleteClue',
+                          data: paramObj
+                      })
+                          .then(function (res) {
+                              if (res.data.code == 200) {
+                                  console.log('删除成功:'+ res.data.data.list.clue_id +'-'+ res.data.data.list.update_time)
+                              } else {
+                                  alert(res.data.msg)
+                              }
+                          })
+                          .catch(function (err) {
+                              console.log(err);
+                          });
+              }else if(flag == 'handover'){
+
+
+              }
+
             },
             // 新增线索按钮
             addClue() {
