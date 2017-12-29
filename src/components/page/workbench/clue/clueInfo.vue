@@ -473,7 +473,7 @@
         data() {
             return {
                 clueType: '',
-                defaultContact: '王老师',
+                defaultContact: '',
                 clueInfoData: {
                     
                 },
@@ -493,7 +493,7 @@
                 statusModel: 1,
                 // 备注禁用状态
                 remarksIptDis: true,
-                remarksIptValue: '输入框内容',
+                remarksIptValue: '',
                 // 学校
                 school: {
                     id: 96,
@@ -729,7 +729,7 @@
                     .then(function (res) {
                         if (res.data.code === 200) {
                             let data = res.data.data;
-                            console.log('线索详情:'+JSON.stringify(data.contacts));
+                            console.log('线索详情:'+JSON.stringify(data.list));
                             self.clueInfoData = data;
                             self.allContacts = data.contacts;
                             for (let i = 0; i < data.contacts.length; i++) {
