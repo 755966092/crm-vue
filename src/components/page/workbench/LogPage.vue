@@ -180,7 +180,7 @@
             <div class="tableTitle">
                 <el-row>
                     <el-col :span="8">
-                        <el-button type="text" style="color: #999">批量删除</el-button>
+                        <el-button type="text" style="color: #999"  @click="delLogItem">批量删除</el-button>
                     </el-col>
                     <el-col :span="10" :offset="6">
                         <el-input placeholder="请输入内容" v-model="searchIptValue" class="input-with-select">
@@ -199,16 +199,18 @@
             </div>
             <template>
                 <div>
-                    <el-table
-                        :data="tableData"
-                        tooltip-effect="dark"
-                        style="width: 100%"
-                        border
+                      <el-table
+                          @selection-change="changeFun"
+                         :data="tableData"
+                         tooltip-effect="dark"
+                         style="width: 100%"
+                         border
+                         max-height="450"
 
-                    >
-                        <el-table-column
-                            type="selection"
-                        >
+                     >
+                         <el-table-column
+                             type="selection"
+                         >
                         </el-table-column>
                         <el-table-column
                             prop="followup_time"
@@ -425,6 +427,42 @@
            },
         },
         methods: {
+
+       // 删除日志
+           delLogItem() {
+                let arr = [];
+                for (let i = 0; i < this.multipleSelection.length; i++) {
+                       this.tableData = this.tableData.filter((value) => {
+                           return value.followup_id != this.multipleSelection[i].followup_id
+                       })
+                       arr.push(this.multipleSelection[i].followup_id)
+                   }
+
+                  this.$axios({
+                              method: 'POST',
+                              withCredentials: false,
+                              url: '/api/clueFollowup/deleteClueFollowups',
+                              data: {
+                                  token: localStorage.getItem('crm_token'),
+                                  followupIds: JSON.stringify(arr),
+                              }
+                          })
+                              .then(function (res) {
+                                  if (res.data.code == 200) {
+
+                                  } else {
+                                      alert(res.data.msg)
+                                  }
+                              })
+                              .catch(function (err) {
+                                  console.log(err);
+                              });
+
+           },
+             //复选框状态改变
+           changeFun(val) {
+               this.multipleSelection = val;
+           },
             // 更新时间
             timeUpdata(data) {
                 console.log(data)
@@ -726,13 +764,14 @@
             },
             // 表格按钮
              // 单选删除日志
-                     showModelTable(data) {
+             showModelTable(index,data,flag) {
+                if(flag == 'deleteBtn'){
                         let paramObj = {};
                         console.log();
                         let self = this;
                            paramObj = {
                              token: localStorage.getItem('crm_token'),
-                             followup_id: 109,
+                             followup_id: data.followup_id,
                              }
                       console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
                              self.$axios({
@@ -751,7 +790,11 @@
                                  .catch(function (err) {
                                      console.log(err);
                                  });
-                     },
+                     }else if(flag == 'handover'){
+
+
+                     }
+                     }
         },
         created() {
             this.getTableData();

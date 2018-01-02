@@ -282,7 +282,7 @@
             <div class="tableTitle">
                 <el-row>
                     <el-col :span="8">
-                        <el-button type="text" style="color: #999">批量删除</el-button>
+                        <el-button type="text" style="color: #999"  @click="delLogItem">批量删除</el-button>
                     </el-col>
                     <el-col :span="10" :offset="6">
                         <el-input placeholder="请输入内容" v-model="searchIptValue" class="input-with-select">
@@ -301,16 +301,18 @@
             </div>
             <template>
                 <div>
-                    <el-table
-                        :data="tableData"
-                        tooltip-effect="dark"
-                        style="width: 100%"
-                        border
+                        <el-table
+                          @selection-change="changeFun"
+                         :data="tableData"
+                         tooltip-effect="dark"
+                         style="width: 100%"
+                         border
+                         max-height="450"
 
-                    >
-                        <el-table-column
-                            type="selection"
-                        >
+                     >
+                         <el-table-column
+                             type="selection"
+                         >
                         </el-table-column>
                         <el-table-column
                             prop="cue_type"
@@ -463,6 +465,8 @@
                     signingTime: '',
                     // 范围
                     parentCompanyList: [],
+                  // 选中行
+                    multipleSelection: []
                 },
                   // 母公司id
                   mother_id: '',
@@ -537,7 +541,7 @@
                 // 搜索框内容
                 searchIptValue: '',
                  // 范围选中内容
-                 selectRangeItem: 1,
+                selectRangeItem: 1
             }
         },
         computed: {
@@ -553,6 +557,41 @@
            },
         },
         methods: {
+         // 删除合同
+            delLogItem() {
+                 let arr = [];
+                 for (let i = 0; i < this.multipleSelection.length; i++) {
+                        this.tableData = this.tableData.filter((value) => {
+                            return value.contract_id != this.multipleSelection[i].contract_id
+                        })
+                        arr.push(this.multipleSelection[i].contract_id)
+                    }
+
+                   this.$axios({
+                               method: 'POST',
+                               withCredentials: false,
+                               url: '/api/clueContract/ContractdeleteDuo',
+                               data: {
+                                   token: localStorage.getItem('crm_token'),
+                                   contractIds: JSON.stringify(arr),
+                               }
+                           })
+                               .then(function (res) {
+                                   if (res.data.code == 200) {
+
+                                   } else {
+                                       alert(res.data.msg)
+                                   }
+                               })
+                               .catch(function (err) {
+                                   console.log(err);
+                               });
+
+            },
+              //复选框状态改变
+            changeFun(val) {
+                this.multipleSelection = val;
+            },
             // 更新时间
             timeUpdata(data) {
                 console.log(data)
@@ -860,32 +899,39 @@
             },
             // 表格按钮
             // 单选删除合同
-                    showModelTable(data) {
-                       let paramObj = {};
-                       console.log();
-                       let self = this;
-                          paramObj = {
-                            token: localStorage.getItem('crm_token'),
-                            contract_id: 109,
-                            }
-                     console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
-                            self.$axios({
-                                method: 'POST',
-                                withCredentials: false,
-                                url: '/api/clueContract/Contractdelete',
-                                data: paramObj
+                showModelTable(index,data,flag) {
+                console.log(data);
+
+                if(flag == 'deleteBtn'){
+                   let paramObj = {};
+                   console.log();
+                   let self = this;
+                      paramObj = {
+                        token: localStorage.getItem('crm_token'),
+                        contract_id: data.contract_id,
+                        }
+                 console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
+                        self.$axios({
+                            method: 'POST',
+                            withCredentials: false,
+                            url: '/api/clueContract/Contractdelete',
+                            data: paramObj
+                        })
+                            .then(function (res) {
+                                if (res.data.code == 200) {
+                                    console.log('删除成功:'+ res.data.data.list.contract_id +'-'+ res.data.data.list.update_time)
+                                } else {
+                                    alert(res.data.msg)
+                                }
                             })
-                                .then(function (res) {
-                                    if (res.data.code == 200) {
-                                        console.log('删除成功:'+ res.data.data.list.clue_id +'-'+ res.data.data.list.update_time)
-                                    } else {
-                                        alert(res.data.msg)
-                                    }
-                                })
-                                .catch(function (err) {
-                                    console.log(err);
-                                });
-                    },
+                            .catch(function (err) {
+                                console.log(err);
+                            });
+                     }else if(flag == 'handover'){
+
+
+                      }
+                },
         },
         created() {
             this.getTableData();
