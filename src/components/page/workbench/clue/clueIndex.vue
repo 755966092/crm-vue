@@ -2152,7 +2152,7 @@
                         city_id: self.addClueData.selectCityData[1],
                         area_id: self.addClueData.selectCityData[2],
                         address: self.addClueData.address,
-                        contacts_name: self.addClueData.contactName,
+                        contacts_name: self.addClueData.teacherName,
                         contacts_post: self.addClueData.contactPosition,
                         contacts_mobile: self.addClueData.contactPhone,
                         contacts_telephone: self.addClueData.contactTel,
@@ -2197,6 +2197,7 @@
                     .then(function (res) {
                         if (res.data.code == 200) {
                             console.log('提交成功:'+ res.data.data.list.clue_id +'-'+ res.data.data.list.update_time)
+                            self.filterClue();
                         } else {
                             alert(res.data.msg)
                         }

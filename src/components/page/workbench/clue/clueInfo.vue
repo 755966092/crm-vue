@@ -27,24 +27,27 @@
             <el-row  :gutter="20">
                 <el-col :span="5">
                      <template>
-                        <el-select v-model="statusModel" placeholder="请选择">
+                        <!-- <el-select v-model="statusModel"  @change="selClueStatus" placeholder="请选择"> -->
+                        <el-select v-model="clueInfoData.list.followup_statu"  @change="selClueStatus" placeholder="请选择">
                             <el-option
                             v-for="item in statusArr"
                             :key="item.value"
                             :label="item.label"
-                            :value="item.value">
+                            :value="item.value"
+                            >
                             </el-option>
                         </el-select>
                     </template>
                 </el-col>
                 <el-col :span="4">
-                     <el-button @click="turnIntoCustomersFn">转成客户</el-button>
+                     <el-button @click="turnIntoCustomersFn('contract')">转成客户</el-button>
                 </el-col>
                 <el-col :span="4">
-                     <el-button>转移给他人</el-button>
+                     <el-button @click="turnIntoCustomersFn('shiftClue')">转移给他人</el-button>
                 </el-col>
                 <el-col :span="4">
-                     <el-button>删除线索</el-button>
+                     <el-button @click="turnIntoCustomersFn('delClue')">删除线索</el-button>
+                     <!-- <el-button @click="turnIntoCustomersFn('delClue')">删除线索</el-button> -->
                 </el-col>
             </el-row>
              
@@ -64,7 +67,7 @@
                             placeholder="请输入内容"
                             resize='none'
                             :disabled='remarksIptDis'
-                            v-model="school.remarke">
+                            v-model="clueInfoData.details.remake">
                         </el-input>
                     </div>
                     <!-- 学校 -->
@@ -408,7 +411,7 @@
                                     <p>来源：</p>
                                 </el-col>
                                 <el-col :span="21">
-                                   <p class="infoLabel">{{details.cue_source}}</p>
+                                   <p class="infoLabel">{{clueInfoData.details.cue_source}}</p>
                                 </el-col>
                             </el-row>
                             <el-row>
@@ -416,7 +419,7 @@
                                     <p>所属机构：</p>
                                 </el-col>
                                 <el-col :span="21">
-                                   <p class="infoLabel">{{details.company_name}}</p>
+                                   <p class="infoLabel">{{clueInfoData.details.company_name}}</p>
                                 </el-col>
                             </el-row>
                             <el-row>
@@ -424,7 +427,7 @@
                                     <p>负责人：</p>
                                 </el-col>
                                 <el-col :span="21">
-                                   <p class="infoLabel">{{details.user_name}}</p>
+                                   <p class="infoLabel">{{clueInfoData.details.user_name}}</p>
                                 </el-col>
                             </el-row>
                             <el-row>
@@ -432,7 +435,7 @@
                                     <p>前负责人：</p>
                                 </el-col>
                                 <el-col :span="21">
-                                   <p class="infoLabel">{{details.user_before_name|| '无'}}</p>
+                                   <p class="infoLabel">{{clueInfoData.details.user_before_name|| '无'}}</p>
                                 </el-col>
                             </el-row>
                             <el-row>
@@ -440,7 +443,7 @@
                                     <p>创建时间：</p>
                                 </el-col>
                                 <el-col :span="21">
-                                   <p class="infoLabel">{{details.create_time}}</p>
+                                   <p class="infoLabel">{{clueInfoData.details.create_time}}</p>
                                 </el-col>
                             </el-row>
                             <el-row>
@@ -448,7 +451,7 @@
                                     <p>更新时间：</p>
                                 </el-col>
                                 <el-col :span="21">
-                                   <p class="infoLabel">{{details.update_time}}</p>
+                                   <p class="infoLabel">{{clueInfoData.details.update_time}}</p>
                                 </el-col>
                             </el-row>
                         </div>
@@ -665,7 +668,7 @@
                         <el-table
                             border
                             @selection-change="changeFun"
-                            :data="studentData"
+                            :data="clueInfoData.student"
                             style="width: 100%">
                             <el-table-column
                                 type="selection"
@@ -800,7 +803,8 @@
                 </div>
                 <div class="mt10">
                     <p class="mb10 ">业务负责人</p>
-                    <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择">
+                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                    <el-select v-model="changeToClientData.businessEmployeeId" placeholder="请选择">
                         <el-option
                         v-for="item in changeToClientData.businessEmployee"
                         :key="item.id"
@@ -824,7 +828,8 @@
                 </div>
                 <div class="mt10">
                     <p class="mb10 ">服务负责人</p>
-                    <el-select @change="selectDefaultContact" v-model="changeToClientData.serviceEmployeeId" placeholder="请选择">
+                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.serviceEmployeeId" placeholder="请选择"> -->
+                    <el-select v-model="changeToClientData.serviceEmployeeId" placeholder="请选择">
                         <el-option
                         v-for="item in changeToClientData.serviceEmployee"
                         :key="item.id"
@@ -848,7 +853,8 @@
                 </div>
                 <div class="mt10">
                     <p class="mb10 ">售后负责人</p>
-                    <el-select @change="selectDefaultContact" v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择">
+                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择"> -->
+                    <el-select v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择">
                         <el-option
                         v-for="item in changeToClientData.aftermarketEmployee"
                         :key="item.id"
@@ -860,7 +866,58 @@
                 
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="turnIntoCustomersStatu = false">取 消</el-button>
-                    <el-button type="primary" @click="turnIntoCustomersStatu = false">确 定</el-button>
+                    <el-button type="primary" @click="intoContract">确 定</el-button>
+                </span>
+            </el-dialog>
+         </div>
+         <!-- 转移线索 -->
+         <div class="shiftClue">
+             <el-dialog
+                title="转移线索"
+                :visible.sync="shiftClueStatu"
+                width="30%"
+                >
+                <div class="mt10">
+                    <p class="mb10 ">选择部门</p>
+                    <el-cascader
+                        expand-trigger="hover"
+                        :value="changeToClientData.businessDepartment"
+                        :options="companyDepartment"
+                        @change="selectServiceDepartment($event,'businessDepartment')"
+                        clearable
+                        change-on-select
+                    >
+                    </el-cascader>
+                </div>
+                <div class="mt10">
+                    <p class="mb10 ">选择负责人</p>
+                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                    <el-select v-model="shiftClueEmployeeId" placeholder="请选择">
+                        <el-option
+                        v-for="item in changeToClientData.businessEmployee"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
+                </div>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="shiftClueStatu = false">取 消</el-button>
+                    <el-button type="primary" @click="shiftClue">确 定</el-button>
+                </span>
+            </el-dialog>
+         </div>
+         <!-- 删除线索 -->
+         <div class="shiftClue">
+             <el-dialog
+                title="删除线索"
+                :visible.sync="delClueStatu"
+                width="30%"
+                >
+                <p>是否确定删除线索</p>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="delClueStatu = false">取 消</el-button>
+                    <el-button type="primary" @click="delClue">确 定</el-button>
                 </span>
             </el-dialog>
          </div>
@@ -874,7 +931,12 @@
         },
         data() {
             return {
+                // 转成客户对话框
                 turnIntoCustomersStatu: false,
+                // 转移线索对话框
+                shiftClueStatu: false,
+                // 删除线索对话框
+                delClueStatu: false,
                 clueType: '',
                 defaultContact: '',
                 clueInfoData: {
@@ -922,8 +984,20 @@
                         customer_department: "",
                         before_customer_department: "",
                         create_time: "",
-                        update_time: ""
+                        update_time: "",
                     },
+                    // 信息, 可以删除
+                    details: {
+                        company_name: "",
+                        cue_source: "",
+                        user_name: "",
+                        user_before_name: null,
+                        create_time: "",
+                        update_time: "",
+                        remake: null
+                    },
+                    // 学生列表
+                    student: [],
 
                 },
                 // 状态
@@ -1145,32 +1219,14 @@
                     create_time: "2017-12-25 09:50:03",
                     update_time: "2017-12-25 09:50:03"
                 },
-                // 信息
-                details: {
-                    company_name: "上一秒科技公司",
-                    cue_source: "高招",
-                    user_name: "dang",
-                    user_before_name: null,
-                    create_time: "2017-12-16 07:24:34",
-                    update_time: "2017-12-16 07:24:34",
-                    remake: null
-                },
+                
                 // 日志表格
                 logTableData: [],
                 // 选中行
                 multipleSelection: [],
                 // 学生页面, 显示数据
                 studentShowContent: '2',
-                // 学生列表
-                studentData: [{
-                    name: "",
-                    parent_name: "",
-                    parent_mobile: "",
-                    city_name: "",
-                    school_name: "",
-                    student_grade: 2,
-                    followup_time: ""
-                }],
+                
                 // z转成客户
                 // 公司所有部门
                 companyDepartment: [],
@@ -1193,11 +1249,139 @@
                     aftermarketEmployeeId:'',
                     // 标记当前选择的是哪一个, 默认业务部门
                     flagDepartment: 'businessDepartment'
-                }
+                },
+                // 转移线索部门员工
+                shiftClueDepatment: [],
+                shiftClueEmployeeId: '',
+
             }
         },
         
         methods: {
+            // 设置线索状态
+            selClueStatus(data) {
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/clue/editClueStatu',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        clue_id: self.$route.query.data.clue_id,
+                        followup_statu: self.clueInfoData.list.followup_statu
+                    }
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
+            },
+            // 线索详情
+            openClueInfo() {
+                // 跳转到线索
+                this.$router.push({path: '/clue'})
+            },
+            // 删除线索
+            delClue() {
+                this.delClueStatu = false;
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/clue/deleteClue',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        clue_id: self.$route.query.data.clue_id,
+                    }
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        self.$message({
+                            message: '删除成功',
+                            type: 'success'
+                        })
+                        self.openClueInfo();
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
+            },
+            // 转移线索
+            shiftClue() {
+                this.shiftClueStatu = false;
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/clue/transferClue',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        clue_id: self.$route.query.data.clue_id,
+                        department_id: self.changeToClientData.businessDepartment[self.changeToClientData.businessDepartment.length-1],
+                        user_new: self.shiftClueEmployeeId
+                    }
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        self.$message({
+                            message: '转移成功',
+                            type: 'success'
+                        });
+                        self.openClueInfo();
+                    } else {
+                        alert(res.data.msg)
+                    }
+                    })
+                .catch(function(err){
+                    console.log(err);
+                });
+            },
+            // 转成客户
+            intoContract() {
+                this.turnIntoCustomersStatu = false;
+                let self = this;
+                // console.log(JSON.stringify(self.changeToClientData,null,4));
+                let changeToClientData = self.changeToClientData;
+                let obj = {
+                        token: localStorage.getItem('crm_token'),
+                        clue_id: self.$route.query.data.clue_id,
+                        person_user: changeToClientData.businessEmployeeId,
+                        person_department: changeToClientData.businessDepartment[changeToClientData.businessDepartment.length - 1],
+                        service_user: changeToClientData.serviceEmployeeId,
+                        service_department: changeToClientData.serviceDepartment[changeToClientData.serviceDepartment.length - 1],
+                        customer_user: changeToClientData.aftermarketEmployeeId,
+                        customer_department: changeToClientData.aftermarketDepartment[changeToClientData.aftermarketDepartment.length - 1]
+                    }
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/clue/clueTurnCustomer',
+                    data: obj
+                })
+                    .then(function (res) {
+                        if (res.data.code === 200) {
+                            self.$message({
+                                message: '转成客户成功',
+                                type: 'success',
+                            });
+                            self.openClueInfo();
+                        } else {
+                            alert(res.data.msg)
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            },
             // 选择服务部门
             selectServiceDepartment(data,flag) {
                 this.changeToClientData.flagDepartment = flag;
@@ -1280,10 +1464,19 @@
 
             },
             // 转成客户
-            turnIntoCustomersFn() {
+            turnIntoCustomersFn(flag) {
                 // 获取部门员工
                 // this.getDepartmentEmployee();
-                this.turnIntoCustomersStatu = true;
+                
+                if (flag == 'contract') {
+                    this.turnIntoCustomersStatu = true;
+                } else if (flag == 'shiftClue') {
+                    this.shiftClueStatu = true;
+                } else {
+                    this.delClueStatu = true;
+
+                }
+
             },
             // 删除日志
             delLogItem() {
@@ -1495,7 +1688,8 @@
         margin: 10px 0;
     }
     /* 转成客户 */
-    .changeToClient .el-cascader {
+    .changeToClient .el-cascader,
+    .shiftClue .el-cascader {
         width: 100%;
     }
 </style>
