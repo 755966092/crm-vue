@@ -2188,23 +2188,38 @@
                     }
                 }
                 console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
-                self.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/clue/applyClue',
-                    data: paramObj
-                })
+                let objFlag = 1;
+                for (const key in paramObj) {
+                    if (!paramObj[key]) {
+                        objFlag = 0;
+                    }
+                }
+                console.log(objFlag)
+                if (objFlag) {
+                    self.$axios({
+                        method: 'POST',
+                        withCredentials: false,
+                        url: '/api/clue/applyClue',
+                        data: paramObj
+                    })
                     .then(function (res) {
                         if (res.data.code == 200) {
-                            console.log('提交成功:'+ res.data.data.list.clue_id +'-'+ res.data.data.list.update_time)
+                            self.$message({
+                                message: '添加线索成功',
+                                type: 'success'
+                            })
                             self.filterClue();
                         } else {
-                            alert(res.data.msg)
+                           
+                            self.$message.error(res.data.msg);
                         }
                     })
                     .catch(function (err) {
                         console.log(err);
                     });
+                } else {
+                    self.$message.error('请完善参数');
+                }
             }
         },
         created() {
