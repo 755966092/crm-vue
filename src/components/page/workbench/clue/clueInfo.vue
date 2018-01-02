@@ -787,23 +787,36 @@
                 width="30%"
                 >
                 <div class="mt10">
+                    <p class="mb10 ">业务部门</p>
+                    <el-cascader
+                        expand-trigger="hover"
+                        :value="changeToClientData.businessDepartment"
+                        :options="companyDepartment"
+                        @change="selectServiceDepartment($event,'businessDepartment')"
+                        clearable
+                        change-on-select
+                    >
+                    </el-cascader>
+                </div>
+                <div class="mt10">
                     <p class="mb10 ">业务负责人</p>
-                    <el-select @change="selectDefaultContact" v-model="clueInfoData.list.contacts_id" placeholder="请选择">
+                    <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择">
                         <el-option
-                        v-for="item in allContacts"
+                        v-for="item in changeToClientData.businessEmployee"
                         :key="item.id"
-                        :label="item.contacts_name"
+                        :label="item.name"
                         :value="item.id">
                         </el-option>
                     </el-select>
                 </div>
+                
                 <div class="mt10">
-                    <p class="mb10 ">业务部门</p>
-                    <el-cascader
+                    <p class="mb10 ">服务部门</p>
+                     <el-cascader
                         expand-trigger="hover"
-                        :value="changeToClientData.ServiceDepartment"
+                        :value="changeToClientData.serviceDepartment"
                         :options="companyDepartment"
-                        @change="selectServiceDepartment($event,'selectService')"
+                        @change="selectServiceDepartment($event,'serviceDepartment')"
                         clearable
                         change-on-select
                     >
@@ -811,48 +824,40 @@
                 </div>
                 <div class="mt10">
                     <p class="mb10 ">服务负责人</p>
-                    <el-select @change="selectDefaultContact" v-model="clueInfoData.list.contacts_id" placeholder="请选择">
+                    <el-select @change="selectDefaultContact" v-model="changeToClientData.serviceEmployeeId" placeholder="请选择">
                         <el-option
-                        v-for="item in allContacts"
+                        v-for="item in changeToClientData.serviceEmployee"
                         :key="item.id"
-                        :label="item.contacts_name"
+                        :label="item.name"
                         :value="item.id">
                         </el-option>
                     </el-select>
                 </div>
+                
                 <div class="mt10">
-                    <p class="mb10 ">服务部门</p>
-                    <el-select @change="selectDefaultContact" v-model="clueInfoData.list.contacts_id" placeholder="请选择">
-                        <el-option
-                        v-for="item in allContacts"
-                        :key="item.id"
-                        :label="item.contacts_name"
-                        :value="item.id">
-                        </el-option>
-                    </el-select>
+                    <p class="mb10 ">售后部门</p>
+                     <el-cascader
+                        expand-trigger="hover"
+                        :value="changeToClientData.aftermarketDepartment"
+                        :options="companyDepartment"
+                        @change="selectServiceDepartment($event,'aftermarketDepartment')"
+                        clearable
+                        change-on-select
+                    >
+                    </el-cascader>
                 </div>
                 <div class="mt10">
                     <p class="mb10 ">售后负责人</p>
-                    <el-select @change="selectDefaultContact" v-model="clueInfoData.list.contacts_id" placeholder="请选择">
+                    <el-select @change="selectDefaultContact" v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择">
                         <el-option
-                        v-for="item in allContacts"
+                        v-for="item in changeToClientData.aftermarketEmployee"
                         :key="item.id"
-                        :label="item.contacts_name"
+                        :label="item.name"
                         :value="item.id">
                         </el-option>
                     </el-select>
                 </div>
-                <div class="mt10">
-                    <p class="mb10 ">售后部门</p>
-                    <el-select @change="selectDefaultContact" v-model="clueInfoData.list.contacts_id" placeholder="请选择">
-                        <el-option
-                        v-for="item in allContacts"
-                        :key="item.id"
-                        :label="item.contacts_name"
-                        :value="item.id">
-                        </el-option>
-                    </el-select>
-                </div>
+                
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="turnIntoCustomersStatu = false">取 消</el-button>
                     <el-button type="primary" @click="turnIntoCustomersStatu = false">确 定</el-button>
@@ -1170,7 +1175,24 @@
                 // 公司所有部门
                 companyDepartment: [],
                 changeToClientData: {
-                    ServiceDepartment: [],
+                   
+                    // 业务部门
+                    businessDepartment: [],
+                    // 业务部门员工
+                    businessEmployee: [],
+                    businessEmployeeId:'',
+                     // 服务部门
+                    serviceDepartment: [],
+                    // 服务部门员工
+                    serviceEmployee: [],
+                    serviceEmployeeId:'',
+                    // 售后部门
+                    aftermarketDepartment: [],
+                    // 售后部门员工
+                    aftermarketEmployee: [],
+                    aftermarketEmployeeId:'',
+                    // 标记当前选择的是哪一个, 默认业务部门
+                    flagDepartment: 'businessDepartment'
                 }
             }
         },
@@ -1178,15 +1200,52 @@
         methods: {
             // 选择服务部门
             selectServiceDepartment(data,flag) {
-                console.log(data);
-                if (flag == 'selectService') {
-                    this.changeToClientData = data
+                this.changeToClientData.flagDepartment = flag;
+                this.changeToClientData[flag] = data;
+                // 获取部门员工
+                this.getDepartmentEmployee();
+            },
+            // 获取部门员工
+            getDepartmentEmployee() {
+                let self = this;
+                // 跟进selectIpt 来判断当前应该获取哪一个部门的员工
+                let slectIpt = '';
+                let flagDepartment = self.changeToClientData.flagDepartment;
+                let changeToClientData = self.changeToClientData;
+                let department_id = department_id = changeToClientData[flagDepartment][changeToClientData[flagDepartment].length-1];
+                if (flagDepartment == 'businessDepartment') {
+                    slectIpt = 'businessEmployee'
+                } else if (flagDepartment== 'serviceDepartment') {
+                    slectIpt = 'serviceEmployee'
+                } else {
+                    slectIpt = 'aftermarketEmployee'
                 }
-                
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/company/companyUsers',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        department_id: department_id
+                    }
+                })
+                    .then(function (res) {
+                        if (res.data.code === 200) {
+                            self.changeToClientData[slectIpt] = res.data.data.list;
+                            // console.log(JSON.stringify(self.changeToClientData));
+                            console.log(department_id);
+                            
+                        } else {
+                            alert(res.data.msg)
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
             },
             // 获取子公司部门
             getCompanyDepartment() {
-                 let self = this;
+                let self = this;
                 this.$axios({
                     method: 'POST',
                     withCredentials: false,
@@ -1216,12 +1275,14 @@
                     }
                     if (value.children.length == 0) {
                         delete value.children
-                    }                    
+                    }
                 }
 
             },
             // 转成客户
             turnIntoCustomersFn() {
+                // 获取部门员工
+                // this.getDepartmentEmployee();
                 this.turnIntoCustomersStatu = true;
             },
             // 删除日志
@@ -1357,6 +1418,7 @@
             } else {
                 this.requestCity();
             }
+            
         }
     }
 </script>
