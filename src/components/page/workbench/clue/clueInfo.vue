@@ -207,16 +207,16 @@
                     <el-button v-if="clueType==4"  @click="turnIntoCustomersFn('addContact')" style="width:100px;margin-bottom:10px">添加家长</el-button>
                     <el-button v-if="clueType==1 || clueType == 2" @click="turnIntoCustomersFn('addContact')" style="width:100px;margin-bottom:10px">添加联系人</el-button>
                     <!-- 联系人 -->
-                    <template>
+                    <template v-for="(item, index) in allContacts">
                         <div class="remarks">
                             <el-row class="title">
                                 <el-col :span="6">
-                                    <p v-if="clueType==1 || clueType == 2" class="remarksTitle">联系人1(默认)</p>
+                                    <p v-if="clueType==1 || clueType == 2" class="remarksTitle">联系人{{index+1}} {{clueInfoData.list.contacts_id == item.id ? '(默认)' :''}}</p>
                                     <p v-else-if="clueType == 3" class="remarksTitle">老师</p>
-                                    <p v-else class="remarksTitle">家长1(默认)</p>
+                                    <p v-else class="remarksTitle">家长1{{index+1}} {{clueInfoData.list.contacts_id == item.id ? '(默认)' :''}}</p>
                                 </el-col>
                                 <el-col :span="2" :offset="14"><p class="editBtn" @click="contactIptStatus">编辑</p></el-col>
-                                <el-col :span="2" ><p class="editBtn" @click="schoolIptStatus">删除</p></el-col>
+                                <el-col :span="2" ><p class="editBtn" @click="selContact(index)">删除</p></el-col>
                             </el-row>
                             <div class="school" :class="{schoolColor:contactIptDis}">
                                 <el-row>
@@ -225,7 +225,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="contacts.contacts_name"
+                                            v-model="item.contacts_name"
                                             :disabled="contactIptDis"
                                         ></el-input>
                                     </el-col>
@@ -236,7 +236,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="contacts.contacts_department"
+                                            v-model="item.contacts_department"
                                             :disabled="contactIptDis"
                                         ></el-input>
                                     </el-col>
@@ -247,7 +247,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="contacts.contacts_department"
+                                            v-model="item.contacts_department"
                                             :disabled="contactIptDis"
                                         ></el-input>
                                     </el-col>
@@ -258,7 +258,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="contacts.contacts_department"
+                                            v-model="item.contacts_department"
                                             :disabled="contactIptDis"
                                         ></el-input>
                                     </el-col>
@@ -269,7 +269,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="contacts.ascontacts_post"
+                                            v-model="item.ascontacts_post"
                                             :disabled="contactIptDis"
                                         ></el-input>
                                     </el-col>
@@ -281,7 +281,7 @@
                                     <el-col :span="21">
                                         <template>
                                             <el-select 
-                                                v-model="contacts.contacts_professor_subjects" 
+                                                v-model="item.contacts_professor_subjects" 
                                                 placeholder="请选择"
                                                 :disabled="contactIptDis">
                                                 <el-option
@@ -301,7 +301,7 @@
                                     <el-col :span="21">
                                         <template>
                                             <el-select 
-                                                v-model="contacts.contacts_professor_grade" 
+                                                v-model="item.contacts_professor_grade" 
                                                 placeholder="请选择"
                                                 :disabled="contactIptDis">
                                                 <el-option
@@ -320,7 +320,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="contacts.contacts_mobile"
+                                            v-model="item.contacts_mobile"
                                             :disabled="contactIptDis"
                                         ></el-input>
                                     </el-col>
@@ -331,7 +331,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="contacts.contacts_telephone"
+                                            v-model="item.contacts_telephone"
                                             :disabled="contactIptDis"
                                         ></el-input>
                                     </el-col>
@@ -342,7 +342,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="contacts.contacts_wechat"
+                                            v-model="item.contacts_wechat"
                                             :disabled="contactIptDis"
                                         ></el-input>
                                     </el-col>
@@ -353,7 +353,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="contacts.contacts_qq"
+                                            v-model="item.contacts_qq"
                                             :disabled="contactIptDis"
                                         ></el-input>
                                     </el-col>
@@ -364,7 +364,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="contacts.contacts_email"
+                                            v-model="item.contacts_email"
                                             :disabled="contactIptDis"
                                         ></el-input>
                                     </el-col>
@@ -377,7 +377,7 @@
                                     <div class="select rightWrap">
                                             <el-cascader
                                                 expand-trigger="hover"
-                                                :value="contacts.selectCityData"
+                                                :value="item.selectCityData"
                                                 :options="cityList"
                                                 @change="selectCity"
                                                 clearable
@@ -394,7 +394,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="contacts.address"
+                                            v-model="item.address"
                                             :disabled="contactIptDis"
                                         ></el-input>
                                     </el-col>
@@ -1378,6 +1378,34 @@
         },
         
         methods: {
+            // 删除联系人
+            selContact(index) {
+                let id = this.allContacts[index].id;
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/clueContacts/deleteContact',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        contact_id: id
+                    }
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        self.$message({
+                            message: '成功',
+                            type: 'success'
+                        });
+                        self.clueDetails();
+                    } else {
+                        self.message.error(res.data.msg);
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
+            },
             // 添加联系人选着地址
             addContactSelectCity(data) {
                 this.addContactData.selectCityData = data;
@@ -1418,7 +1446,8 @@
                            self.$message({
                                 message: '新增联系人成功',
                                 type: 'success'
-                           })
+                           });
+                           self.clueDetails();
                        } else {
                            self.$message.error(res.data.msg);
                        }
@@ -1688,8 +1717,12 @@
                     .then(function (res) {
                         if (res.data.code === 200) {
                             let data = res.data.data;
-                            console.log('线索详情:'+JSON.stringify(data));
+                            // console.log('线索详情:'+JSON.stringify(data));
                             self.clueInfoData = data;
+                            // for (let i = 0; i < data.contacts.length; i++) {
+                            //     const element = data.contacts[i];
+                            //     element.contactIptDis = true;
+                            // }
                             self.allContacts = data.contacts;
                             for (let i = 0; i < data.contacts.length; i++) {
                                 const element = data.contacts[i];
@@ -1731,8 +1764,12 @@
                 this.schoolIptDis = !this.schoolIptDis
             },
             // 联系人输入状态
-            contactIptStatus() {
+            contactIptStatus(index) {
+                console.log(index)
                 this.contactIptDis = !this.contactIptDis
+                // console.log(JSON.stringify(this.allContacts[index]));
+                
+                // this.allContacts[index].contactIptDis = !this.allContacts[index].contactIptDis
             },
             // 学生输入状态
             studentIptStatus(flag) {
