@@ -213,12 +213,12 @@
                                 <el-col :span="6">
                                     <p v-if="clueType==1 || clueType == 2" class="remarksTitle">联系人{{index+1}} {{clueInfoData.list.contacts_id == item.id ? '(默认)' :''}}</p>
                                     <p v-else-if="clueType == 3" class="remarksTitle">老师</p>
-                                    <p v-else class="remarksTitle">家长1{{index+1}} {{clueInfoData.list.contacts_id == item.id ? '(默认)' :''}}</p>
+                                    <p v-else class="remarksTitle">家长{{index+1}} {{clueInfoData.list.contacts_id == item.id ? '(默认)' :''}}</p>
                                 </el-col>
-                                <el-col :span="2" :offset="14"><p class="editBtn" @click="contactIptStatus">编辑</p></el-col>
+                                <el-col :span="2" :offset="14"><p class="editBtn" @click="contactIptStatus(index)">编辑</p></el-col>
                                 <el-col :span="2" ><p class="editBtn" @click="selContact(index)">删除</p></el-col>
                             </el-row>
-                            <div class="school" :class="{schoolColor:contactIptDis}">
+                            <div class="school" :class="{schoolColor:item.contactIptDis}">
                                 <el-row>
                                     <el-col :span="3">
                                         <p>姓名：</p>
@@ -226,7 +226,7 @@
                                     <el-col :span="21">
                                         <el-input
                                             v-model="item.contacts_name"
-                                            :disabled="contactIptDis"
+                                            :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>
                                 </el-row>
@@ -236,8 +236,8 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="item.contacts_department"
-                                            :disabled="contactIptDis"
+                                            v-model="item.contacts_relationship"
+                                            :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>
                                 </el-row>
@@ -247,8 +247,8 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="item.contacts_department"
-                                            :disabled="contactIptDis"
+                                            v-model="item.contacts_company_name"
+                                            :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>
                                 </el-row>
@@ -259,7 +259,7 @@
                                     <el-col :span="21">
                                         <el-input
                                             v-model="item.contacts_department"
-                                            :disabled="contactIptDis"
+                                            :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>
                                 </el-row>
@@ -270,7 +270,7 @@
                                     <el-col :span="21">
                                         <el-input
                                             v-model="item.ascontacts_post"
-                                            :disabled="contactIptDis"
+                                            :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>
                                 </el-row>
@@ -283,7 +283,7 @@
                                             <el-select 
                                                 v-model="item.contacts_professor_subjects" 
                                                 placeholder="请选择"
-                                                :disabled="contactIptDis">
+                                                :disabled="item.contactIptDis">
                                                 <el-option
                                                 v-for="item in professorSubjectsArr"
                                                 :key="item.value"
@@ -303,7 +303,7 @@
                                             <el-select 
                                                 v-model="item.contacts_professor_grade" 
                                                 placeholder="请选择"
-                                                :disabled="contactIptDis">
+                                                :disabled="item.contactIptDis">
                                                 <el-option
                                                 v-for="item in studentGradeArr"
                                                 :key="item.value"
@@ -321,7 +321,7 @@
                                     <el-col :span="21">
                                         <el-input
                                             v-model="item.contacts_mobile"
-                                            :disabled="contactIptDis"
+                                            :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>
                                 </el-row>
@@ -332,7 +332,7 @@
                                     <el-col :span="21">
                                         <el-input
                                             v-model="item.contacts_telephone"
-                                            :disabled="contactIptDis"
+                                            :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>
                                 </el-row>
@@ -343,7 +343,7 @@
                                     <el-col :span="21">
                                         <el-input
                                             v-model="item.contacts_wechat"
-                                            :disabled="contactIptDis"
+                                            :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>
                                 </el-row>
@@ -354,7 +354,7 @@
                                     <el-col :span="21">
                                         <el-input
                                             v-model="item.contacts_qq"
-                                            :disabled="contactIptDis"
+                                            :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>
                                 </el-row>
@@ -365,7 +365,7 @@
                                     <el-col :span="21">
                                         <el-input
                                             v-model="item.contacts_email"
-                                            :disabled="contactIptDis"
+                                            :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>
                                 </el-row>
@@ -379,10 +379,10 @@
                                                 expand-trigger="hover"
                                                 :value="item.selectCityData"
                                                 :options="cityList"
-                                                @change="selectCity"
+                                                @change="selectCity($event,index, 'contacts')"
                                                 clearable
                                                 separator="-"
-                                                :disabled="contactIptDis"
+                                                :disabled="item.contactIptDis"
                                             >
                                             </el-cascader>
                                         </div>
@@ -395,7 +395,7 @@
                                     <el-col :span="21">
                                         <el-input
                                             v-model="item.address"
-                                            :disabled="contactIptDis"
+                                            :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>
                                 </el-row>
@@ -461,201 +461,203 @@
                 </el-tab-pane>
                 <el-tab-pane label="学生">
                     <template v-if="clueType == 4">
-                        <el-button style="width:100px;margin-bottom:10px">添加学生</el-button>
-                        <div class="remarks">
-                            <el-row class="title">
-                                <el-col :span="6">
-                                    <p class="remarksTitle">学生</p>
-                                </el-col>
-                                <el-col :span="2" :offset="14"><p class="editBtn" @click="studentIptStatus('1')">编辑</p></el-col>
-                                <el-col :span="2" ><p class="editBtn" @click="studentIptStatus('2')">删除</p></el-col>
-                            </el-row>
-                            
-                            <div class="school" :class="{schoolColor:studentIptDis}">
-                                <el-button :disabled="studentIptDis" style="width:100px;margin-top:10px">转成客户</el-button>
-                                <el-row>
-                                    <el-col :span="3">
-                                        <p>姓名：</p>
+                        <el-button @click="addStudentStatu = true" style="width:100px;margin-bottom:10px">添加学生</el-button>
+                       <template v-for="(item, index) in clueInfoData.student">
+                            <div class="remarks">
+                                <el-row class="title">
+                                    <el-col :span="6">
+                                        <p class="remarksTitle">学生</p>
                                     </el-col>
-                                    <el-col :span="21">
-                                        <el-input
-                                            v-model="clueInfoData.list.name"
-                                            :disabled="studentIptDis"
-                                        ></el-input>
-                                    </el-col>
-                                </el-row>
-                                <el-row >
-                                    <el-col :span="3">
-                                        <p>性别：</p>
-                                    </el-col>
-                                    <el-col :span="21">
-                                        <template>
-                                            <el-select 
-                                                v-model="clueInfoData.list.sex" 
-                                                placeholder="请选择"
-                                                :disabled="studentIptDis">
-                                                <el-option
-                                                v-for="item in sexArr"
-                                                :key="item.value"
-                                                :label="item.label"
-                                                :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </template>
-                                    </el-col>
-                                </el-row>
-                                <el-row >
-                                    <el-col :span="3">
-                                        <p>文理科：</p>
-                                    </el-col>
-                                    <el-col :span="21">
-                                        <template>
-                                            <el-select 
-                                                v-model="clueInfoData.list.the_science" 
-                                                placeholder="请选择"
-                                                :disabled="studentIptDis">
-                                                <el-option
-                                                v-for="item in subjectArr"
-                                                :key="item.value"
-                                                :label="item.label"
-                                                :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </template>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="3">
-                                        <p>年级：</p>
-                                    </el-col>
-                                    <el-col :span="21">
-                                        <template>
-                                            <el-select 
-                                                v-model="clueInfoData.list.student_grade" 
-                                                placeholder="请选择"
-                                                :disabled="studentIptDis">
-                                                <el-option
-                                                v-for="item in studentGradeArr"
-                                                :key="item.value"
-                                                :label="item.label"
-                                                :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </template>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="3">
-                                        <p>学校地区：</p>
-                                    </el-col>
-                                    <el-col :span="21">
-                                    <div class="select rightWrap">
-                                            <el-cascader
-                                                expand-trigger="hover"
-                                                :value="contacts.selectCityData"
-                                                :options="cityList"
-                                                @change="selectCity"
-                                                clearable
-                                                separator="-"
-                                                :disabled="studentIptDis"
-                                            >
-                                            </el-cascader>
-                                        </div>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="3">
-                                        <p>学校名称：</p>
-                                    </el-col>
-                                    <el-col :span="21">
-                                        <el-input
-                                            v-model="clueInfoData.list.school_name"
-                                            :disabled="studentIptDis"
-                                        ></el-input>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="3">
-                                        <p>学校等级：</p>
-                                    </el-col>
-                                    <el-col :span="21">
-                                        <template>
-                                            <el-select 
-                                                v-model="contacts.professor_grade" 
-                                                placeholder="请选择"
-                                                :disabled="studentIptDis">
-                                                <el-option
-                                                v-for="item in schoolLevelArr"
-                                                :key="item.value"
-                                                :label="item.label"
-                                                :value="item.value">
-                                                </el-option>
-                                            </el-select>
-                                        </template>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="3">
-                                        <p>手机：</p>
-                                    </el-col>
-                                    <el-col :span="21">
-                                        <el-input
-                                            v-model="contacts.mobile"
-                                            :disabled="studentIptDis"
-                                        ></el-input>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="3">
-                                        <p>电话：</p>
-                                    </el-col>
-                                    <el-col :span="21">
-                                        <el-input
-                                            v-model="contacts.telephone"
-                                            :disabled="studentIptDis"
-                                        ></el-input>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="3">
-                                        <p>微信：</p>
-                                    </el-col>
-                                    <el-col :span="21">
-                                        <el-input
-                                            v-model="contacts.wechat"
-                                            :disabled="studentIptDis"
-                                        ></el-input>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="3">
-                                        <p>QQ：</p>
-                                    </el-col>
-                                    <el-col :span="21">
-                                        <el-input
-                                            v-model="contacts.qq"
-                                            :disabled="studentIptDis"
-                                        ></el-input>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="3">
-                                        <p>邮箱：</p>
-                                    </el-col>
-                                    <el-col :span="21">
-                                        <el-input
-                                            v-model="contacts.email"
-                                            :disabled="studentIptDis"
-                                        ></el-input>
-                                    </el-col>
+                                    <el-col :span="2" :offset="14"><p class="editBtn" @click="studentIptStatus(index,'1')">编辑</p></el-col>
+                                    <el-col :span="2" ><p class="editBtn" @click="studentIptStatus(index,'2')">删除</p></el-col>
                                 </el-row>
                                 
+                                <div class="school" :class="{schoolColor:item.studentIptDis}">
+                                    <el-button :disabled="item.studentIptDis" style="width:100px;margin-top:10px">转成客户</el-button>
+                                    <el-row>
+                                        <el-col :span="3">
+                                            <p>姓名：</p>
+                                        </el-col>
+                                        <el-col :span="21">
+                                            <el-input
+                                                v-model="item.name"
+                                                :disabled="item.studentIptDis"
+                                            ></el-input>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row >
+                                        <el-col :span="3">
+                                            <p>性别：</p>
+                                        </el-col>
+                                        <el-col :span="21">
+                                            <template>
+                                                <el-select 
+                                                    v-model="item.sex" 
+                                                    placeholder="请选择"
+                                                    :disabled="item.studentIptDis">
+                                                    <el-option
+                                                    v-for="item in sexArr"
+                                                    :key="item.value"
+                                                    :label="item.label"
+                                                    :value="item.value">
+                                                    </el-option>
+                                                </el-select>
+                                            </template>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row >
+                                        <el-col :span="3">
+                                            <p>文理科：</p>
+                                        </el-col>
+                                        <el-col :span="21">
+                                            <template>
+                                                <el-select 
+                                                    v-model="item.the_science" 
+                                                    placeholder="请选择"
+                                                    :disabled="item.studentIptDis">
+                                                    <el-option
+                                                    v-for="item in subjectArr"
+                                                    :key="item.value"
+                                                    :label="item.label"
+                                                    :value="item.value">
+                                                    </el-option>
+                                                </el-select>
+                                            </template>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="3">
+                                            <p>年级：</p>
+                                        </el-col>
+                                        <el-col :span="21">
+                                            <template>
+                                                <el-select 
+                                                    v-model="item.student_grade" 
+                                                    placeholder="请选择"
+                                                    :disabled="item.studentIptDis">
+                                                    <el-option
+                                                    v-for="item in studentGradeArr"
+                                                    :key="item.value"
+                                                    :label="item.label"
+                                                    :value="item.value">
+                                                    </el-option>
+                                                </el-select>
+                                            </template>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="3">
+                                            <p>学校地区：</p>
+                                        </el-col>
+                                        <el-col :span="21">
+                                        <div class="select rightWrap">
+                                                <el-cascader
+                                                    expand-trigger="hover"
+                                                    :value="item.selectCityData"
+                                                    :options="cityList"
+                                                    @change="selectCity($event, index, 'student')"
+                                                    clearable
+                                                    separator="-"
+                                                    :disabled="item.studentIptDis"
+                                                >
+                                                </el-cascader>
+                                            </div>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="3">
+                                            <p>学校名称：</p>
+                                        </el-col>
+                                        <el-col :span="21">
+                                            <el-input
+                                                v-model="item.school_name"
+                                                :disabled="item.studentIptDis"
+                                            ></el-input>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="3">
+                                            <p>学校等级：</p>
+                                        </el-col>
+                                        <el-col :span="21">
+                                            <template>
+                                                <el-select 
+                                                    v-model="item.school_grade" 
+                                                    placeholder="请选择"
+                                                    :disabled="item.studentIptDis">
+                                                    <el-option
+                                                    v-for="item in schoolLevelArr"
+                                                    :key="item.value"
+                                                    :label="item.label"
+                                                    :value="item.value">
+                                                    </el-option>
+                                                </el-select>
+                                            </template>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="3">
+                                            <p>手机：</p>
+                                        </el-col>
+                                        <el-col :span="21">
+                                            <el-input
+                                                v-model="item.mobile"
+                                                :disabled="item.studentIptDis"
+                                            ></el-input>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="3">
+                                            <p>电话：</p>
+                                        </el-col>
+                                        <el-col :span="21">
+                                            <el-input
+                                                v-model="item.telephone"
+                                                :disabled="item.studentIptDis"
+                                            ></el-input>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="3">
+                                            <p>微信：</p>
+                                        </el-col>
+                                        <el-col :span="21">
+                                            <el-input
+                                                v-model="item.wechat"
+                                                :disabled="item.studentIptDis"
+                                            ></el-input>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="3">
+                                            <p>QQ：</p>
+                                        </el-col>
+                                        <el-col :span="21">
+                                            <el-input
+                                                v-model="item.qq"
+                                                :disabled="item.studentIptDis"
+                                            ></el-input>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="3">
+                                            <p>邮箱：</p>
+                                        </el-col>
+                                        <el-col :span="21">
+                                            <el-input
+                                                v-model="item.email"
+                                                :disabled="item.studentIptDis"
+                                            ></el-input>
+                                        </el-col>
+                                    </el-row>
+                                    
+                                </div>
                             </div>
-                        </div>
+                       </template>
                     </template>
                     <template v-else>
                         <div class="studentBtnGroup">
-                            <span>新增学生</span>
+                            <span @click="addStudentStatu = true">新增学生</span>
                             <span>导入学生</span>
                             <span>转客户</span>
                             <span>删除</span>
@@ -679,12 +681,14 @@
                             <el-table-column
                             prop="name"
                             sortable
+                            show-overflow-tooltip
                             label="学生名称"
                             min-width="120">
                             </el-table-column>
                             <el-table-column
                             prop="parent_name"
                             label="家长姓名"
+                            show-overflow-tooltip
                             align="center"
                             min-width="100">
                             </el-table-column>
@@ -699,23 +703,27 @@
                             prop="city_name"
                             sortable
                             label="学校地区"
+                            show-overflow-tooltip
                             min-width="120">
                             </el-table-column>
                              <el-table-column
                             prop="school_name"
                             sortable
                             label="学校名称"
+                            show-overflow-tooltip
                             min-width="120">
                             </el-table-column>
                              <el-table-column
                             prop="student_grade"
                             label="年级"
                             sortable
+                            align="center"
                             min-width="100">
                             </el-table-column>
                              <el-table-column
                             prop="followup_time"
                             label="跟进状态"
+                            show-overflow-tooltip
                             sortable
                             min-width="180">
                             </el-table-column>
@@ -923,7 +931,7 @@
                 </span>
             </el-dialog>
          </div>
-         <!-- 删除线索 -->
+         <!-- 添加联系人 -->
          <div class="shiftClue">
              <el-dialog
                 title="添加联系人"
@@ -1018,7 +1026,121 @@
                 </div>  
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="addContactStatu = false">取 消</el-button>
-                    <el-button type="primary" @click="addContact">确 定</el-button>
+                    <el-button type="primary" @click="addContact('contact')">确 定</el-button>
+                </span>
+            </el-dialog>
+         </div>
+         <!-- 新增学生 -->
+         <div class="shiftClue">
+             <el-dialog
+                title="新增学生"
+                :visible.sync="addStudentStatu"
+                width="30%"
+                >
+                <div>
+                    <div>
+                        <span class="iptName">姓名:</span>
+                        <el-input v-model="addStudentData.name" placeholder="请输入姓名"></el-input>
+                    </div>
+                    <div class="mt10">
+                        <p class="mb10 ">性别</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="addStudentData.sex" placeholder="请选择">
+                            <el-option
+                            v-for="item in sexArr"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <div class="mt10" >
+                        <p class="mb10 ">文理科</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="addStudentData.subject" placeholder="请选择">
+                            <el-option
+                            v-for="item in subjectArr"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <div class="mt10" >
+                        <p class="mb10 ">年级</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="addStudentData.grade" placeholder="请选择">
+                            <el-option
+                            v-for="item in studentGradeArr"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <!-- 机构教师x学生显示 -->
+                    <template v-if="clueType != 1">
+                        <div>
+                            <span class="iptName">学校名称:</span>
+                            <el-input v-model="addStudentData.schoolName" placeholder="请输入家长姓名"></el-input>
+                        </div>
+                        <div class="mt10" >
+                            <p class="mb10 ">等级</p>
+                            <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                            <el-select v-model="addStudentData.schoolLevel" placeholder="请选择">
+                                <el-option
+                                v-for="item in schoolLevelArr"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                        <div class="mt10">
+                            <p class="mb10 ">学校所在地</p>
+                            <el-cascader
+                                expand-trigger="hover"
+                                :value="addStudentData.selectCityData"
+                                :options="cityList"
+                                @change="selectCity($event, 2, 'addStudent')"
+                                clearable
+                                separator="-"
+                            >
+                            </el-cascader>
+                        </div>
+                    </template>
+
+                    <template v-if="clueType != 4">
+                        <div>
+                            <span class="iptName">家长姓名:</span>
+                            <el-input v-model="addStudentData.parentsName" placeholder="请输入家长姓名"></el-input>
+                        </div>
+                        <div>
+                            <span class="iptName">手机:</span>
+                            <el-input v-model="addStudentData.phone" placeholder="请输入手机"></el-input>
+                        </div>
+                        <div>
+                            <span class="iptName">电话:</span>
+                            <el-input v-model="addStudentData.tel" placeholder="请输入电话"></el-input>
+                        </div>
+                        <div>
+                            <span class="iptName">微信:</span>
+                            <el-input v-model="addStudentData.weixin" placeholder="请输入微信"></el-input>
+                        </div>
+                        <div>
+                            <span class="iptName">QQ:</span>
+                            <el-input v-model="addStudentData.qq" placeholder="请输入QQ"></el-input>
+                        </div>
+                        <div>
+                            <span class="iptName">邮箱:</span>
+                            <el-input v-model="addStudentData.email" placeholder="请输入邮箱"></el-input>
+                        </div>
+                    </template>
+                </div>  
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="addStudentStatu = false">取 消</el-button>
+                    <el-button type="primary" @click="addContact('student')">确 定</el-button>
                 </span>
             </el-dialog>
          </div>
@@ -1049,6 +1171,24 @@
                     company_name: '',
                     relationship: ''
                 },
+                // 新增学生数据
+                addStudentData: {
+                    name:'',
+                    sex:'',
+                    subject:'',
+                    grade:'',
+                    parentsName:'',
+                    phone:'111',
+                    tel:'222',
+                    weixin:'333',
+                    qq:'444',
+                    email:'555',
+                    schoolName:'',
+                    schoolLevel:'',
+                    selectCityData:[],
+                },
+                // 新增学生对话框
+                addStudentStatu: false,
                 // 转成客户对话框
                 turnIntoCustomersStatu: false,
                 // 转移线索对话框
@@ -1411,50 +1551,83 @@
                 this.addContactData.selectCityData = data;
             },
             // 添加联系人
-            addContact() {
+            addContact(flag) {
                 console.log(JSON.stringify(this.addContactData,null,4));
-                let self = this;
-                    let obj = self.addContactData
+                let self = this, obj,param,url;
+                if (flag == 'contact') {
+                    // 新增联系人
+                    url = '/api/clueContacts/applyClueContacts'
+                    obj = self.addContactData;
+                    param = {
+                        token: localStorage.getItem('crm_token'),
+                        clue_id: self.$route.query.data.clue_id,
+                        name: obj.contactName,
+                        department: obj.department,
+                        post: obj.post,
+                        professor_grade: obj.grade,
+                        professor_subjects:	obj.subject,
+                        mobile: obj.phone,
+                        telephone: obj.tel,
+                        wechat: obj.weixin,
+                        qq: obj.qq,
+                        email: obj.email,
+                        province_id: obj.selectCityData[0],
+                        city_id: obj.selectCityData[1],
+                        area_id: obj.selectCityData[2],
+                        address: obj.address,
+                        relationship: obj.relationship,
+                        company_name: obj.company_name,
+                    }
+                } else {
+                    url = '/api/clue/applyPSJTstudent'
+                    obj = self.addStudentData;
+                    param = {
+                        token:localStorage.getItem('crm_token'),
+                        name: obj.name,
+                        sex:obj.sex,
+                        the_science:obj.subject,
+                        student_grade:obj.grade,
+                        parent_name: obj.parentsName,
+                        mobile:	obj.phone,
+                        telephone:	obj.tel,
+                        wechat: obj.weixin,
+                        qq: obj.qq,
+                        school_name:obj.schoolName,
+                        grade:obj.schoolLevel,
+                        province_id: obj.selectCityData[0],
+                        city_id: obj.selectCityData[1],
+                        area_id: obj.selectCityData[2],
+                        parent_id: self.clueType == 4 ? self.clueInfoData.list.contacts_id : '',
+                        clue_id: self.$route.query.data.clue_id
+                    }
+                }
+                if (param.name) {
                     this.$axios({
-                       method: 'POST',
-                       withCredentials: false,
-                       url: '/api/clueContacts/applyClueContacts',
-                       data: {
-                            token: localStorage.getItem('crm_token'),
-                            clue_id: self.$route.query.data.clue_id,
-                            name: obj.contactName,
-                            department: obj.department,
-                            post: obj.post,
-                            professor_grade: obj.grade,
-                            professor_subjects:	obj.subject,
-                            mobile: obj.phone,
-                            telephone: obj.tel,
-                            wechat: obj.weixin,
-                            qq: obj.qq,
-                            email: obj.email,
-                            province_id: obj.selectCityData[0],
-                            city_id: obj.selectCityData[1],
-                            area_id: obj.selectCityData[2],
-                            address: obj.address,
-                            relationship: obj.relationship,
-                            company_name: obj.company_name,
-                       }
+                        method: 'POST',
+                        withCredentials: false,
+                        url: url,
+                        data: param
                     })
                     .then(function(res){
                         self.addContactStatu = false;
-                       if (res.data.code === 200) {
-                           self.$message({
+                        if (res.data.code === 200) {
+                            self.$message({
                                 message: '新增联系人成功',
                                 type: 'success'
-                           });
-                           self.clueDetails();
-                       } else {
-                           self.$message.error(res.data.msg);
-                       }
+                            });
+                            self.addStudentStatu = false;
+                            self.clueDetails();
+                        } else {
+                            self.$message.error(res.data.msg);
+                        }
                     })
                     .catch(function(err){
                         console.log(err);
                     });
+                } else {
+                    self.$message.error('请完善参数!')
+                }
+              
             },
             // 设置线索状态
             selClueStatus(data) {
@@ -1717,19 +1890,27 @@
                     .then(function (res) {
                         if (res.data.code === 200) {
                             let data = res.data.data;
-                            // console.log('线索详情:'+JSON.stringify(data));
-                            self.clueInfoData = data;
-                            // for (let i = 0; i < data.contacts.length; i++) {
-                            //     const element = data.contacts[i];
-                            //     element.contactIptDis = true;
-                            // }
-                            self.allContacts = data.contacts;
+                            
+                            
                             for (let i = 0; i < data.contacts.length; i++) {
                                 const element = data.contacts[i];
                                 if (element.id == data.list.contacts_id) {
                                      self.contacts = element;
                                 }
+                                element.contactIptDis = true;
+                                element.selectCityData = [element.province_id,element.city_id,element.area_id]
                             }
+                            // 处理学生数组
+                            for (let i = 0; i < data.student.length; i++) {
+                                const element = data.student[i];
+                                element.studentIptDis = true;
+                                element.selectCityData = [element.province_id,element.city_id,element.area_id];
+                            }
+                            self.allContacts = data.contacts;
+                            // for (let i = 0; i < data.contacts.length; i++) {
+                            //     const element = data.contacts[i];
+                               
+                            // }
                            
                             // self.school.cityArr.push(data.list.province_id)
                             // self.school.cityArr.push(data.list.city_id)
@@ -1744,11 +1925,14 @@
                                 element.contact_ifmt = contactIfmt[element.contact_ifmt-1]
                             }
                             self.logTableData = data.followup;
+                            self.clueInfoData = data;
+                            console.log('线索详情:'+JSON.stringify(data));
                             // console.log('Data返回:'+JSON.stringify(self.clueInfoData));
                             // 获取到线索详情后, 获取线索所在公司
                             self.getCompanyDepartment();
                         } else {
-                            alert(res.data.msg)
+                            // alert(res.data.msg)
+                            self.$message.error(res.data.msg);
                         }
                     })
                     .catch(function (err) {
@@ -1765,24 +1949,143 @@
             },
             // 联系人输入状态
             contactIptStatus(index) {
-                console.log(index)
-                this.contactIptDis = !this.contactIptDis
-                // console.log(JSON.stringify(this.allContacts[index]));
+                // console.log(event);
+                if (event.target.innerText == '编辑') {
+                    event.target.innerText = '保存'
+                } else {
+                    event.target.innerText = '编辑';
+                    this.editContact(index);
+                }
                 
-                // this.allContacts[index].contactIptDis = !this.allContacts[index].contactIptDis
+                let obj =  this.allContacts[index];
+                obj.contactIptDis = !obj.contactIptDis;
+                this.$set(this.allContacts, index, obj);
             },
-            // 学生输入状态
-            studentIptStatus(flag) {
+            // 提交修改联系人资料
+            editContact(index) {
+                this.allContacts[index].token = localStorage.getItem('crm_token');
+                this.allContacts[index].contacts_id = this.allContacts[index].id;
+                this.allContacts[index].contacts_address = this.allContacts[index].address;
+                this.allContacts[index].type = this.clueType;
+                console.log(JSON.stringify(this.allContacts[index],null,4));
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/clue/editClueContacts',
+                    data: self.allContacts[index]
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        console.log(JSON.stringify(res.data.data, null, 4))
+                        self.$message({
+                            message: '成功',
+                            type: 'success'
+                        })
+                    } else {
+                        self.$message.error(res.data.msg);
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
+                
+            },
+            editStudent(index,flag) {
+                let url = '',obj = {};
                 if (flag == 1) {
                     // 编辑
-                    this.studentIptDis = !this.studentIptDis; 
+                    url = '/api/clue/editSTudent';
+                    obj = this.clueInfoData.student[index];
                 } else {
                     // 删除
+                    url = '/api/clue/deleteStudentClue';
+                }
+                obj.token = localStorage.getItem('crm_token'); 
+                obj.clue_id = obj.student_id; 
+                let self = this;
+                console.log(JSON.stringify(obj,null,4));
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: url,
+                    data: obj
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        console.log(JSON.stringify(res.data.data, null, 4))
+                        self.$message({
+                            message: '成功',
+                            type: 'success'
+                        })
+                    } else {
+                        self.$message.error(res.data.msg);
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
+            },
+            // 学生输入状态
+            studentIptStatus(index, flag) {
+                let self = this;
+                let data = self.clueInfoData.student[index];
+                console.log(data);
+                
+                if (flag == 1) {
+                     // 编辑
+                    data.studentIptDis = !data.studentIptDis;
+                    if (event.target.innerText == '编辑') {
+                        event.target.innerText = '保存'
+                    } else {
+                        event.target.innerText = '编辑';
+                        self.editStudent(index, flag);
+                    }
+                } else {
+                    // 删除
+                    this.$axios({
+                        method: 'POST',
+                        withCredentials: false,
+                        url: '/api/clue/deleteStudentClue',
+                        data: {
+                            token: localStorage.getItem('crm_token'),
+                            clue_id: data.student_id
+                        }
+                    })
+                    .then(function(res){
+                        if (res.data.code === 200) {
+                            console.log(JSON.stringify(res.data.data, null, 4))
+                            self.$message({
+                                message: '成功',
+                                type: 'success'
+                            });
+                            self.clueDetails();
+                        } else {
+                            self.$message.error(res.data.msg);
+                        }
+                    })
+                    .catch(function(err){
+                        console.log(err);
+                    });
                 }
             },
             // 选着地址
-            selectCity(data) {
-                console.log(data);
+            selectCity(data,index, flag) {
+                if(flag == 'contacts') {
+                    // 编辑联系人
+                    this.allContacts[index].province_id = data[0];
+                    this.allContacts[index].city_id = data[1];
+                    this.allContacts[index].area_id = data[2];
+                } else if (flag == 'student') {
+                    
+                    // 编辑学生
+                    this.clueInfoData.student[index].province_id = data[0];
+                    this.clueInfoData.student[index].city_id = data[1];
+                    this.clueInfoData.student[index].area_id = data[2];
+                } else if (flag == 'addStudent') {
+                    this.addStudentData.selectCityData = data;
+                }
+               
             },
              // 省市县数据
             requestCity() {

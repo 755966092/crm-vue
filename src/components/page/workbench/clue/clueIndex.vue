@@ -896,6 +896,10 @@
                             <span class="iptName">教师名称:</span>
                             <el-input v-model="addClueData.teacherName" placeholder="请输入内容"></el-input>
                         </div>
+                         <div>
+                            <span class="iptName">职务:</span>
+                            <el-input v-model="addClueData.contactPosition" placeholder="请输入内容"></el-input>
+                        </div>
                         <div>
                             <span class="iptName">学校名称:</span>
                             <el-input v-model="addClueData.schoolName" placeholder="请输入内容"></el-input>
@@ -1603,8 +1607,8 @@
                     .then(function (res) {
                         if (res.data.code == 200) {
                             // 当前用户只会有一个母公司
-                            console.log('报错数据:'+JSON.stringify(res.data.data.list));
-                            console.log('数据格式:'+ typeof res.data.data.list);
+                            // console.log('报错数据:'+JSON.stringify(res.data.data.list));
+                            // console.log('数据格式:'+ typeof res.data.data.list);
                             
                             self.parentCompanyList = res.data.data.list[0].children;
                             self.mother_id = res.data.data.list[0].id
@@ -2027,7 +2031,7 @@
                     }
                 })
                     .then(function (res) {
-                        objrr = [];
+                        // objrr = [];
                         self.cityList = res.data.data.list;
                         localStorage.setItem('cityData', JSON.stringify(res.data.data.list))
                         // console.log(JSON.stringify(res.data.data.list));
@@ -2144,6 +2148,7 @@
 
                         los: self.addClueData.academicSystem,
                         grade: self.addClueData.schoolLevel,
+                        // professor_grade
 
                         contacts_professor_grade: self.addClueData.grade,
                         contacts_professor_subjects: self.addClueData.professorSubjects,
@@ -2170,9 +2175,9 @@
                         sex: self.addClueData.sex,
                         school_name: self.addClueData.schoolName,
 
-                        los: self.addClueData.academicSystem,
+                        // los: self.addClueData.academicSystem,
                         grade: self.addClueData.schoolLevel,
-
+                        student_grade: self.addClueData.grade,
 
                         province_id: self.addClueData.selectCityData[0],
                         city_id: self.addClueData.selectCityData[1],
