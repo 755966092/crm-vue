@@ -473,7 +473,7 @@
                                 </el-row>
                                 
                                 <div class="school" :class="{schoolColor:item.studentIptDis}">
-                                    <el-button :disabled="item.studentIptDis" style="width:100px;margin-top:10px">转成客户</el-button>
+                                    <el-button v-if="item.is_turn == 1" @click="studentturnIntoCustomersFn(index)" :disabled="item.studentIptDis" style="width:100px;margin-top:10px">转成客户</el-button>
                                     <el-row>
                                         <el-col :span="3">
                                             <p>姓名：</p>
@@ -731,10 +731,14 @@
                                 <template slot-scope="scope">
                                     <el-button
                                     size="mini"
-                                    @click="handleEdit(scope.$index, scope.row)">转客户</el-button>
+                                    :disabled="scope.row.is_turn == 2"
+                                    type="success"
+                                    @click="handleEdit(scope.$index, scope.row, 'studentToContract')">转客户</el-button>
                                     <el-button
+                                    :disabled="scope.row.is_turn == 2"
                                     size="mini"
-                                    @click="handleEdit(scope.$index, scope.row)">删除</el-button>
+                                    type="danger"
+                                    @click="handleEdit(scope.$index, scope.row,'delStudent')">删除</el-button>
                                 </template>
                                
                             </el-table-column>
@@ -784,7 +788,7 @@
                                 <template slot-scope="scope">
                                     <el-button
                                     size="mini"
-                                    @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                                    @click="handleEdit(scope.$index, scope.row,'logEdit')">编辑</el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -1513,6 +1517,11 @@
                 // 转移线索部门员工
                 shiftClueDepatment: [],
                 shiftClueEmployeeId: '',
+                // 是学生转客户还是线索转客户
+                // 学生  false
+                // 线索 true
+                studentOrClueToCantract: true,
+                studentToCantract: '',
 
             }
         },
@@ -1534,7 +1543,7 @@
                 .then(function(res){
                     if (res.data.code === 200) {
                         self.$message({
-                            message: '成功',
+                            message: '操作成功',
                             type: 'success'
                         });
                         self.clueDetails();
@@ -1552,7 +1561,6 @@
             },
             // 添加联系人
             addContact(flag) {
-                console.log(JSON.stringify(this.addContactData,null,4));
                 let self = this, obj,param,url;
                 if (flag == 'contact') {
                     // 新增联系人
@@ -1601,6 +1609,8 @@
                         clue_id: self.$route.query.data.clue_id
                     }
                 }
+                console.log(JSON.stringify(param,null,4));
+                
                 if (param.name) {
                     this.$axios({
                         method: 'POST',
@@ -1724,7 +1734,6 @@
                 let changeToClientData = self.changeToClientData;
                 let obj = {
                         token: localStorage.getItem('crm_token'),
-                        clue_id: self.$route.query.data.clue_id,
                         person_user: changeToClientData.businessEmployeeId,
                         person_department: changeToClientData.businessDepartment[changeToClientData.businessDepartment.length - 1],
                         service_user: changeToClientData.serviceEmployeeId,
@@ -1732,6 +1741,17 @@
                         customer_user: changeToClientData.aftermarketEmployeeId,
                         customer_department: changeToClientData.aftermarketDepartment[changeToClientData.aftermarketDepartment.length - 1]
                     }
+                    if (self.studentOrClueToCantract) {
+                        // 线索转客户
+                        console.log('线索');
+                        obj.clue_id = self.$route.query.data.clue_id;
+                    } else {
+                        console.log('学生');
+                        // 学生转客户
+                        obj.clue_id = self.studentToCantract
+                    }
+                    console.log(JSON.stringify(obj));
+                    
                 this.$axios({
                     method: 'POST',
                     withCredentials: false,
@@ -1744,7 +1764,14 @@
                                 message: '转成客户成功',
                                 type: 'success',
                             });
-                            self.openClueInfo();
+                            if (self.studentOrClueToCantract) {
+                                // 线索
+                                self.openClueInfo();    
+                            } else {
+                                // 学生
+                                self.clueDetails();
+                            }
+                            self.studentOrClueToCantract = true;
                         } else {
                             alert(res.data.msg)
                         }
@@ -1849,6 +1876,14 @@
                     this.delClueStatu = true;
                 }
             },
+            // 学生转换为客户
+            studentturnIntoCustomersFn(index) {
+                this.turnIntoCustomersStatu = true;
+                // clueInfoData.student
+                this.studentOrClueToCantract = false;
+                this.studentToCantract = this.clueInfoData.student[index].student_id;
+
+            },
             // 删除日志
             delLogItem() {
                 for (let i = 0; i < this.multipleSelection.length; i++) {
@@ -1862,11 +1897,48 @@
                 this.multipleSelection = val;
             },
             // 编辑按钮
-            handleEdit(index,data) {
+            handleEdit(index,data, flag) {
                 // index 所在行数, 从0开始
                 // data 当前行数据
-                console.log(index);
-                console.log(data);
+                let self = this;
+                if (flag == 'studentToContract') {
+                    // 学生表格转客户
+                    console.log(index);
+                    console.log(data);
+                    this.turnIntoCustomersStatu = true;
+                    this.studentOrClueToCantract = false;
+                    this.studentToCantract = data.student_id;
+                } else if (flag == 'delStudent') {
+                    // 删除按钮
+
+                    this.$axios({
+                        method: 'POST',
+                        withCredentials: false,
+                        url: '/api/clue/deleteStudentClue',
+                        data: {
+                            token: localStorage.getItem('crm_token'),
+                            clue_id: data.student_id
+                        }
+                    })
+                    .then(function(res){
+                        if (res.data.code === 200) {
+                            console.log(JSON.stringify(res.data.data, null, 4))
+                            self.$message({
+                                message: '操作成功',
+                                type: 'success'
+                            });
+                            self.clueDetails();
+                        } else {
+                            self.$message.error(res.data.msg);
+                        }
+                    })
+                    .catch(function(err){
+                        console.log(err);
+                    });
+                } else {
+                    // 编辑日志按钮 logEdit
+                }
+                
                 
             },
             // 选择默认联系人
@@ -1979,7 +2051,7 @@
                     if (res.data.code === 200) {
                         console.log(JSON.stringify(res.data.data, null, 4))
                         self.$message({
-                            message: '成功',
+                            message: '操作成功',
                             type: 'success'
                         })
                     } else {
@@ -2015,7 +2087,7 @@
                     if (res.data.code === 200) {
                         console.log(JSON.stringify(res.data.data, null, 4))
                         self.$message({
-                            message: '成功',
+                            message: '操作成功',
                             type: 'success'
                         })
                     } else {
@@ -2056,7 +2128,7 @@
                         if (res.data.code === 200) {
                             console.log(JSON.stringify(res.data.data, null, 4))
                             self.$message({
-                                message: '成功',
+                                message: '操作成功',
                                 type: 'success'
                             });
                             self.clueDetails();
