@@ -54,7 +54,7 @@
          </div>
          <div class="tapPage">
              <el-tabs type="border-card">
-                <el-tab-pane label="线索信息">
+                <el-tab-pane label="客户信息">
                     <!-- 备注 -->
                     <div class="remarks">
                         <el-row class="title">
@@ -459,6 +459,8 @@
                         </div>
                      </div>
                 </el-tab-pane>
+                <el-tab-pane label="合同">
+                </el-tab-pane> 
                 <el-tab-pane label="学生">
                     <template v-if="clueType == 4">
                         <el-button @click="addStudentStatu = true" style="width:100px;margin-bottom:10px">添加学生</el-button>
@@ -1539,15 +1541,15 @@
                 // 机构类型
                 mechanismTypeArr: [
                     {
-                        value: '大型',
+                        value: 1,
                         label: '大型'
                     },
                     {
-                        value: '中型',
+                        value: 2,
                         label: '中型'
                     },
                     {
-                        value: '小型',
+                        value: 3,
                         label: '小型'
                     },
                 ],
@@ -2242,7 +2244,7 @@
                     data: {
                         token: localStorage.getItem('crm_token'),
                         clue_id: self.$route.query.data.clue_id,
-                        type: 1
+                        type: 2
                     }
                 })
                     .then(function (res) {
@@ -2287,12 +2289,7 @@
                             self.selCityList = [data.list.province_id,data.list.city_id,data.list.area_id]
                             console.log(self.selCityList);
                             self.school = data.details;
-                            
-                            if(!self.school.website) {
-                                self.school.website = ''
-                            }
-
-                            self.school.selCityList = [data.details.province_id, data.details.city_id, data.details.area_id]
+                            self.school.selCityList = [data.details.province_name, data.details.city_name, data.details.area_name]
                             // 处理日志联系方式
                             let contactIfmt = ['手机','电话','QQ','微信','邮箱'];
                             for (let i = 0; i < data.followup.length; i++) {
@@ -2351,65 +2348,48 @@
             // 学校输入框状态
             schoolIptStatus() {
                 this.schoolIptDis = !this.schoolIptDis;
-                let self = this;
                  if (event.target.innerText == '编辑') {
                     event.target.innerText = '保存'
                 } else {
                     event.target.innerText = '编辑';
                     // 保存备注
-                    console.log(JSON.stringify(self.school,null,4));
+                    console.log(JSON.stringify(this.school,null,4));
                     let obj = {
-                         token: localStorage.getItem('crm_token'),
-                            type: self.$route.query.clueType,
-                            name: self.school.school_name,
-                            los:  self.school.los,
-                            grade:  self.school.grade,
-                            address: self.school.address,
-                            location: self.school.location,
-                            jitype:	self.school.type,
-                            province_id: parseInt(self.school.selCityList[0]),
-                            city_id: parseInt(self.school.selCityList[1]),
-                            area_id: parseInt(self.school.selCityList[2]),
-                            website: self.school.website
+                        token:	'',
+                        type:	 '',
+                        name:	'',
+                        los:	 '',
+                        grade:	 '',
+                        address:	'',
+                        location:	'',
+                        jitype:	'',
+                        province_id: '',
+                        city_id: '',
+                        area_id: '',
+                        website:	'',
                     }
-                    console.log(JSON.stringify(obj,null,4));
-                    this.$axios({
-                        method: 'POST',
-                        withCredentials: false,
-                        url: '/api/clue/editClueShool',
-                        data: {
-                            token: localStorage.getItem('crm_token'),
-                            clue_id: self.$route.query.data.clue_id,
-                            type: self.$route.query.clueType,
-                            name: self.school.school_name,
-                            los:  self.school.los,
-                            grade:  self.school.grade,
-                            address: self.school.address,
-                            location: self.school.location,
-                            jitype:	self.school.type,
-                            province_id: self.school.selCityList[0],
-                            city_id: self.school.selCityList[1],
-                            area_id: self.school.selCityList[2],
-                            website: self.school.website
-                            
-                        }
-                    })
-                    .then(function(res){
-                        if (res.data.code === 200) {
-                            console.log(JSON.stringify(res.data.data, null, 4))
-                            self.$message({
-                                message: '操作成功',
-                                type: 'success'
-                            })
-                        } else {
-                            self.$message.error(res.data.msg);
-                        }
-                    })
-                    .catch(function(err){
-                        console.log(err);
-                    });
-
-                    
+                    let obj2 = {
+                        "school_name": "学校线索",
+                        "los": 2,
+                        "grade": 1,
+                        "province_name": null,
+                        "city_name": null,
+                        "area_name": null,
+                        "address": "121",
+                        "cue_source": "全部",
+                        "company_name": "上一秒科技公司",
+                        "user_name": "带我走",
+                        "user_before_name": "dang",
+                        "create_time": "2018-01-02 17:33:05",
+                        "update_time": "2018-01-04 15:52:34",
+                        "remake": "asdasdasdasdasd",
+                        "contacts_id": 109,
+                        "selCityList": [
+                            "15",
+                            "1505",
+                            "150522"
+                        ]
+                    }
                 }
             },
             // 联系人输入状态

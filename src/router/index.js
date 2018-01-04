@@ -50,7 +50,11 @@ export default new Router({
                        {
                             path: '/',
                             component: resolve => require(['../components/page/workbench/clientPage/clientIndex.vue'], resolve)    // 拖拽列表组件
-                       }
+                       },
+                        {
+                            path: 'clientInfo', // 线索详情
+                            component: resolve => require(['../components/page/workbench/clientPage/clientInfo.vue'], resolve),    // 拖拽列表组件
+                        }
                     ]
                 },
                 {
