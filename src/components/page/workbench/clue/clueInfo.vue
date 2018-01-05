@@ -714,11 +714,18 @@
                             min-width="120">
                             </el-table-column>
                              <el-table-column
-                            prop="student_grade"
                             label="年级"
                             sortable
                             align="center"
                             min-width="100">
+                                <template slot-scope="scope">
+                                    {{scope.row.student_grade==1?"初一":(
+                                        scope.row.student_grade==2?"初二":(
+                                            scope.row.student_grade==3?"初三":(
+                                                scope.row.student_grade==4?"高一":(
+                                                    scope.row.student_grade==5?"高二":"高三"
+                                            ))))}}
+                                </template>
                             </el-table-column>
                              <el-table-column
                             prop="followup_time"

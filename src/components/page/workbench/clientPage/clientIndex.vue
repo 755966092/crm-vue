@@ -1767,7 +1767,7 @@ export default {
     // 客户详情
     openClueInfo(index, data) {
       // 跳转到客户详情的页面
-      this.$router.push({ path: "/client/clientInfo",query:{data:data,clueType:this.clueType,parentCompanyList:self.parentCompanyList} });
+      this.$router.push({ path: "/client/clientInfo",query:{data:data,clueType:this.clueType,parentCompanyList:this.parentCompanyList} });
     },
     // 更新时间
     timeUpdata(data) {

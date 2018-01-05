@@ -369,10 +369,10 @@
                         // 筛选表格数据
                         // console.log(this.clueType)
                         let self = this;
-                        let token = '1514255017UHQZ';
+                        
                         let obj = {
                         type: self.selectRangeItem,
-                        token: token,
+                        token: localStorage.getItem('crm_token'),
                         statu:'',
                          create_start: self.lastFollowUpTime[0],
                          create_end: self.lastFollowUpTime[1],
@@ -464,10 +464,10 @@
             // 导出筛选数据
             // console.log(this.clueType)
             let self = this;
-            let token = '1514255017UHQZ';
+            
             let obj = {
             type: self.selectRangeItem,
-            token: token,
+            token: localStorage.getItem('crm_token'),
              statu:1,
              followup_start: self.lastFollowUpTime[0],
              followup_end: self.lastFollowUpTime[1],

@@ -459,19 +459,19 @@
                 <el-tab-pane label="合同">
                      <div class="addLogBtn mb10">
                         <span @click="turnIntoCustomersFn('addContract')">新增合同</span>
-                        <span class="delBtn" @click="delLogItem('contract')">删除</span>
+                        <span class="delBtn" @click="delContractDig('all')">删除</span>
                     </div>
                       <el-table
                             border
-                            @selection-change="changeFun($event,'student')"
-                            :data="contractList"
+                            @selection-change="changeFun($event,'contract')"
+                            :data="clueInfoData.contract"
                             style="width: 100%">
                             <el-table-column v-if="studentShowContent=='1'"
                                 type="selection"
                             >
                             </el-table-column>
                             <el-table-column
-                            prop="contacts_name"
+                            prop="name"
                             sortable
                             show-overflow-tooltip
                             label="合同标题"
@@ -479,22 +479,24 @@
                             min-width="120">
                             </el-table-column>
                             <el-table-column
-                            prop="contacts_mobile"
+                            prop="number"
                             label="合同编号"
                             show-overflow-tooltip
                             align="center"
                             min-width="100">
                             </el-table-column>
                              <el-table-column
-                            prop="followup_statu"
                             label="业务类型"
-
+                            
                             align="center"
                             min-width="100">
+                            <template slot-scope="scope">
+                            {{scope.row.business_type==1?'自主招生':(scope.row.business_type==2?"竞赛":"论文")}}
+                            </template>
+
                             </el-table-column>
-                           
                              <el-table-column
-                            prop="price"
+                            prop="money"
                             sortable
                             align="center"
                             label="金额"
@@ -502,38 +504,43 @@
                             min-width="100">
                             </el-table-column>
                              <el-table-column
-                            prop="professor_grade"
+                            prop="start_time"
                             sortable
                             label="起始日期"
                             align="center"
                             show-overflow-tooltip
-                            min-width="120">
+                            min-width="180">
                             </el-table-column>
                              <el-table-column
-                            prop="professor_subjects"
+                            prop="end_time"
                             label="结束日期"
                             sortable
                             align="center"
-                            min-width="120">
+                            min-width="180">
                             </el-table-column>
                              <el-table-column
-                            prop="clue_name"
                             align="center"
                             label="跟进状态"
                             show-overflow-tooltip
                             sortable
-                            min-width="180">
+                            min-width="120">
+                            <template slot-scope="scope">
+                            {{scope.row.statu==1?'执行中':(scope.row.statu==2?"成功结束":(scope.row.statu==3?"以外终止":"未开始"))}}
+                            </template>
                             </el-table-column>
                             <el-table-column
-                            prop="price2"
+                            
                             label="回款"
                             show-overflow-tooltip
                             sortable
                             align="center"
                             min-width="100">
+                                <template slot-scope="scope">
+                                    {{scope.row.payment_statu==1?'待付款':(scope.row.payment_statu==2?"部分结算":"全部结清")}}
+                                </template>
                             </el-table-column>
                             <el-table-column
-                            prop="professor_subjects2"
+                            prop="followup_time"
                             label="上次跟进时间"
                             show-overflow-tooltip
                             sortable
@@ -546,7 +553,7 @@
                                     :disabled="scope.row.is_turn == 2"
                                     size="mini"
                                     type="danger"
-                                    @click="handleEdit(scope.$index, scope.row,'delStudent')">删除</el-button>
+                                    @click="delContractDig('item',scope.$index, scope.row)">删除</el-button>
                                 </template>
                                
                             </el-table-column>
@@ -806,12 +813,21 @@
                             min-width="120">
                             </el-table-column>
                              <el-table-column
-                            prop="student_grade"
                             label="年级"
                             sortable
                             align="center"
                             min-width="100">
+                                <template slot-scope="scope">
+                                    {{scope.row.student_grade==1?"初一":(
+                                        scope.row.student_grade==2?"初二":(
+                                            scope.row.student_grade==3?"初三":(
+                                                scope.row.student_grade==4?"高一":(
+                                                    scope.row.student_grade==5?"高二":"高三"
+                                            ))))}}
+                                </template>
                             </el-table-column>
+                                
+
                              <el-table-column
                             prop="followup_time"
                             label="跟进状态"
@@ -1036,7 +1052,21 @@
                 <p>是否确定删除客户</p>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="delClueStatu = false">取 消</el-button>
-                    <el-button type="primary" @click="delClue">确 定</el-button>
+                    <el-button type="primary" @click="delClue('all')">确 定</el-button>
+                </span>
+            </el-dialog>
+         </div>
+         <!-- 删除合同 -->
+          <div class="shiftClue">
+             <el-dialog
+                title="删除合同"
+                :visible.sync="delContractStatu"
+                width="30%"
+                >
+                <p>是否确定删除合同</p>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="delContractStatu = false">取 消</el-button>
+                    <el-button type="primary" @click="delContract">确 定</el-button>
                 </span>
             </el-dialog>
          </div>
@@ -1347,16 +1377,16 @@
                 <div>
                     <div>
                         <span class="iptName">合同标题</span>
-                        <el-input v-model="addContractData.name" placeholder="请输入姓名"></el-input>
+                        <el-input v-model="addContractData.name" placeholder="请输入合同标题"></el-input>
                     </div>
                     <div>
                         <span class="iptName">合同编号</span>
-                        <el-input v-model="addContractData.number" placeholder="请输入姓名"></el-input>
+                        <el-input :maxlength='15' v-model="addContractData.number" placeholder="请输入合同编号"></el-input>
                     </div>
                     <div class="mt10">
                         <p class="mb10 ">业务类型</p>
                         <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
-                        <el-select v-model="addContractData.business_type" placeholder="请选择">
+                        <el-select v-model="addContractData.business_type" placeholder="请选择业务类型">
                             <el-option
                             v-for="item in addContractParam.business_type"
                             :key="item.value"
@@ -1367,7 +1397,7 @@
                     </div>
                      <div>
                         <span class="iptName">合同金额(元)</span>
-                        <el-input v-model="addContractData.money" placeholder="请输入姓名"></el-input>
+                        <el-input v-model="addContractData.money" placeholder="请输入合同金额"></el-input>
                     </div>
                      <div>
                         <span class="iptName">开始时间</span>
@@ -1387,21 +1417,23 @@
                     </div>
                     <div class="mt10" >
                         <p class="mb10 ">我方签约机构</p>
-                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
-                        <el-select v-model="addContractData.company_id" placeholder="请选择">
-                            <el-option
-                            v-for="item in studentGradeArr"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                            </el-option>
-                        </el-select>
+                        <el-cascader
+                            placeholder="选择签约机构"
+                            expand-trigger="hover"
+                            v-model="addContractData.company_id_arr"
+                            :options="paramData.parentCompanyList"
+                            clearable
+                            :show-all-levels='false'
+                            :change-on-select='true'
+                        >
+                        </el-cascader>
                     </div>
                      <div class="mt10" >
                         <p class="mb10 ">我方签约人</p>
                         <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
                         <el-select v-model="addContractData.user_id" placeholder="请选择">
                             <el-option
+                            placeholder="选择签约人"
                             v-for="item in studentGradeArr"
                             :key="item.value"
                             :label="item.label"
@@ -1435,6 +1467,10 @@
         },
         data() {
             return {
+                // 删除合同状态
+                delContractStatu: false,
+                delContractStatuFlag: false,
+                delContractData: '',
                 // 上个页面传过来的参数
                 paramData: '',
                 fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
@@ -1449,6 +1485,7 @@
                     start_time: '',
                     end_time: '',
                     contract_time: '',
+                    company_id_arr: [],
                     company_id: '',
                     user_id: ''
                 },
@@ -1468,23 +1505,7 @@
                         }
                     ],
                 },
-                // 合同列表
-                contractList: [
-                    {
-                        followup_statu: 1,
-                        clue_name: "jay",
-                        price:11111,
-                        price2:11111,
-                        city_name: "市辖区",
-                        school_grade: 1,
-                        school_los: null,
-                        contacts_name: "陈龙辉",
-                        contacts_mobile: "17778090023",
-                        professor_grade: '2018-02-02',
-                        professor_subjects: '2018-02-02',
-                        professor_subjects2: '2018-02-02',
-                    }
-                ],
+                
                 // 日志显示内容
                 logShowContent: '1',
                 // 新增日志
@@ -1602,6 +1623,20 @@
                     },
                     // 学生列表
                     student: [],
+                    // 合同列表
+                    contract: [
+                        {
+                            name: "11",
+                            number: "222",
+                            business_type: 1,
+                            money: 333,
+                            start_time: "2018-01-18 07:57:05",
+                            end_time: "2018-02-09 07:57:10",
+                            statu: 4,
+                            payment_statu: 1,
+                            followup_time: null
+                        }
+                    ],
 
                 },
                 // 状态
@@ -1886,6 +1921,75 @@
                 return this.$confirm(`确定移除 ${ file.name }？`);
             },
 
+            // 删除合同对话框
+            delContractDig(flag,index,data) {
+                if (flag=='all') {
+                    // q全选
+                    this.delContractStatuFlag = true;
+                } else {
+                    // 单选
+                    this.delContractData = data
+                    this.delContractStatuFlag = false;
+                }
+                this.delContractStatu = true;
+            },
+            // 删除合同
+            delContract(flag, index, data) {
+                let url,obj;
+                 //查找
+                this.delContractStatu = false;
+              if (this.delContractStatuFlag) {
+                    // 多选删除
+                    let ids = [];
+                    for (let i = 0; i < this.multipleSelection.length; i++) {
+                        const element = this.multipleSelection[i];
+                        ids.push(element.contract_id)
+                    }
+                    url = '/api/clueContract/ContractdeleteDuo'
+                    obj = {
+                        token: localStorage.getItem('crm_token'),
+                        contractIds: JSON.stringify(ids)
+                    }
+                } else {
+                    // 单选删除
+                    obj = {
+                        token: localStorage.getItem('crm_token'),
+                        contract_id: this.delContractData.contract_id
+                    }
+                    url = '/api/clueContract/Contractdelete'
+                }
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: url,
+                    data: obj
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        if (self.delContractStatuFlag) {
+                            for (let i = 0; i < self.multipleSelection.length; i++) {
+                                self.clueInfoData.contract = self.clueInfoData.contract.filter((value) => {
+                                    return value.contract_id != self.multipleSelection[i].contract_id
+                                })
+                            }
+                        } else {
+                                self.clueInfoData.contract = self.clueInfoData.contract.filter((value) => {
+                                    return value.contract_id != self.delContractData.contract_id
+                                })
+                        }
+                        self.$message({
+                            message: '删除成功',
+                            type: 'success'
+                        })
+                    } else {
+                        self.$message.error(res.data.msg);
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
+            },
             // 切换学生表格显示
             switchStudentShowContent(flag) {
                 if(flag == 'student') {
@@ -1982,7 +2086,10 @@
                     obj = self.addContractData;
                     obj.token = localStorage.getItem('crm_token')
                     obj.client_id = self.$route.query.data.clue_id;
+                    obj.company_id = self.addContractData.company_id_arr[self.addContractData.company_id_arr.length-1]
                 }
+                console.log(JSON.stringify(obj,null,4));
+                
                 this.$axios({
                     method: 'POST',
                     withCredentials: false,
@@ -2189,11 +2296,12 @@
             // 进入客户列表页
             openClueInfo() {
                 // 跳转到客户
-                this.$router.push({path: '/clue'})
+                this.$router.push({path: '/client'})
             },
-            // 删除客户
-            delClue() {
+            // 删除合同
+            delClue(flag) {
                 this.delClueStatu = false;
+                // /clueContract/ContractdeleteDuo
                 let self = this;
                 this.$axios({
                     method: 'POST',
@@ -2345,7 +2453,7 @@
                     this.delServerData('log')
                 } else if (flag == 'contract') {
                     // 删除合同
-                    this.$message.error('删除学生')
+                    this.delClueStatu = true;
                 }
                 else {
                     // 删除学生
@@ -2418,12 +2526,6 @@
             },
             //复选框状态改变
             changeFun(val,flag) {
-                if (flag == 'student') {
-                    // 学生表格多选
-
-                } else {
-                    // 日志表格多选
-                }
                 this.multipleSelection = val;
             },
             // 编辑按钮
@@ -2823,6 +2925,8 @@
             console.log(this.$route)
             this.clueType = this.$route.query.clueType;
             this.paramData = this.$route.query;
+            console.log(this.paramData.parentCompanyList);
+            
             this.clueDetails();
             if (localStorage.getItem('cityData')) {
                 this.cityList = JSON.parse(localStorage.getItem('cityData'))
