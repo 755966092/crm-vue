@@ -30,7 +30,6 @@
                         </el-option>
                     </el-select>
                 </div>
-
             </el-col>
             <el-col :span="6">
                 <!-- 选着子公司 -->
@@ -1091,6 +1090,43 @@
                 </el-dialog>
             </div>
         </template>
+        <template>
+             <el-dialog
+                title="转移线索"
+                :visible.sync="shiftClueStatu"
+                width="30%"
+                >
+                <div class="mt10">
+                    <p class="mb10 ">选择部门</p>
+                    <el-cascader
+                        expand-trigger="hover"
+                        :value="changeToClientData.businessDepartment"
+                        :options="companyDepartment"
+                        @change="selectServiceDepartment($event,'businessDepartment')"
+                        clearable
+                        change-on-select
+                    >
+                    </el-cascader>
+                </div>
+                <div class="mt10">
+                    <p class="mb10 ">选择负责人</p>
+                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                    <el-select v-model="shiftClueEmployeeId" placeholder="请选择">
+                        <el-option
+                        v-for="item in changeToClientData.businessEmployee"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
+                </div>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="shiftClueStatu = false">取 消</el-button>
+                    <el-button type="primary" @click="shiftClue">确 定</el-button>
+                </span>
+            </el-dialog>
+        </template>
+
     </div>
 </template>
 
@@ -1767,7 +1803,7 @@ export default {
     // 客户详情
     openClueInfo(index, data) {
       // 跳转到客户详情的页面
-      this.$router.push({ path: "/client/clientInfo",query:{data:data,clueType:this.clueType,parentCompanyList:self.parentCompanyList} });
+      this.$router.push({ path: "/client/clientInfo",query:{data:data,type:this.clueType} });
     },
     // 更新时间
     timeUpdata(data) {
@@ -1786,12 +1822,9 @@ export default {
       })
         .then(function(res) {
           if (res.data.code == 200) {
-              console.log(JSON.stringify(res.data.data));
-              
             // 当前用户只会有一个母公司
-            self.getMenuName(res.data.data.list);
-            self.parentCompanyList = res.data.data.list;
-            self.mother_id = localStorage.getItem('motherCompanyId')
+            self.parentCompanyList = res.data.data.list[0].children;
+            self.mother_id = res.data.data.list[0].id;
           } else {
             alert(res.data.msg);
           }
@@ -1817,7 +1850,6 @@ export default {
             // 当前母公司下的部门 parentCompanyDepartment
             // console.log(JSON.stringify(res.data.data,null,4))
             // console.log(self.mother_id)
-            self.getMenuName(res.data.data.list);
             self.currentCompanyDepartment = res.data.data.list;
           } else {
             alert(res.data.msg);
@@ -1842,7 +1874,6 @@ export default {
         .then(function(res) {
           if (res.data.code === 200) {
             // 当前子公司下的部门 parentCompanyDepartment
-            self.getMenuName(res.data.data.list);
             self.currentCompanyDepartment = res.data.data.list;
           } else {
             alert(res.data.msg);
@@ -2142,7 +2173,7 @@ export default {
         .then(function(res) {
           if (res.data.code === 200) {
             // console.log('返回参数:');
-            console.log("返回参数:" + JSON.stringify(res.data, null, 4));
+            console.log("返回参数:" + JSON.stringify(res.data));
             for (var i = 0; i < res.data.data.list.length; i++) {
               var obj = res.data.data.list[i];
               obj.school_grade = self.schoolLevelArr[obj.school_grade - 1];
@@ -2239,8 +2270,7 @@ export default {
           clue_id: data.clue_id
         };
         console.log("提交客户参数:" + JSON.stringify(paramObj, null, 4));
-        self
-          .$axios({
+        self.$axios({
             method: "POST",
             withCredentials: false,
             url: "/api/clue/deleteClue",
@@ -2391,19 +2421,7 @@ export default {
         .catch(function(err) {
           console.log(err);
         });
-    },
-    // 处理树形数据, 删除空的children
-    getMenuName(menus){
-        for (var value of menus) {
-            if (value.children) {
-                this.getMenuName(value.children)
-            }
-            if (value.children.length == 0) {
-                delete value.children
-            }
-        }
-
-    },
+    }
   },
   created() {
     this.applyCompany();

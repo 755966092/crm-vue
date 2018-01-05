@@ -40,14 +40,11 @@
                     </template>
                 </el-col>
                 <el-col :span="4">
-                     <el-button @click="turnIntoCustomersFn('contract')">转成客户</el-button>
-                </el-col>
-                <el-col :span="4">
                      <el-button @click="turnIntoCustomersFn('shiftClue')">转移给他人</el-button>
                 </el-col>
                 <el-col :span="4">
-                     <el-button @click="turnIntoCustomersFn('delClue')">删除线索</el-button>
-                     <!-- <el-button @click="turnIntoCustomersFn('delClue')">删除线索</el-button> -->
+                     <el-button @click="turnIntoCustomersFn('delClue')">删除客户</el-button>
+                     <!-- <el-button @click="turnIntoCustomersFn('delClue')">删除客户</el-button> -->
                 </el-col>
             </el-row>
              
@@ -269,7 +266,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="item.ascontacts_post"
+                                            v-model="item.contacts_post"
                                             :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>
@@ -394,7 +391,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="item.address"
+                                            v-model="item.contacts_address"
                                             :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>
@@ -460,6 +457,100 @@
                      </div>
                 </el-tab-pane>
                 <el-tab-pane label="合同">
+                     <div class="addLogBtn mb10">
+                        <span @click="turnIntoCustomersFn('addContract')">新增合同</span>
+                        <span class="delBtn" @click="delLogItem('contract')">删除</span>
+                    </div>
+                      <el-table
+                            border
+                            @selection-change="changeFun($event,'student')"
+                            :data="contractList"
+                            style="width: 100%">
+                            <el-table-column v-if="studentShowContent=='1'"
+                                type="selection"
+                            >
+                            </el-table-column>
+                            <el-table-column
+                            prop="contacts_name"
+                            sortable
+                            show-overflow-tooltip
+                            label="合同标题"
+                            align="center"
+                            min-width="120">
+                            </el-table-column>
+                            <el-table-column
+                            prop="contacts_mobile"
+                            label="合同编号"
+                            show-overflow-tooltip
+                            align="center"
+                            min-width="100">
+                            </el-table-column>
+                             <el-table-column
+                            prop="followup_statu"
+                            label="业务类型"
+
+                            align="center"
+                            min-width="100">
+                            </el-table-column>
+                           
+                             <el-table-column
+                            prop="price"
+                            sortable
+                            align="center"
+                            label="金额"
+                            show-overflow-tooltip
+                            min-width="100">
+                            </el-table-column>
+                             <el-table-column
+                            prop="professor_grade"
+                            sortable
+                            label="起始日期"
+                            align="center"
+                            show-overflow-tooltip
+                            min-width="120">
+                            </el-table-column>
+                             <el-table-column
+                            prop="professor_subjects"
+                            label="结束日期"
+                            sortable
+                            align="center"
+                            min-width="120">
+                            </el-table-column>
+                             <el-table-column
+                            prop="clue_name"
+                            align="center"
+                            label="跟进状态"
+                            show-overflow-tooltip
+                            sortable
+                            min-width="180">
+                            </el-table-column>
+                            <el-table-column
+                            prop="price2"
+                            label="回款"
+                            show-overflow-tooltip
+                            sortable
+                            align="center"
+                            min-width="100">
+                            </el-table-column>
+                            <el-table-column
+                            prop="professor_subjects2"
+                            label="上次跟进时间"
+                            show-overflow-tooltip
+                            sortable
+                            align="center"
+                            min-width="180">
+                            </el-table-column>
+                            <el-table-column min-width="80" label="操作">
+                                <template slot-scope="scope">
+                                    <el-button
+                                    :disabled="scope.row.is_turn == 2"
+                                    size="mini"
+                                    type="danger"
+                                    @click="handleEdit(scope.$index, scope.row,'delStudent')">删除</el-button>
+                                </template>
+                               
+                            </el-table-column>
+                        </el-table>
                 </el-tab-pane> 
                 <el-tab-pane label="学生">
                     <template v-if="clueType == 4">
@@ -475,7 +566,6 @@
                                 </el-row>
                                 
                                 <div class="school" :class="{schoolColor:item.studentIptDis}">
-                                    <el-button v-if="item.is_turn == 1" @click="studentturnIntoCustomersFn('single', index)" :disabled="item.studentIptDis" style="width:100px;margin-top:10px">转成客户</el-button>
                                     <el-row>
                                         <el-col :span="3">
                                             <p>姓名：</p>
@@ -666,8 +756,8 @@
                         </div>
                         <div class="showBtn">
                             <span class="mr10">显示</span>
-                             <el-radio-group @change="switchStudentShowContent" v-model="studentShowContent">
-                                <el-radio  label="1">线索</el-radio>
+                             <el-radio-group @change="switchStudentShowContent('student')" v-model="studentShowContent">
+                                <el-radio  label="1">客户</el-radio>
                                 <el-radio  label="2">客户</el-radio>
                              </el-radio-group>
                         </div>
@@ -752,6 +842,16 @@
                         <span @click="turnIntoCustomersFn('addLog')">新增日志</span>
                         <span class="delBtn" @click="delLogItem('log')">删除</span>
                     </div>
+                    <div class="showBtn">
+                            <span class="mr10">显示</span>
+                             <el-radio-group @change="switchStudentShowContent('log')" v-model="logShowContent">
+                                <el-radio  label="1">前期跟进</el-radio>
+                                <el-radio  label="2">售中跟进</el-radio>
+                                <el-radio  label="3">售中服务</el-radio>
+                                <el-radio  label="4">售后跟进</el-radio>
+                                <el-radio  label="5">售后服务</el-radio>
+                             </el-radio-group>
+                        </div>
                     <div class="logTable">
                         <el-table
                             ref="logList"
@@ -799,6 +899,8 @@
                 </el-tab-pane>
             </el-tabs>
          </div> 
+        <!-- 新增合同 -->
+
          <!-- 转成客户 -->
          <div class="changeToClient">
              <el-dialog
@@ -887,10 +989,10 @@
                 </span>
             </el-dialog>
          </div>
-         <!-- 转移线索 -->
+         <!-- 转移客户 -->
          <div class="shiftClue">
              <el-dialog
-                title="转移线索"
+                title="转移客户"
                 :visible.sync="shiftClueStatu"
                 width="30%"
                 >
@@ -924,14 +1026,14 @@
                 </span>
             </el-dialog>
          </div>
-         <!-- 删除线索 -->
+         <!-- 删除客户 -->
          <div class="shiftClue">
              <el-dialog
-                title="删除线索"
+                title="删除客户"
                 :visible.sync="delClueStatu"
                 width="30%"
                 >
-                <p>是否确定删除线索</p>
+                <p>是否确定删除客户</p>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="delClueStatu = false">取 消</el-button>
                     <el-button type="primary" @click="delClue">确 定</el-button>
@@ -1191,7 +1293,7 @@
                 </div>
                  <span slot="footer" class="dialog-footer">
                     <el-button @click="addLogStatu = false">取 消</el-button>
-                    <el-button type="primary" @click="addLog">确 定</el-button>
+                    <el-button type="primary" @click="addLog('log')">确 定</el-button>
                 </span>
              </el-dialog>
          </div>
@@ -1208,7 +1310,7 @@
             </span>
         </el-dialog>
         <!-- 导入学生第二部 -->
-         <el-dialog
+        <el-dialog
             title="批量导入--上传数据文件"
             :visible.sync="importStatu2"
             width="30%"
@@ -1235,6 +1337,94 @@
                 <el-button type="primary" @click="importStatu2 = false">确 定</el-button>
             </span>
         </el-dialog>
+        <!-- 新增合同 -->   
+        <div class="shiftClue">
+             <el-dialog
+                title="新增合同"
+                :visible.sync="addContractStatu"
+                width="30%"
+                >
+                <div>
+                    <div>
+                        <span class="iptName">合同标题</span>
+                        <el-input v-model="addContractData.name" placeholder="请输入姓名"></el-input>
+                    </div>
+                    <div>
+                        <span class="iptName">合同编号</span>
+                        <el-input v-model="addContractData.number" placeholder="请输入姓名"></el-input>
+                    </div>
+                    <div class="mt10">
+                        <p class="mb10 ">业务类型</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="addContractData.business_type" placeholder="请选择">
+                            <el-option
+                            v-for="item in addContractParam.business_type"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
+                     <div>
+                        <span class="iptName">合同金额(元)</span>
+                        <el-input v-model="addContractData.money" placeholder="请输入姓名"></el-input>
+                    </div>
+                     <div>
+                        <span class="iptName">开始时间</span>
+                        <el-date-picker
+                        v-model="addContractData.start_time"
+                        type="datetime"
+                        placeholder="选择开始时间">
+                        </el-date-picker>
+                    </div>
+                     <div>
+                        <span class="iptName">结束时间</span>
+                        <el-date-picker
+                        v-model="addContractData.end_time"
+                        type="datetime"
+                        placeholder="选择结束时间">
+                        </el-date-picker>
+                    </div>
+                    <div class="mt10" >
+                        <p class="mb10 ">我方签约机构</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="addContractData.company_id" placeholder="请选择">
+                            <el-option
+                            v-for="item in studentGradeArr"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
+                     <div class="mt10" >
+                        <p class="mb10 ">我方签约人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="addContractData.user_id" placeholder="请选择">
+                            <el-option
+                            v-for="item in studentGradeArr"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
+                     <div>
+                        <span class="iptName">签约时间</span>
+                        <el-date-picker
+                        v-model="addContractData.contract_time"
+                        type="datetime"
+                        placeholder="选择签约时间">
+                        </el-date-picker>
+                    </div>
+                </div>  
+                 <span slot="footer" class="dialog-footer">
+                    <el-button @click="addContractStatu = false">取 消</el-button>
+                    <el-button type="primary" @click="addLog('contract')">确 定</el-button>
+                </span>
+             </el-dialog>
+        </div>
+        
      </div>
 </template>
 
@@ -1245,7 +1435,58 @@
         },
         data() {
             return {
+                // 上个页面传过来的参数
+                paramData: '',
                 fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
+                // 新增合同
+                addContractStatu: false,
+                addContractData: {
+                    client_id: '',
+                    name: '',
+                    number: '',
+                    business_type: '',
+                    money: '',
+                    start_time: '',
+                    end_time: '',
+                    contract_time: '',
+                    company_id: '',
+                    user_id: ''
+                },
+                addContractParam: {
+                    business_type: [
+                        {
+                            label:'自主招生',
+                            value:1
+                        },
+                        {
+                            label:'竞赛',
+                            value:2
+                        },
+                        {
+                            label:'论文',
+                            value:3
+                        }
+                    ],
+                },
+                // 合同列表
+                contractList: [
+                    {
+                        followup_statu: 1,
+                        clue_name: "jay",
+                        price:11111,
+                        price2:11111,
+                        city_name: "市辖区",
+                        school_grade: 1,
+                        school_los: null,
+                        contacts_name: "陈龙辉",
+                        contacts_mobile: "17778090023",
+                        professor_grade: '2018-02-02',
+                        professor_subjects: '2018-02-02',
+                        professor_subjects2: '2018-02-02',
+                    }
+                ],
+                // 日志显示内容
+                logShowContent: '1',
                 // 新增日志
                 addLogData: {
                     addLogTime: '',
@@ -1294,9 +1535,9 @@
                 addStudentStatu: false,
                 // 转成客户对话框
                 turnIntoCustomersStatu: false,
-                // 转移线索对话框
+                // 转移客户对话框
                 shiftClueStatu: false,
-                // 删除线索对话框
+                // 删除客户对话框
                 delClueStatu: false,
                 // 新增联系人对话框
                 addContactStatu: false,
@@ -1610,12 +1851,12 @@
                     // 标记当前选择的是哪一个, 默认业务部门
                     flagDepartment: 'businessDepartment'
                 },
-                // 转移线索部门员工
+                // 转移客户部门员工
                 shiftClueDepatment: [],
                 shiftClueEmployeeId: '',
-                // 是学生转客户还是线索转客户
+                // 是学生转客户还是客户转客户
                 // 学生  false
-                // 线索 true
+                // 客户 true
                 studentOrClueToCantract: true,
                 studentToCantract: '',
                 // 多选删除学生
@@ -1646,44 +1887,124 @@
             },
 
             // 切换学生表格显示
-            switchStudentShowContent() {
-                if (this.studentShowContent == '1') {
-                    this.clueInfoData.studentShowList = this.clueInfoData.studentClueList;
+            switchStudentShowContent(flag) {
+                if(flag == 'student') {
+                    // 切换学生显示
+                    if (this.studentShowContent == '1') {
+                        this.clueInfoData.studentShowList = this.clueInfoData.studentClueList;
+                    } else {
+                        this.clueInfoData.studentShowList = this.clueInfoData.studentContractList;
+                    }
                 } else {
-                    this.clueInfoData.studentShowList = this.clueInfoData.studentContractList;
+                    console.log(this.logShowContent);
+                    
                 }
             },
-            // 新增日志
-            addLog() {
+             // 转成客户
+            intoContract(flag) {
+                
+                this.turnIntoCustomersStatu = false;
                 let self = this;
-                    this.$axios({
-                       method: 'POST',
-                       withCredentials: false,
-                       url: '/api/clueFollowup/applyClueFollowup',
-                       data: {
-                           token: localStorage.getItem('crm_token'),
-                           type: 1,
-                           clue_id: self.$route.query.data.clue_id,
-                           contact_ifmt: self.addLogData.contactType,
-                           content: self.addLogData.content,
-                           time: self.addLogData.addLogTime
-                       }
+                let changeToClientData = self.changeToClientData;
+                let url = '/api/clue/clueTurnCustomer';
+                let obj = {
+                    token: localStorage.getItem('crm_token'),
+                    person_user: changeToClientData.businessEmployeeId,
+                    person_department: changeToClientData.businessDepartment[changeToClientData.businessDepartment.length - 1],
+                    service_user: changeToClientData.serviceEmployeeId,
+                    service_department: changeToClientData.serviceDepartment[changeToClientData.serviceDepartment.length - 1],
+                    customer_user: changeToClientData.aftermarketEmployeeId,
+                    customer_department: changeToClientData.aftermarketDepartment[changeToClientData.aftermarketDepartment.length - 1]
+                }
+                
+                if (self.studentToCantractFlag == 'multiple') {
+                    obj.clueIds = [];
+                    url = '/api/clue/clueTurnCustomerDuo';
+                    // 多选删除学生
+                    obj.clueIds = JSON.stringify(this.studentToCantractArr);
+                } else {
+                    if (self.studentOrClueToCantract) {
+                        // 客户转客户
+                        obj.clue_id = self.$route.query.data.clue_id;
+                    } else {
+                        // 学生转客户
+                        obj.clue_id = self.studentToCantract
+                    }
+                }
+                // console.log(JSON.stringify(self.changeToClientData,null,4));
+               
+                    
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: url,
+                    data: obj
+                })
+                    .then(function (res) {
+                        if (res.data.code === 200) {
+                            self.$message({
+                                message: '转成客户成功',
+                                type: 'success',
+                            });
+                            if (self.studentOrClueToCantract) {
+                                // 客户
+                                self.openClueInfo();    
+                            } else {
+                                // 学生
+                                self.clueDetails();
+                            }
+                            self.studentOrClueToCantract = true;
+                        } else {
+                            alert(res.data.msg)
+                        }
                     })
-                    .then(function(res){
-                       if (res.data.code === 200) {
-                           self.$message({
-                               message: '操作成功',
-                               type: 'success'
-                           });
-                           self.addLogStatu = false;
-                           self.clueDetails()
-                       } else {
-                           self.$message.error(res.data.msg);
-                       }
-                    })
-                    .catch(function(err){
+                    .catch(function (err) {
                         console.log(err);
                     });
+            },
+            // 新增日志
+            addLog(flag) {
+                let self = this,url,obj;
+                if (flag == 'log') {
+                    // 添加日志
+                    url = '/api/clueFollowup/applyClueFollowup';
+                    obj = {
+                        token: localStorage.getItem('crm_token'),
+                        type: 2,
+                        clue_id: self.$route.query.data.clue_id,
+                        contact_ifmt: self.addLogData.contactType,
+                        content: self.addLogData.content,
+                        time: self.addLogData.addLogTime
+                    }
+                } else {
+                    // 添加合同
+                    url = '/api/clueContract/addClueContract';
+                    obj = self.addContractData;
+                    obj.token = localStorage.getItem('crm_token')
+                    obj.client_id = self.$route.query.data.clue_id;
+                }
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: url,
+                    data: obj
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        self.$message({
+                            message: '操作成功',
+                            type: 'success'
+                        });
+                        self.addLogStatu = false;
+                        self.addContractStatu = false;
+                        self.clueDetails()
+                    } else {
+                        self.$message.error(res.data.msg);
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
             },
             // 删除联系人
             selContact(index) {
@@ -1796,7 +2117,7 @@
                 }
               
             },
-            // 设置线索状态
+            // 设置客户状态
             selClueStatus(data) {
                 let self = this;
                 this.$axios({
@@ -1820,132 +2141,7 @@
                     console.log(err);
                 });
             },
-            // 进入线索列表页
-            openClueInfo() {
-                // 跳转到线索
-                this.$router.push({path: '/clue'})
-            },
-            // 删除线索
-            delClue() {
-                this.delClueStatu = false;
-                let self = this;
-                this.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/clue/deleteClue',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        clue_id: self.$route.query.data.clue_id,
-                    }
-                })
-                .then(function(res){
-                    if (res.data.code === 200) {
-                        self.$message({
-                            message: '删除成功',
-                            type: 'success'
-                        })
-                        self.openClueInfo();
-                    } else {
-                        alert(res.data.msg)
-                    }
-                })
-                .catch(function(err){
-                    console.log(err);
-                });
-            },
-            // 转移线索
-            shiftClue() {
-                this.shiftClueStatu = false;
-                let self = this;
-                this.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/clue/transferClue',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        clue_id: self.$route.query.data.clue_id,
-                        department_id: self.changeToClientData.businessDepartment[self.changeToClientData.businessDepartment.length-1],
-                        user_new: self.shiftClueEmployeeId
-                    }
-                })
-                .then(function(res){
-                    if (res.data.code === 200) {
-                        self.$message({
-                            message: '转移成功',
-                            type: 'success'
-                        });
-                        self.openClueInfo();
-                    } else {
-                        alert(res.data.msg)
-                    }
-                    })
-                .catch(function(err){
-                    console.log(err);
-                });
-            },
-            // 转成客户
-            intoContract(flag) {
-                
-                this.turnIntoCustomersStatu = false;
-                let self = this;
-                let changeToClientData = self.changeToClientData;
-                let url = '/api/clue/clueTurnCustomer';
-                let obj = {
-                    token: localStorage.getItem('crm_token'),
-                    person_user: changeToClientData.businessEmployeeId,
-                    person_department: changeToClientData.businessDepartment[changeToClientData.businessDepartment.length - 1],
-                    service_user: changeToClientData.serviceEmployeeId,
-                    service_department: changeToClientData.serviceDepartment[changeToClientData.serviceDepartment.length - 1],
-                    customer_user: changeToClientData.aftermarketEmployeeId,
-                    customer_department: changeToClientData.aftermarketDepartment[changeToClientData.aftermarketDepartment.length - 1]
-                }
-                
-                if (self.studentToCantractFlag == 'multiple') {
-                    obj.clueIds = [];
-                    url = '/api/clue/clueTurnCustomerDuo';
-                    // 多选删除学生
-                    obj.clueIds = JSON.stringify(this.studentToCantractArr);
-                } else {
-                    if (self.studentOrClueToCantract) {
-                        // 线索转客户
-                        obj.clue_id = self.$route.query.data.clue_id;
-                    } else {
-                        // 学生转客户
-                        obj.clue_id = self.studentToCantract
-                    }
-                }
-                // console.log(JSON.stringify(self.changeToClientData,null,4));
-               
-                    
-                this.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: url,
-                    data: obj
-                })
-                    .then(function (res) {
-                        if (res.data.code === 200) {
-                            self.$message({
-                                message: '转成客户成功',
-                                type: 'success',
-                            });
-                            if (self.studentOrClueToCantract) {
-                                // 线索
-                                self.openClueInfo();    
-                            } else {
-                                // 学生
-                                self.clueDetails();
-                            }
-                            self.studentOrClueToCantract = true;
-                        } else {
-                            alert(res.data.msg)
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-            // 选择服务部门
+             // 选择服务部门
             selectServiceDepartment(data,flag) {
                 this.changeToClientData.flagDepartment = flag;
                 this.changeToClientData[flag] = data;
@@ -1990,6 +2186,70 @@
                         console.log(err);
                     });
             },
+            // 进入客户列表页
+            openClueInfo() {
+                // 跳转到客户
+                this.$router.push({path: '/clue'})
+            },
+            // 删除客户
+            delClue() {
+                this.delClueStatu = false;
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/clue/deleteClue',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        clue_id: self.$route.query.data.clue_id,
+                    }
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        self.$message({
+                            message: '删除成功',
+                            type: 'success'
+                        })
+                        self.openClueInfo();
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
+            },
+            // 转移客户
+            shiftClue() {
+                this.shiftClueStatu = false;
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/clue/transferClue',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        clue_id: self.$route.query.data.clue_id,
+                        department_id: self.changeToClientData.businessDepartment[self.changeToClientData.businessDepartment.length-1],
+                        user_new: self.shiftClueEmployeeId
+                    }
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        self.$message({
+                            message: '转移成功',
+                            type: 'success'
+                        });
+                        self.openClueInfo();
+                    } else {
+                        alert(res.data.msg)
+                    }
+                    })
+                .catch(function(err){
+                    console.log(err);
+                });
+            },
+           
             // 获取子公司部门
             getCompanyDepartment() {
                 let self = this;
@@ -2041,6 +2301,9 @@
                     this.addLogStatu = true;    
                 } else if (flag == 'importStudent') {
                     this.importStatu = true;
+                } else if (flag == 'addContract') {
+                    // 新增合同
+                    this.addContractStatu = true;
                 }
                 else {
                     this.delClueStatu = true;
@@ -2080,7 +2343,11 @@
                         })
                     }
                     this.delServerData('log')
-                } else {
+                } else if (flag == 'contract') {
+                    // 删除合同
+                    this.$message.error('删除学生')
+                }
+                else {
                     // 删除学生
                     for (let i = 0; i < this.multipleSelection.length; i++) {
                         this.clueInfoData.studentShowList = this.clueInfoData.studentShowList.filter((value) => {
@@ -2165,6 +2432,7 @@
                 // data 当前行数据
                 let self = this;
                 if (flag == 'studentToContract') {
+                    console.log('111');
                     // 学生表格转客户
                     this.studentToCantractFlag = 'single';
                     this.turnIntoCustomersStatu = true;
@@ -2234,7 +2502,7 @@
                 this.clueInfoData.list.contacts_id= data
                 
             },
-            // 线索详情
+            // 客户详情
             clueDetails() {
                 let self = this;
                 this.$axios({
@@ -2268,7 +2536,7 @@
                                 element.studentIptDis = true;
                                 element.selectCityData = [element.province_id,element.city_id,element.area_id];
                                 if (element.is_turn == 1) {
-                                    // 线索
+                                    // 客户
                                     data.studentClueList.push(element)
                                 } else {
                                     // 客户
@@ -2298,9 +2566,9 @@
                             }
                             self.logTableData = data.followup;
                             self.clueInfoData = data;
-                            console.log('线索详情:'+JSON.stringify(data));
+                            console.log('客户详情:'+JSON.stringify(data));
                             // console.log('Data返回:'+JSON.stringify(self.clueInfoData));
-                            // 获取到线索详情后, 获取线索所在公司
+                            // 获取到客户详情后, 获取客户所在公司
                             self.getCompanyDepartment();
                         } else {
                             // alert(res.data.msg)
@@ -2369,7 +2637,7 @@
                         website:	'',
                     }
                     let obj2 = {
-                        "school_name": "学校线索",
+                        "school_name": "学校客户",
                         "los": 2,
                         "grade": 1,
                         "province_name": null,
@@ -2410,7 +2678,7 @@
             editContact(index) {
                 this.allContacts[index].token = localStorage.getItem('crm_token');
                 this.allContacts[index].contacts_id = this.allContacts[index].id;
-                this.allContacts[index].contacts_address = this.allContacts[index].address;
+                this.allContacts[index].contacts_address = this.allContacts[index].contacts_address;
                 this.allContacts[index].type = this.clueType;
                 let self = this;
                 this.$axios({
@@ -2554,6 +2822,7 @@
              // 传来的参数
             console.log(this.$route)
             this.clueType = this.$route.query.clueType;
+            this.paramData = this.$route.query;
             this.clueDetails();
             if (localStorage.getItem('cityData')) {
                 this.cityList = JSON.parse(localStorage.getItem('cityData'))

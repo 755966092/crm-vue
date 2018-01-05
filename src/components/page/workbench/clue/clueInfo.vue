@@ -394,7 +394,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="item.address"
+                                            v-model="item.contacts_address"
                                             :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>
@@ -2430,7 +2430,7 @@
             editContact(index) {
                 this.allContacts[index].token = localStorage.getItem('crm_token');
                 this.allContacts[index].contacts_id = this.allContacts[index].id;
-                this.allContacts[index].contacts_address = this.allContacts[index].address;
+                this.allContacts[index].contacts_address = this.allContacts[index].contacts_address;
                 this.allContacts[index].type = this.clueType;
                 let self = this;
                 this.$axios({

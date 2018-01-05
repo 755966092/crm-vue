@@ -61,6 +61,7 @@
                                 localStorage.setItem('crm_username', res.data.data.list.user_name);
                                 // token缓存
                                 localStorage.setItem('crm_token', res.data.data.list.user_token);
+                                self.selfCompany();
                                 self.$router.push('/workbench');
                             } else {
                                 console.log('error submit!!');
@@ -77,6 +78,29 @@
                     console.log(err);
                 });
 
+            },
+            // 当前用户所属公司
+            selfCompany() {
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/company/CompanyMyCompany',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                    }
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        localStorage.setItem('motherCompanyId', res.data.data.mother.id);
+                        localStorage.setItem('chirdrenCompanyId', res.data.data.chirdren.id);
+                    } else {
+                    //    self.message.error(res.data.msg);
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
             }
         }
     }

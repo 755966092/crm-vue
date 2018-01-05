@@ -1609,9 +1609,9 @@
                             // 当前用户只会有一个母公司
                             // console.log('报错数据:'+JSON.stringify(res.data.data.list));
                             // console.log('数据格式:'+ typeof res.data.data.list);
-                            
-                            self.parentCompanyList = res.data.data.list[0].children;
-                            self.mother_id = res.data.data.list[0].id
+                            self.getMenuName(res.data.data.list)
+                            self.parentCompanyList = res.data.data.list;
+                            self.mother_id = localStorage.getItem('motherCompanyId');
                         } else {
                             alert(res.data.msg)
                         }
@@ -1637,6 +1637,7 @@
                             // 当前母公司下的部门 parentCompanyDepartment
                             // console.log(JSON.stringify(res.data.data,null,4))
                             // console.log(self.mother_id)
+                            self.getMenuName(res.data.data.list)
                             self.currentCompanyDepartment = res.data.data.list
                         } else {
                             alert(res.data.msg)
@@ -1661,6 +1662,7 @@
                     .then(function (res) {
                         if (res.data.code === 200) {
                             // 当前子公司下的部门 parentCompanyDepartment
+                            self.getMenuName(res.data.data.list)
                             self.currentCompanyDepartment = res.data.data.list
                         } else {
                             alert(res.data.msg)
@@ -2085,6 +2087,18 @@
                 }
 
              },
+            // 处理树形数据, 删除空的children
+            getMenuName(menus){
+                for (var value of menus) {
+                    if (value.children) {
+                        this.getMenuName(value.children)
+                    }
+                    if (value.children.length == 0) {
+                        delete value.children
+                    }
+                }
+
+            },
             // 新增线索按钮
             addClue() {
                 this.dialogVisible = true;
@@ -2227,6 +2241,7 @@
                 }
             }
         },
+        
         created() {
             this.applyCompany();
             this.filterClue();
