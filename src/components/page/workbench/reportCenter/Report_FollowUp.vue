@@ -313,11 +313,19 @@
             // 子公司/ 母公司/ 加盟商修改
             bigRangeChange(data) {
                 this.selectRangeItem = data;
-                if (data === 2) {
-                    // 获取子公司
+                if (data === 1) {
+                    // 获取母公司
                     this.applyCompany();
                     this.filterClue()
-                }
+                }else if(data === 2){
+                   // 获取子公司
+                    this.applyCompany();
+                    this.filterClue()
+                }else if(data === 3){
+                    // 获取加盟商公司
+                     this.applyCompany();
+                     this.filterClue()
+                 }
             },
              // 所有子公司
             applyCompany() {
@@ -477,17 +485,14 @@
                 data: obj
             })
                 .then(function (res) {
-                    if (res.data.code === 200) {
-                        // console.log('返回参数:');
-                        console.log(res);
-                       alert('打印成功')
-                    } else {
-                        alert(res.data.msg)
-                    }
+
+                      // console.log('返回参数:');
+                    console.log(JSON.stringify(res.data,null,4))
+                    window.open("https://crm.tonyliangli.cn"+res.data.url);
                 })
                 .catch(function (err) {
                     console.log(err);
-                });
+                })
             },
             drawLine() {
                 let self = this;

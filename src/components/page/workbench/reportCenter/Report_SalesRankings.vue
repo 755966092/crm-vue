@@ -310,14 +310,22 @@
                 }
             },
             // 子公司/ 母公司/ 加盟商修改
-            bigRangeChange(data) {
-                this.selectRangeItem = data;
-                if (data === 2) {
-                    // 获取子公司
-                    this.applyCompany();
-                    this.filterClue()
-                }
-            },
+              bigRangeChange(data) {
+                       this.selectRangeItem = data;
+                       if (data === 1) {
+                           // 获取母公司
+                           this.applyCompany();
+                           this.filterClue()
+                       }else if(data === 2){
+                          // 获取子公司
+                           this.applyCompany();
+                           this.filterClue()
+                       }else if(data === 3){
+                           // 获取加盟商公司
+                            this.applyCompany();
+                            this.filterClue()
+                        }
+                   },
              // 所有子公司
             applyCompany() {
                 let self = this;
@@ -451,7 +459,39 @@
 
             // 导出
             exportData() {
-                alert('导出成功')
+              console.log('导出筛选数据')
+                // 导出筛选数据
+                // console.log(this.clueType)
+                let self = this;
+                let token = '1514255017UHQZ';
+                let obj = {
+                type: self.selectRangeItem,
+                token: token,
+                 statu:1,
+                 followup_start: self.lastFollowUpTime[0],
+                 followup_end: self.lastFollowUpTime[1],
+                 children_id: self.children_id,
+                 department_id: self.department_id,
+                 user_id: self.employees_id,
+                  name: "",
+                };
+
+                console.log('请求参数:'+JSON.stringify(obj,null,4))
+                self.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/reportCenter/RtfJournaling',
+                    data: obj
+                })
+                    .then(function (res) {
+
+                          // console.log('返回参数:');
+                        console.log(JSON.stringify(res.data,null,4))
+                        window.open("https://crm.tonyliangli.cn"+res.data.url);
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    })
             },
             drawLine() {
                 let self = this;
