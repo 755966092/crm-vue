@@ -1936,7 +1936,7 @@
             // 删除合同
             delContract(flag, index, data) {
                 let url,obj;
-                 //查找
+                 
                 this.delContractStatu = false;
               if (this.delContractStatuFlag) {
                     // 多选删除
@@ -2239,9 +2239,12 @@
                 })
                 .then(function(res){
                     if (res.data.code === 200) {
-                        
+                        self.$message({
+                            message: '修改状态成功',
+                            type: 'success'
+                        })
                     } else {
-                        alert(res.data.msg)
+                        self.$message.error(res.data.msg)
                     }
                 })
                 .catch(function(err){
