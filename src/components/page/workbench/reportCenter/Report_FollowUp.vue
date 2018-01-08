@@ -134,12 +134,17 @@
                         align="center">
                     </el-table-column>
                     <el-table-column
-                        prop="center_count"
+                        prop="center_follow_count"
                         label="售中跟进次数"
                         min-width="130"
                         align="center">
                     </el-table-column>
-
+                     <el-table-column
+                        prop="center_serve_count"
+                        label="售中服务次数"
+                        min-width="130"
+                        align="center">
+                    </el-table-column>
                    <el-table-column
                         prop="before_follow_count"
                         label="售后跟进次数"
@@ -369,7 +374,9 @@
                         // 筛选表格数据
                         // console.log(this.clueType)
                         let self = this;
-                        
+                        if (self.lastFollowUpTime == null) {
+                            self.lastFollowUpTime = ""
+                        }
                         let obj = {
                         type: self.selectRangeItem,
                         token: localStorage.getItem('crm_token'),
@@ -395,7 +402,6 @@
                                     console.log(res);
                                     console.log('返回参数:'+JSON.stringify(res.data,null,4));
                                     for (var i = 0; i < res.data.data.list.length; i++) {
-
                                         for (let key in obj) {
                                             if (obj[key] == null) {
                                                 obj[key] = '-'
@@ -405,8 +411,8 @@
                                     console.log(JSON.stringify(res.data.data.list,null,4))
                                     self.tableData = res.data.data.list
                                     self.tableDataTu = res.data.data.listTu
-                                    console.log(typeof self.tableDataTu.timeday);
-                                    self.tableDataAll = res.data.data
+                                    self.tableDataAll = res.data.data;
+                                    self.drawLine()
                                 } else {
                                     alert(res.data.msg)
                                 }
@@ -460,39 +466,39 @@
             },
             // 导出
             exportData() {
-              console.log('导出筛选数据')
-            // 导出筛选数据
-            // console.log(this.clueType)
-            let self = this;
-            
-            let obj = {
-            type: self.selectRangeItem,
-            token: localStorage.getItem('crm_token'),
-             statu:1,
-             followup_start: self.lastFollowUpTime[0],
-             followup_end: self.lastFollowUpTime[1],
-             children_id: self.children_id,
-             department_id: self.department_id,
-             user_id: self.employees_id,
-              name: "",
-            };
+                console.log('导出筛选数据')
+                // 导出筛选数据
+                // console.log(this.clueType)
+                let self = this;
+                
+                let obj = {
+                type: self.selectRangeItem,
+                token: localStorage.getItem('crm_token'),
+                statu:1,
+                followup_start: self.lastFollowUpTime[0],
+                followup_end: self.lastFollowUpTime[1],
+                children_id: self.children_id,
+                department_id: self.department_id,
+                user_id: self.employees_id,
+                name: "",
+                };
 
-            console.log('请求参数:'+JSON.stringify(obj,null,4))
-            self.$axios({
-                method: 'POST',
-                withCredentials: false,
-                url: '/api/reportCenter/journaling',
-                data: obj
-            })
-                .then(function (res) {
+                console.log('请求参数:'+JSON.stringify(obj,null,4))
+                self.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/reportCenter/journaling',
+                    data: obj
+                })
+                    .then(function (res) {
 
-                      // console.log('返回参数:');
-                    console.log(JSON.stringify(res.data,null,4))
-                    window.open("https://crm.tonyliangli.cn"+res.data.url);
-                })
-                .catch(function (err) {
-                    console.log(err);
-                })
+                        // console.log('返回参数:');
+                        console.log(JSON.stringify(res.data,null,4))
+                        window.open("https://crm.tonyliangli.cn"+res.data.url);
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    })
             },
             drawLine() {
                 let self = this;
@@ -508,7 +514,7 @@
                         }
                     },
                     legend: {
-                        data:['日志总数','前期跟进次数','售中跟进次数','售后跟进次数','售后服务次数']
+                        data:['日志总数','前期跟进次数','售中跟进次数','售中服务次数','售后跟进次数','售后服务次数']
                     },
                     grid: {
                         left: '3%',
@@ -541,7 +547,12 @@
                         {
                             name:'售中跟进次数',
                             type:'bar',
-                            data: self.tableDataTu.center_count
+                            data: self.tableDataTu.center_follow_count
+                        },
+                         {
+                            name:'售中服务次数',
+                            type:'bar',
+                            data: self.tableDataTu.center_serve_count
                         },
                         {
                             name:'售后跟进次数',
@@ -571,7 +582,7 @@
             }
          },
         mounted() {
-            this.drawLine()
+            
         },
         created() {
             this.applyCompany();

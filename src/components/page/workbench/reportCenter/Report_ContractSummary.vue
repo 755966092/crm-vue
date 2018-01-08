@@ -416,7 +416,9 @@
                         // 筛选表格数据
                         // console.log(this.clueType)
                         let self = this;
-                        
+                        if (self.lastFollowUpTime == null) {
+                            self.lastFollowUpTime = "";
+                        }
                         let obj = {
                         type: self.selectRangeItem,
                         token: localStorage.getItem('crm_token'),
@@ -444,9 +446,21 @@
                                     console.log('返回参数:'+JSON.stringify(res.data,null,4));
 
                                     console.log(JSON.stringify(res.data.data.list,null,4))
-                                    self.tableData = res.data.data.list
+                                    self.tableData = res.data.data.list || [];
                                     self.tableDataAll = res.data.data
-
+                                    self.histogramDate = [];
+                                    self.histogramData.clueFrequency = [];
+                                    self.histogramData.clientFrequency = [];
+                                    if (self.tableData.length > 0) {
+                                        for (let i = 0; i < self.tableData.length; i++) {
+                                            const element = self.tableData[i];
+                                            self.histogramDate.push(element.time);
+                                            self.histogramData.clueFrequency.push(element.contract_count);
+                                            self.histogramData.clientFrequency.push(element.contract_money);
+                                        }
+                                    }
+                                    self.drawLine()
+                                    
                                 } else {
                                     alert(res.data.msg)
                                 }
@@ -563,7 +577,6 @@
             }
          },
         mounted() {
-            this.drawLine()
         },
       created() {
           this.applyCompany();

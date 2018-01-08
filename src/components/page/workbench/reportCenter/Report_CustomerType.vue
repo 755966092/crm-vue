@@ -410,7 +410,9 @@
                     // 筛选表格数据
                     // console.log(this.clueType)
                     let self = this;
-                    
+                    if (self.lastFollowUpTime == null) {
+                        self.lastFollowUpTime = ""
+                    }
                     let obj = {
                     type: self.selectRangeItem,
                     token: localStorage.getItem('crm_token'),
@@ -435,15 +437,20 @@
                                 // console.log('返回参数:');
                                 console.log(res);
                                 console.log('返回参数:'+JSON.stringify(res.data,null,4));
+                                 self.histogramData.clueFrequency = [0,0,0,0];
+                                self.histogramData.clientFrequency = [0,0,0,0];
                                 for (var i = 0; i < res.data.data.list.length; i++) {
-                                    if(res.data.data.list[i].cue_type == 1){
-                                        res.data.data.list[i].cue_type="学校"
-                                    }else if(res.data.data.list[i].cue_type == 2){
-                                       res.data.data.list[i].cue_type="机构"
-                                    }else if(res.data.data.list[i].cue_type == 3){
-                                       res.data.data.list[i].cue_type="教师"
-                                    }else if(res.data.data.list[i].cue_type == 4){
-                                        res.data.data.list[i].cue_type="学生"
+                                    let element = res.data.data.list[i];
+                                     self.histogramData.clueFrequency[element.cue_type -1] = element.contract_count;
+                                     self.histogramData.clientFrequency[element.cue_type -1] = element.contract_money;
+                                    if(element.cue_type == 1){
+                                        element.cue_type="学校"
+                                    }else if(element.cue_type == 2){
+                                       element.cue_type="机构"
+                                    }else if(element.cue_type == 3){
+                                       element.cue_type="教师"
+                                    }else if(element.cue_type == 4){
+                                        element.cue_type="学生"
                                     }
                                     for (let key in obj) {
                                         if (obj[key] == null) {
@@ -452,8 +459,10 @@
                                     }
                                 }
                                 console.log(JSON.stringify(res.data.data.list,null,4))
-                                self.tableData = res.data.data.list
-                                self.tableDataAll = res.data.data
+                                self.tableData = res.data.data.list || [];
+                                self.tableDataAll = res.data.data;
+                               
+                                 self.drawLine()
                             } else {
                                 alert(res.data.msg)
                             }
@@ -569,7 +578,7 @@
             }
          },
         mounted() {
-            this.drawLine()
+           
         },
         created() {
             this.applyCompany();

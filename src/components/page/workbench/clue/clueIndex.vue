@@ -181,7 +181,7 @@
                 <div class="select rightWrap">
                     <div class="block">
                         <el-date-picker
-                            v-model="lastFollowUpTime"
+                            v-model="filterTime.lastFollowUpTime"
                             @change="timeUpdata"
                             type="daterange"
                             :editable=false
@@ -206,7 +206,7 @@
                 <div class="select rightWrap">
                     <div class="block">
                         <el-date-picker
-                            v-model="updateTime"
+                            v-model="filterTime.updateTime"
                             @change="timeUpdata"
                             type="daterange"
                             :editable=false
@@ -231,7 +231,7 @@
                 <div class="select rightWrap">
                     <div class="block">
                         <el-date-picker
-                            v-model="createTime"
+                            v-model="filterTime.createTime"
                             type="daterange"
                             @change="timeUpdata"
                             :editable=false
@@ -1154,12 +1154,14 @@
                 parentCompanyDepartment: [],
                 // 当前部门员工列表
                 currentDepartmentStaff: [],
-                // 最后跟进时间
-                lastFollowUpTime: '',
-                // 更新时间
-                updateTime: '',
-                // 新建时间
-                createTime: '',
+                filterTime: {
+                      // 最后跟进时间
+                    lastFollowUpTime: '',
+                    // 更新时间
+                    updateTime: '',
+                    // 新建时间
+                    createTime: '',
+                },
                 // 城市选择器数据
                 cityList: [],
                 // 选中城市数据
@@ -1815,6 +1817,14 @@
                 // 筛选表格数据
                 // console.log(this.clueType)
                 let self = this;
+                for (const key in self.filterTime) {
+                    if (self.filterTime.hasOwnProperty(key)) {
+                        let element = self.filterTime[key];
+                        if (element == null) {
+                            self.filterTime[key] = "";
+                        }
+                    }
+                }
                 let token = localStorage.getItem('crm_token');
                 let obj = {
                     // token: localStorage.getItem('crm_token'),
@@ -1853,12 +1863,12 @@
                         token: token,
                         page_num: "",
                         typebig: self.selectRangeItem,
-                        followup_start: self.lastFollowUpTime[0],
-                        followup_end: self.lastFollowUpTime[1],
-                        update_start: self.updateTime[0],
-                        update_end: self.updateTime[1],
-                        create_start: self.createTime[0],
-                        create_end: self.createTime[1],
+                        followup_start: self.filterTime.lastFollowUpTime[0],
+                        followup_end: self.filterTime.lastFollowUpTime[1],
+                        update_start: self.filterTime.updateTime[0],
+                        update_end: self.filterTime.updateTime[1],
+                        create_start: self.filterTime.createTime[0],
+                        create_end: self.filterTime.createTime[1],
                         children_id: self.children_id,
                         department_id: self.department_id,
                         user_id: self.employees_id,
@@ -1879,12 +1889,12 @@
                         token: token,
                         page_num: "",
                         typebig: self.selectRangeItem,
-                        followup_start: self.lastFollowUpTime[0],
-                        followup_end: self.lastFollowUpTime[1],
-                        update_start: self.updateTime[0],
-                        update_end: self.updateTime[1],
-                        create_start: self.createTime[0],
-                        create_end: self.createTime[1],
+                        followup_start: self.filterTime.lastFollowUpTime[0],
+                        followup_end: self.filterTime.lastFollowUpTime[1],
+                        update_start: self.filterTime.updateTime[0],
+                        update_end: self.filterTime.updateTime[1],
+                        create_start: self.filterTime.createTime[0],
+                        create_end: self.filterTime.createTime[1],
                         children_id: self.children_id,
                         department_id: self.department_id,
                         user_id: self.employees_id,
@@ -1906,12 +1916,12 @@
                         token: token,
                         page_num: "",
                         typebig: self.selectRangeItem,
-                        followup_start: self.lastFollowUpTime[0],
-                        followup_end: self.lastFollowUpTime[1],
-                        update_start: self.updateTime[0],
-                        update_end: self.updateTime[1],
-                        create_start: self.createTime[0],
-                        create_end: self.createTime[1],
+                        followup_start: self.filterTime.lastFollowUpTime[0],
+                        followup_end: self.filterTime.lastFollowUpTime[1],
+                        update_start: self.filterTime.updateTime[0],
+                        update_end: self.filterTime.updateTime[1],
+                        create_start: self.filterTime.createTime[0],
+                        create_end: self.filterTime.createTime[1],
                         children_id: self.children_id,
                         department_id: self.department_id,
                         user_id: self.employees_id,
@@ -1935,12 +1945,12 @@
                         token: token,
                         page_num: "",
                         typebig: self.selectRangeItem,
-                        followup_start: self.lastFollowUpTime[0],
-                        followup_end: self.lastFollowUpTime[1],
-                        update_start: self.updateTime[0],
-                        update_end: self.updateTime[1],
-                        create_start: self.createTime[0],
-                        create_end: self.createTime[1],
+                        followup_start: self.filterTime.lastFollowUpTime[0],
+                        followup_end: self.filterTime.lastFollowUpTime[1],
+                        update_start: self.filterTime.updateTime[0],
+                        update_end: self.filterTime.updateTime[1],
+                        create_start: self.filterTime.createTime[0],
+                        create_end: self.filterTime.createTime[1],
                         children_id: self.children_id,
                         department_id: self.department_id,
                         user_id: self.employees_id,

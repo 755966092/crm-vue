@@ -412,7 +412,9 @@
                     // 筛选表格数据
                     // console.log(this.clueType)
                     let self = this;
-                    
+                    if (self.lastFollowUpTime == null) {
+                        self.lastFollowUpTime = ""
+                    }
                     let obj = {
                     type: self.selectRangeItem,
                     token: localStorage.getItem('crm_token'),
@@ -446,8 +448,16 @@
                                     }
                                 }
                                 console.log(JSON.stringify(res.data.data.list,null,4))
-                                self.tableData = res.data.data.list
-                                self.tableDataAll = res.data.data
+                                self.tableData = res.data.data.list || [];
+                                self.tableDataAll = res.data.data;
+                                self.histogramDate = [];
+                                self.histogramData.clientFrequency = [];
+                                for (let i = 0; i < self.tableData.length; i++) {
+                                    const element = self.tableData[i];
+                                    self.histogramDate.push(element.user_name)
+                                    self.histogramData.clientFrequency.push(element.contract_money)
+                                }
+                                self.drawLine()
                             } else {
                                 alert(res.data.msg)
                             }
@@ -554,7 +564,7 @@
             }
          },
         mounted() {
-            this.drawLine()
+            
         },
        created() {
            this.applyCompany();

@@ -407,7 +407,7 @@
                         <el-table-column
                             label="操作"
                             align="center"
-                            width="140"
+                            width="180"
                         >
                             <template slot-scope="scope">
                                 <el-button
@@ -594,10 +594,7 @@
             },
             // 更新时间
             timeUpdata(data) {
-                console.log(data)
-                console.log(this.updateTime)
-                console.log(this.lastFollowUpTime)
-                console.log(this.createTime)
+                
                 this.filterClue();
             },
          // 子公司/ 母公司/ 加盟商修改
@@ -690,12 +687,18 @@
            filterClue() {
                     console.log('筛选表格数据')
                     // 筛选表格数据
-                    // console.log(this.clueType)
                     let self = this;
-                    let token = '1514255017UHQZ';
+                    for (const key in self.selectedItems) {
+                        if (self.selectedItems.hasOwnProperty(key)) {
+                            let element = self.selectedItems[key];
+                            if (element == null) {
+                                self.selectedItems[key] = "";
+                            }
+                        }
+                    }
                     let obj = {
                       type: self.selectRangeItem,
-                      token: token,
+                      token: localStorage.getItem('crm_token'),
                       page_num: "",
                       cue_type: self.selectedItems.clientType,
                       business_type: self.selectedItems.businessType,
@@ -705,14 +708,14 @@
                       province_id: self.selectedItems.area[0],
                       city_id: self.selectedItems.area[1],
                       area_id: self.selectedItems.area[2],
-                      followup_start: self.selectedItems.lastFollowupTime[0],
-                      followup_end: self.selectedItems.lastFollowupTime[1],
-                      start_start: self.selectedItems.startAndEndTime[0],
-                      start_end: self.selectedItems.startAndEndTime[1],
-                      end_start: self.selectedItems.maturityTime[0],
-                      end_end: self.selectedItems.maturityTime[1],
-                      contract_start: self.selectedItems.signingTime[0],
-                      contract_end: self.selectedItems.signingTime[1],
+                      followup_start: self.selectedItems.lastFollowupTime[0] || '',
+                      followup_end: self.selectedItems.lastFollowupTime[1] || '',
+                      start_start: self.selectedItems.startAndEndTime[0] || '',
+                      start_end: self.selectedItems.startAndEndTime[1] || '',
+                      end_start: self.selectedItems.maturityTime[0] || '',
+                      end_end: self.selectedItems.maturityTime[1] || '',
+                      contract_start: self.selectedItems.signingTime[0] || '',
+                      contract_end: self.selectedItems.signingTime[1] || '',
                      children_id: self.children_id,
                      department_id: self.department_id,
                      user_id: self.employees_id,

@@ -283,7 +283,7 @@
                         <el-table-column
                             label="操作"
                             align="center"
-                            width="140"
+                            width="180"
                         >
                             <template slot-scope="scope">
                                 <el-button
@@ -429,48 +429,48 @@
         methods: {
 
        // 删除日志
-           delLogItem() {
-                let arr = [];
-                for (let i = 0; i < this.multipleSelection.length; i++) {
-                       this.tableData = this.tableData.filter((value) => {
-                           return value.followup_id != this.multipleSelection[i].followup_id
-                       })
-                       arr.push(this.multipleSelection[i].followup_id)
-                   }
+        delLogItem() {
+            let arr = [];
+            for (let i = 0; i < this.multipleSelection.length; i++) {
+                    this.tableData = this.tableData.filter((value) => {
+                        return value.followup_id != this.multipleSelection[i].followup_id
+                    })
+                    arr.push(this.multipleSelection[i].followup_id)
+                }
 
-                  this.$axios({
-                              method: 'POST',
-                              withCredentials: false,
-                              url: '/api/clueFollowup/deleteClueFollowups',
-                              data: {
-                                  token: localStorage.getItem('crm_token'),
-                                  followupIds: JSON.stringify(arr),
-                              }
-                          })
-                              .then(function (res) {
-                                  if (res.data.code == 200) {
+                this.$axios({
+                            method: 'POST',
+                            withCredentials: false,
+                            url: '/api/clueFollowup/deleteClueFollowups',
+                            data: {
+                                token: localStorage.getItem('crm_token'),
+                                followupIds: JSON.stringify(arr),
+                            }
+                        })
+                            .then(function (res) {
+                                if (res.data.code == 200) {
 
-                                  } else {
-                                      alert(res.data.msg)
-                                  }
-                              })
-                              .catch(function (err) {
-                                  console.log(err);
-                              });
+                                } else {
+                                    alert(res.data.msg)
+                                }
+                            })
+                            .catch(function (err) {
+                                console.log(err);
+                            });
 
-           },
-             //复选框状态改变
-           changeFun(val) {
-               this.multipleSelection = val;
-           },
-            // 更新时间
-            timeUpdata(data) {
-                console.log(data)
-                console.log(this.updateTime)
-                console.log(this.lastFollowUpTime)
-                console.log(this.createTime)
-                this.filterClue();
-            },
+        },
+            //复选框状态改变
+        changeFun(val) {
+            this.multipleSelection = val;
+        },
+        // 更新时间
+        timeUpdata(data) {
+            console.log(data)
+            console.log(this.updateTime)
+            console.log(this.lastFollowUpTime)
+            console.log(this.createTime)
+            this.filterClue();
+        },
          // 子公司/ 母公司/ 加盟商修改
          bigRangeChange(data) {
              this.selectRangeItem = data;
@@ -563,10 +563,17 @@
                     // 筛选表格数据
                     // console.log(this.clueType)
                     let self = this;
-                    let token = '1514255017UHQZ';
+                    for (const key in self.selectedItems) {
+                        if (self.selectedItems.hasOwnProperty(key)) {
+                            let element = self.selectedItems[key];
+                            if (element == null) {
+                                self.selectedItems[key] = "";
+                            }
+                        }
+                    }
                     let obj = {
                       type: self.selectRangeItem,
-                      token: token,
+                      token: localStorage.getItem('crm_token'),
                       page_num: "",
                       cue_type: self.selectedItems.clientType,
                       status: self.selectedItems.status,

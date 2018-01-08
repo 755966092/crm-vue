@@ -221,12 +221,12 @@
                     }]
                 },
                 // 柱状图时间 ['2017-5','2017-6','2017-7','2017-8','2017-9','2017-10']
-                histogramDate: ['2017-5','2017-6','2017-7','2017-8','2017-9','2017-10'],
+                histogramDate: [],
                 // 柱状图数据
                 histogramData: {
-                    clueFrequency: [2, 3, 1, 4, 5, 6],
-                    clientFrequency: [5, 6, 3, 6, 3, 4],
-                    contractFrequency: [1, 4, 5, 2, 7, 4],
+                    clueFrequency: [],
+                    clientFrequency: [],
+                    contractFrequency: [],
                 },
                 // 表格数据
                 tableData: [],
@@ -393,7 +393,9 @@
                         // 筛选表格数据
                         // console.log(this.clueType)
                         let self = this;
-                        
+                        if (self.lastFollowUpTime == null) {
+                            self.lastFollowUpTime = ""
+                        }
                         let obj = {
                         type: self.selectRangeItem,
                         token: localStorage.getItem('crm_token'),
@@ -427,8 +429,25 @@
                                         }
                                     }
                                     console.log(JSON.stringify(res.data.data.list,null,4))
-                                    self.tableData = res.data.data.list
+                                    self.tableData = res.data.data.list || [];
                                     self.tableDataAll = res.data.data
+                                    // histogramDate
+                                    // histogramData
+                                    // clueFrequency: [2, 3, 1, 4, 5, 6],
+                                    // clientFrequency: [5, 6, 3, 6, 3, 4],
+                                    // contractFrequency: [1, 4, 5, 2, 7, 4],
+                                    self.histogramDate = [];
+                                    self.histogramData.clueFrequency = [];
+                                    self.histogramData.clientFrequency = [];
+                                    self.histogramData.contractFrequency = [];
+                                    for (let i = 0; i < self.tableData.length; i++) {
+                                        const element = self.tableData[i];
+                                        self.histogramDate.push(element.time);
+                                        self.histogramData.clueFrequency.push(element.clue_count)
+                                        self.histogramData.clientFrequency.push(element.customer_count)
+                                        self.histogramData.contractFrequency.push(element.contract_count)
+                                    }
+                                    self.drawLine()
                                 } else {
                                     alert(res.data.msg)
                                 }
@@ -479,6 +498,8 @@
             },
             drawLine() {
                 let self = this;
+                console.log(JSON.stringify(self.histogramData,null,4));
+                
                 // 基于准备好的dom，初始化echarts实例
                 let myChart = echarts.init(document.getElementById('myChart'))
                 // 绘制图表
@@ -544,7 +565,7 @@
             }
          },
         mounted() {
-            this.drawLine()
+            
         },
          created() {
              this.applyCompany();
