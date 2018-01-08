@@ -1303,6 +1303,17 @@
                             </el-select>
                     </div>
                     <div>
+                        <span class="iptName">日志状态:</span>
+                        <el-select v-model="addLogData.status" placeholder="请选择">
+                                <el-option
+                                v-for="item in logStatus"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                                </el-option>
+                            </el-select>
+                    </div>
+                    <div>
                         <span class="iptName">时间:</span>
                         <el-date-picker
                         v-model="addLogData.addLogTime"
@@ -1505,14 +1516,38 @@
                         }
                     ],
                 },
-                
+                // 日志状态
+                logStatus: [
+                    {
+                        value: 1,
+                        label: '前期跟进'
+                    },
+                    {
+                        value: 2,
+                        label: '售中跟进'
+                    },
+                   
+                    {
+                        value: 3,
+                        label: '售中服务'
+                    },
+                     {
+                        value: 4,
+                        label: '售后跟进'
+                    },
+                     {
+                        value: 5,
+                        label: '售后服务'
+                    }
+                ],
                 // 日志显示内容
                 logShowContent: '1',
                 // 新增日志
                 addLogData: {
                     addLogTime: '',
                     contactType: '',
-                    content: ''
+                    content: '',
+                    status: 1
                 },
                 // 新增联系人数据
                 addContactData: {
@@ -2000,8 +2035,10 @@
                         this.clueInfoData.studentShowList = this.clueInfoData.studentContractList;
                     }
                 } else {
-                    console.log(this.logShowContent);
-                    
+                    // 切换日志显示
+                    this.logTableData = this.clueInfoData.followup.filter((value) => {
+                        return value.status == this.logShowContent
+                    })
                 }
             },
              // 转成客户
@@ -2078,6 +2115,7 @@
                         clue_id: self.$route.query.data.clue_id,
                         contact_ifmt: self.addLogData.contactType,
                         content: self.addLogData.content,
+                        status: self.addLogData.status,
                         time: self.addLogData.addLogTime
                     }
                 } else {
@@ -2667,10 +2705,14 @@
                             let contactIfmt = ['手机','电话','QQ','微信','邮箱'];
                             for (let i = 0; i < data.followup.length; i++) {
                                 const element = data.followup[i];
-                                element.contact_ifmt = contactIfmt[element.contact_ifmt-1]
+                                element.contact_ifmt = contactIfmt[element.contact_ifmt-1];
                             }
-                            self.logTableData = data.followup;
+                            
+                            // self.logTableData = data.followup;
                             self.clueInfoData = data;
+                            self.logTableData = self.clueInfoData.followup.filter((value) => {
+                                return value.status == 1
+                            })
                             console.log('客户详情:'+JSON.stringify(data));
                             // console.log('Data返回:'+JSON.stringify(self.clueInfoData));
                             // 获取到客户详情后, 获取客户所在公司
