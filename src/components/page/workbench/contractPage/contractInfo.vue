@@ -26,7 +26,7 @@
             <el-row  :gutter="20">
                 <el-col :span="5">
                      <template>
-                        <el-select v-model="clueInfoData.details.statu"  @change="selClueStatus" placeholder="请选择">
+                        <el-select v-model="clueInfoData.details.statu"  @change="selClueStatus($event,'statu')" placeholder="请选择">
                         <!-- <el-select   @change="selClueStatus" placeholder="请选择"> -->
                             <el-option
                             v-for="item in contractStatusArr"
@@ -40,7 +40,7 @@
                 </el-col>
                 <el-col :span="5">
                      <template>
-                        <el-select v-model="clueInfoData.details.payment_statu"  @change="selClueStatus" placeholder="请选择">
+                        <el-select v-model="clueInfoData.details.payment_statu"  @change="selClueStatus($event,'payment_statu')" placeholder="请选择">
                         <!-- <el-select   @change="selClueStatus" placeholder="请选择"> -->
                             <el-option
                             v-for="item in paymentStatusArr"
@@ -196,7 +196,27 @@
                                         </el-date-picker>
                                 </el-col>
                             </el-row>
+                             <el-row>
+                                <el-col :span="4">
+                                    <p>我方签约机构：</p>
+                                </el-col>
+                                <el-col :span="18">
+                                    <el-cascader
+                                        expand-trigger="hover"
+                                        v-model="clueInfoData.details.company_idArr"
+                                        :placeholder="clueInfoData.details.company_name"
+                                        :options="parentCompanyList"
+                                        :show-all-levels='false'
+                                        filterable
+                                        change-on-select
+                                        clearable
+                                        :disabled="schoolIptDis"
+                                    >
+                                    </el-cascader>
+                                </el-col>
+                            </el-row>
                             <el-row>
+                                <!-- childrenCompany_id -->
                                 <el-col :span="4">
                                     <p>我方签约人：</p>
                                 </el-col>
@@ -1039,7 +1059,9 @@
                 // 多选删除学生
                 studentToCantractArr: [],
                 studentToCantractFlag: '',
-
+                // 子公司列表
+                parentCompanyList: [],
+                childrenCompany_id: ''
             }
         },
         
@@ -1372,17 +1394,29 @@
               
             },
             // 设置客户状态
-            selClueStatus(data) {
-                let self = this;
+            selClueStatus(data,flag) {
+                let self = this,url,param;
+                console.log(data)
+                if (flag == 'statu') {
+                    url = '/api/clueContract/ClueContractEditStatu';
+                    param = {
+                        token: localStorage.getItem('crm_token'),
+                        contract_id: self.$route.query.data.contract_id,
+                        statu: data
+                    }
+                } else {
+                    url = '/api/clueContract/ClueContractEditPayment';
+                    param = {
+                        token: localStorage.getItem('crm_token'),
+                        contract_id: self.$route.query.data.contract_id,
+                        payment_statu: data
+                    }
+                }
                 this.$axios({
                     method: 'POST',
                     withCredentials: false,
-                    url: '/api/clue/editClueStatu',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        clue_id: self.$route.query.data.clue_id,
-                        followup_statu: self.clueInfoData.list.followup_statu
-                    }
+                    url: url,
+                    data: param
                 })
                 .then(function(res){
                     if (res.data.code === 200) {
@@ -1506,7 +1540,32 @@
                     console.log(err);
                 });
             },
-           
+            // 获取子公司
+            applyCompany() {
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/company/CompanyMyList',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                    }
+                })
+                    .then(function (res) {
+                        if (res.data.code == 200) {
+                            // 当前用户只会有一个母公司
+                            self.getMenuName(res.data.data.list);
+                            self.parentCompanyList = res.data.data.list;
+                            console.log(self.parentCompanyList);
+                            
+                        } else {
+                            alert(res.data.msg)
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            },
             // 获取子公司部门
             getCompanyDepartment() {
                 let self = this;
@@ -1847,6 +1906,7 @@
                             
                             // self.logTableData = data.followup;
                             self.clueInfoData = data;
+                            self.clueInfoData.details.company_idArr=[self.clueInfoData.details.company_id];
                             if (self.logShowContent) {
                                 self.logTableData = self.clueInfoData.followup.filter((value) => {
                                     return value.status == self.logShowContent
@@ -1884,17 +1944,17 @@
                     this.$axios({
                         method: 'POST',
                         withCredentials: false,
-                        url: '/api/clue/clueEditRemake',
+                        url: '/api/clueContract/ClueContractEditStatu',
                         data: {
                             token: localStorage.getItem('crm_token'),
-                            clue_id: self.$route.query.data.clue_id,
-                            remake: this.clueInfoData.details.remake
+                            contract_id: self.$route.query.data.contract_id,
+                            remake: self.clueInfoData.details.remake
                         }
                     })
                     .then(function(res){
                         if (res.data.code === 200) {
                             self.$message({
-                                message: '成功',
+                                message: '修改备注成功',
                                 type: 'success'
                             })
                         } else {
@@ -1909,48 +1969,47 @@
             // 学校输入框状态
             schoolIptStatus() {
                 this.schoolIptDis = !this.schoolIptDis;
+                let data = this.clueInfoData.details;
                  if (event.target.innerText == '编辑') {
+                     
                     event.target.innerText = '保存'
                 } else {
                     event.target.innerText = '编辑';
                     // 保存备注
-                    console.log(JSON.stringify(this.school,null,4));
-                    let obj = {
-                        token:	'',
-                        type:	 '',
-                        name:	'',
-                        los:	 '',
-                        grade:	 '',
-                        address:	'',
-                        location:	'',
-                        jitype:	'',
-                        province_id: '',
-                        city_id: '',
-                        area_id: '',
-                        website:	'',
-                    }
-                    let obj2 = {
-                        "school_name": "学校客户",
-                        "los": 2,
-                        "grade": 1,
-                        "province_name": null,
-                        "city_name": null,
-                        "area_name": null,
-                        "address": "121",
-                        "cue_source": "全部",
-                        "company_name": "上一秒科技公司",
-                        "user_name": "带我走",
-                        "user_before_name": "dang",
-                        "create_time": "2018-01-02 17:33:05",
-                        "update_time": "2018-01-04 15:52:34",
-                        "remake": "asdasdasdasdasd",
-                        "contacts_id": 109,
-                        "selCityList": [
-                            "15",
-                            "1505",
-                            "150522"
-                        ]
-                    }
+                    console.log(JSON.stringify(self.clueInfoData.details,null,4));
+                    let self = this;
+                    this.axios({
+                        method: 'POST',
+                        withCredentials: false,
+                        url: '/api/clueContract/ClueContractEdit',
+                        data: {
+                            token: localStorage.getItem('crm_token'),
+                            contract_id: self.$route.query.data.contacts_id,
+                            name: data.contract_name,
+                            number: data.contract_number,
+                            business_type: data.contract_business_type,
+                            money: data.money,
+                            start_time: data.start_time,
+                            end_time: data.end_time,
+                            // company_id: ,
+                            // user_id: '',
+                            contract_time: data.contract_time,
+                        }
+                    })
+                    .then(function(res){
+                        if (res.data.code === 200) {
+                            self.message({
+                                message: '修改合同信息成功',
+                                type: 'success'
+                            })
+                        } else {
+                            self.message.error(res.data.msg);
+                        }
+                    })
+                    .catch(function(err){
+                        console.log(err);
+                    });
+
                 }
             },
             // 联系人输入状态
@@ -2119,6 +2178,7 @@
             console.log(this.paramData);
             
             this.clueDetails();
+            this.applyCompany();
             if (localStorage.getItem('cityData')) {
                 this.cityList = JSON.parse(localStorage.getItem('cityData'))
             } else {
