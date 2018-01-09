@@ -1547,7 +1547,11 @@
                                    })
                                        .then(function (res) {
                                            if (res.data.code == 200) {
-
+                                            self.$message({
+                                              message: '批量删除线索成功',
+                                              type: 'success'
+                                           })
+                                              self.filterClue();
                                            } else {
                                                alert(res.data.msg)
                                            }
@@ -2251,7 +2255,11 @@
                          })
                              .then(function (res) {
                                  if (res.data.code == 200) {
-                                     console.log('删除成功:'+ res.data.data.list.clue_id +'-'+ res.data.data.list.update_time)
+                                 self.$message({
+                                      message: '删除线索成功',
+                                      type: 'success'
+                                  })
+                                  self.filterClue();
                                  } else {
                                      alert(res.data.msg)
                                  }

@@ -428,7 +428,7 @@
         },
         methods: {
 
-       // 删除日志
+       // 批量删除日志
         delLogItem() {
             let arr = [];
             for (let i = 0; i < this.multipleSelection.length; i++) {
@@ -449,7 +449,11 @@
                         })
                             .then(function (res) {
                                 if (res.data.code == 200) {
-
+                                         self.$message({
+                                               message: '批量删除日志成功',
+                                               type: 'success'
+                                           })
+                                           self.filterClue();
                                 } else {
                                     alert(res.data.msg)
                                 }
@@ -789,7 +793,11 @@
                              })
                                  .then(function (res) {
                                      if (res.data.code == 200) {
-                                         console.log('删除成功:'+ res.data.data.list.clue_id +'-'+ res.data.data.list.update_time)
+                                           self.$message({
+                                               message: '删除日志成功',
+                                               type: 'success'
+                                           })
+                                           self.filterClue();
                                      } else {
                                          alert(res.data.msg)
                                      }

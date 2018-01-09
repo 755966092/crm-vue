@@ -263,14 +263,7 @@
                 applyFranchiseeList:[],
                 // 申请状态
                 applicationStatusData: [
-                    {
-                        trader_company_name: '环球壹学教育科技有限公司',
-                        apply_company_name: '环球壹学教育科技有限公司',
-                        apply_user_name: '王小虎',
-                        create_time: '2019-11-09',
-                        statu: '待审批',
-                        content: '说明内容'
-                    }
+
                 ],// 申请状态
                 // 现已加盟
                 alreadyJoinedData: [
@@ -325,9 +318,7 @@
                     }
                 })
                     .then(function (res) {
-                        self.applicationStatusData = res.data.data.list;
-                        console.log(self.applicationStatusData);
-
+                             self.applicationStatusData = res.data.data.list;
                     })
                     .catch(function (err) {
                         console.log(err);
