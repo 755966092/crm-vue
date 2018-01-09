@@ -2,24 +2,19 @@
      <div class="componentsRoot">
          <div>
              <span>
-                <span v-if="clueType==1">学校：</span>
-                <span v-else-if="clueType==2">机构：</span>
-                <span v-else-if="clueType==3">教师：</span>
-                <span v-else>家长：</span>
-                <span v-if="clueType != 4">{{school.school_name}}</span>
-                <span v-else>{{contacts.contacts_name}}</span>
+                <span>合同：</span>
              </span>
-             <span v-if="clueType!=3" class="defaultContact" style="margin-left:20px">
-                <span>默认联系人：</span>
+             <span class="defaultContact" style="margin-left:20px">
+                <span>学校：</span>
                     <template>
-                    <el-select @change="selectDefaultContact"  placeholder="请选择">
+                    <!-- <el-select @change="selectDefaultContact"  placeholder="请选择">
                         <el-option
                         v-for="item in allContacts"
                         :key="item.id"
                         :label="item.contacts_name"
                         :value="item.id">
                         </el-option>
-                    </el-select>
+                    </el-select> -->
                     </template>
              </span>
          </div>
@@ -27,8 +22,8 @@
             <el-row  :gutter="20">
                 <el-col :span="5">
                      <template>
-                        <!-- <el-select v-model="statusModel"  @change="selClueStatus" placeholder="请选择"> -->
-                        <el-select   @change="selClueStatus" placeholder="请选择">
+                        <el-select v-model="statusModel"  @change="selClueStatus" placeholder="请选择">
+                        <!-- <el-select   @change="selClueStatus" placeholder="请选择"> -->
                             <el-option
                             v-for="item in statusArr"
                             :key="item.value"
@@ -47,7 +42,6 @@
                      <!-- <el-button @click="turnIntoCustomersFn('delClue')">删除客户</el-button> -->
                 </el-col>
             </el-row>
-             
          </div>
          <div class="tapPage">
              <el-tabs type="border-card">
@@ -111,10 +105,11 @@
                                         placeholder="请选择"
                                         :disabled="schoolIptDis">
                                         <el-option
-                                        v-for="item in mechanismTypeArr"
+                                        v-for="item in addContractParam.business_type"
                                         :key="item.value"
                                         :label="item.label"
-                                        :value="item.value">
+                                        :value="item.value"
+                                        >
                                         </el-option>
                                     </el-select>
                                 </el-col>
@@ -129,10 +124,9 @@
                                     placeholder="请选择"
                                     :disabled="schoolIptDis">
                                         <el-option
-                                        v-for="item in mechanismPositioningArr"
+                                        v-for="item in clientType"
                                         :key="item.value"
                                         :label="item.label"
-                                        
                                         :value="item.value">
                                         </el-option>
                                     </el-select>
@@ -162,20 +156,29 @@
                             </el-row>
                              <el-row>
                                 <el-col :span="4">
-                                    <p>起始时间：</p>
+                                    <p>合同起始日期：</p>
                                 </el-col>
                                 <el-col :span="18">
-                                   <el-date-picker
-                                        type="daterange"
-                                        :editable='false'
-                                        align="right"
-                                        unlink-panels
-                                        range-separator="至"
-                                        start-placeholder="开始日期"
-                                        end-placeholder="到期日期"
-                                        placeholder="合同起始时间"
-                                        :picker-options="pickerOptions2">
-                                    </el-date-picker>
+                                    <el-date-picker
+                                        v-model="clueInfoData.details.contract_time"
+                                        type="date"
+                                        :disabled="schoolIptDis"
+                                        placeholder="合同起始日期">
+                                        </el-date-picker>
+                                 
+                                </el-col>
+                            </el-row>
+                             <el-row>
+                                <el-col :span="4">
+                                    <p>合同到期日期：</p>
+                                </el-col>
+                                <el-col :span="18">
+                                    <el-date-picker
+                                        v-model="clueInfoData.details.contract_time"
+                                        type="date"
+                                        :disabled="schoolIptDis"
+                                        placeholder="合同到期日期">
+                                        </el-date-picker>
                                 </el-col>
                             </el-row>
                             <el-row>
@@ -208,6 +211,7 @@
                                     <el-date-picker
                                         v-model="clueInfoData.details.contract_time"
                                         type="date"
+                                        :disabled="schoolIptDis"
                                         placeholder="选择日期">
                                         </el-date-picker>
                                 </el-col>
@@ -272,298 +276,7 @@
                      </div>
                 </el-tab-pane>
                 <el-tab-pane label="学生">
-                    <template v-if="clueType == 4">
-                        <el-button @click="addStudentStatu = true" style="width:100px;margin-bottom:10px">添加学生</el-button>
-                       <template v-for="(item, index) in clueInfoData.student">
-                            <div class="remarks">
-                                <el-row class="title">
-                                    <el-col :span="6">
-                                        <p class="remarksTitle">学生</p>
-                                    </el-col>
-                                    <el-col :span="2" :offset="14"><p class="editBtn" @click="studentIptStatus(index,'1')">编辑</p></el-col>
-                                    <el-col :span="2" ><p class="editBtn" @click="studentIptStatus(index,'2')">删除</p></el-col>
-                                </el-row>
-                                
-                                <div class="school" :class="{schoolColor:item.studentIptDis}">
-                                    <el-row>
-                                        <el-col :span="3">
-                                            <p>姓名：</p>
-                                        </el-col>
-                                        <el-col :span="21">
-                                            <el-input
-                                                v-model="item.name"
-                                                :disabled="item.studentIptDis"
-                                            ></el-input>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row >
-                                        <el-col :span="3">
-                                            <p>性别：</p>
-                                        </el-col>
-                                        <el-col :span="21">
-                                            <template>
-                                                <el-select 
-                                                    v-model="item.sex" 
-                                                    placeholder="请选择"
-                                                    :disabled="item.studentIptDis">
-                                                    <el-option
-                                                    v-for="item in sexArr"
-                                                    :key="item.value"
-                                                    :label="item.label"
-                                                    :value="item.value">
-                                                    </el-option>
-                                                </el-select>
-                                            </template>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row >
-                                        <el-col :span="3">
-                                            <p>文理科：</p>
-                                        </el-col>
-                                        <el-col :span="21">
-                                            <template>
-                                                <el-select 
-                                                    v-model="item.the_science" 
-                                                    placeholder="请选择"
-                                                    :disabled="item.studentIptDis">
-                                                    <el-option
-                                                    v-for="item in subjectArr"
-                                                    :key="item.value"
-                                                    :label="item.label"
-                                                    :value="item.value">
-                                                    </el-option>
-                                                </el-select>
-                                            </template>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row>
-                                        <el-col :span="3">
-                                            <p>年级：</p>
-                                        </el-col>
-                                        <el-col :span="21">
-                                            <template>
-                                                <el-select 
-                                                    v-model="item.student_grade" 
-                                                    placeholder="请选择"
-                                                    :disabled="item.studentIptDis">
-                                                    <el-option
-                                                    v-for="item in studentGradeArr"
-                                                    :key="item.value"
-                                                    :label="item.label"
-                                                    :value="item.value">
-                                                    </el-option>
-                                                </el-select>
-                                            </template>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row>
-                                        <el-col :span="3">
-                                            <p>学校地区：</p>
-                                        </el-col>
-                                        <el-col :span="21">
-                                        <div class="select rightWrap">
-                                                <el-cascader
-                                                    expand-trigger="hover"
-                                                    :value="item.selectCityData"
-                                                    :options="cityList"
-                                                    @change="selectCity($event, index, 'student')"
-                                                    clearable
-                                                    separator="-"
-                                                    :disabled="item.studentIptDis"
-                                                >
-                                                </el-cascader>
-                                            </div>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row>
-                                        <el-col :span="3">
-                                            <p>学校名称：</p>
-                                        </el-col>
-                                        <el-col :span="21">
-                                            <el-input
-                                                v-model="item.school_name"
-                                                :disabled="item.studentIptDis"
-                                            ></el-input>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row>
-                                        <el-col :span="3">
-                                            <p>学校等级：</p>
-                                        </el-col>
-                                        <el-col :span="21">
-                                            <template>
-                                                <el-select 
-                                                    v-model="item.school_grade" 
-                                                    placeholder="请选择"
-                                                    :disabled="item.studentIptDis">
-                                                    <el-option
-                                                    v-for="item in schoolLevelArr"
-                                                    :key="item.value"
-                                                    :label="item.label"
-                                                    :value="item.value">
-                                                    </el-option>
-                                                </el-select>
-                                            </template>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row>
-                                        <el-col :span="3">
-                                            <p>手机：</p>
-                                        </el-col>
-                                        <el-col :span="21">
-                                            <el-input
-                                                v-model="item.mobile"
-                                                :disabled="item.studentIptDis"
-                                            ></el-input>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row>
-                                        <el-col :span="3">
-                                            <p>电话：</p>
-                                        </el-col>
-                                        <el-col :span="21">
-                                            <el-input
-                                                v-model="item.telephone"
-                                                :disabled="item.studentIptDis"
-                                            ></el-input>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row>
-                                        <el-col :span="3">
-                                            <p>微信：</p>
-                                        </el-col>
-                                        <el-col :span="21">
-                                            <el-input
-                                                v-model="item.wechat"
-                                                :disabled="item.studentIptDis"
-                                            ></el-input>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row>
-                                        <el-col :span="3">
-                                            <p>QQ：</p>
-                                        </el-col>
-                                        <el-col :span="21">
-                                            <el-input
-                                                v-model="item.qq"
-                                                :disabled="item.studentIptDis"
-                                            ></el-input>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row>
-                                        <el-col :span="3">
-                                            <p>邮箱：</p>
-                                        </el-col>
-                                        <el-col :span="21">
-                                            <el-input
-                                                v-model="item.email"
-                                                :disabled="item.studentIptDis"
-                                            ></el-input>
-                                        </el-col>
-                                    </el-row>
-                                    
-                                </div>
-                            </div>
-                       </template>
-                    </template>
-                    <template v-else>
-                        <div class="studentBtnGroup">
-                            <span @click="addStudentStatu = true">新增学生</span>
-                            <span @click="turnIntoCustomersFn('importStudent')">导入学生</span>
-                            <span @click="studentturnIntoCustomersFn('multiple')">转客户</span>
-                            <span @click="delLogItem('student')">删除</span>
-                        </div>
-                        <div class="showBtn">
-                            <span class="mr10">显示</span>
-                             <el-radio-group @change="switchStudentShowContent('student')" v-model="studentShowContent">
-                                <el-radio  label="1">客户</el-radio>
-                                <el-radio  label="2">客户</el-radio>
-                             </el-radio-group>
-                        </div>
-                        <el-table
-                            border
-                            @selection-change="changeFun($event,'student')"
-                            :data="clueInfoData.studentShowList"
-                            style="width: 100%">
-                            <el-table-column v-if="studentShowContent=='1'"
-                                type="selection"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                            prop="name"
-                            sortable
-                            show-overflow-tooltip
-                            label="学生名称"
-                            min-width="120">
-                            </el-table-column>
-                            <el-table-column
-                            prop="parent_name"
-                            label="家长姓名"
-                            show-overflow-tooltip
-                            align="center"
-                            min-width="100">
-                            </el-table-column>
-                             <el-table-column
-                            prop="parent_mobile"
-                            label="联系方式"
-                            align="center"
-                            min-width="100">
-                            </el-table-column>
-                           
-                             <el-table-column
-                            prop="city_name"
-                            sortable
-                            label="学校地区"
-                            show-overflow-tooltip
-                            min-width="120">
-                            </el-table-column>
-                             <el-table-column
-                            prop="school_name"
-                            sortable
-                            label="学校名称"
-                            show-overflow-tooltip
-                            min-width="120">
-                            </el-table-column>
-                             <el-table-column
-                            label="年级"
-                            sortable
-                            align="center"
-                            min-width="100">
-                                <template slot-scope="scope">
-                                    {{scope.row.student_grade==1?"初一":(
-                                        scope.row.student_grade==2?"初二":(
-                                            scope.row.student_grade==3?"初三":(
-                                                scope.row.student_grade==4?"高一":(
-                                                    scope.row.student_grade==5?"高二":"高三"
-                                            ))))}}
-                                </template>
-                            </el-table-column>
-                                
-
-                             <el-table-column
-                            prop="followup_time"
-                            label="跟进状态"
-                            show-overflow-tooltip
-                            sortable
-                            min-width="180">
-                            </el-table-column>
-                            <el-table-column min-width="180" label="操作">
-                                <template slot-scope="scope">
-                                    <el-button
-                                    size="mini"
-                                    :disabled="scope.row.is_turn == 2"
-                                    type="success"
-                                    @click="handleEdit(scope.$index, scope.row, 'studentToContract')">转客户</el-button>
-                                    <el-button
-                                    :disabled="scope.row.is_turn == 2"
-                                    size="mini"
-                                    type="danger"
-                                    @click="handleEdit(scope.$index, scope.row,'delStudent')">删除</el-button>
-                                </template>
-                               
-                            </el-table-column>
-                        </el-table>
-                    </template>
+                  
                 </el-tab-pane>
                 <el-tab-pane label="跟进日志">
                     <div class="addLogBtn">
@@ -629,131 +342,8 @@
          </div> 
         <!-- 新增合同 -->
 
-         <!-- 转成客户 -->
-         <div class="changeToClient">
-             <el-dialog
-                title="转成客户"
-                :visible.sync="turnIntoCustomersStatu"
-                width="30%"
-                >
-                <div class="mt10">
-                    <p class="mb10 ">业务部门</p>
-                    <el-cascader
-                        expand-trigger="hover"
-                        :value="changeToClientData.businessDepartment"
-                        :options="companyDepartment"
-                        @change="selectServiceDepartment($event,'businessDepartment')"
-                        clearable
-                        change-on-select
-                    >
-                    </el-cascader>
-                </div>
-                <div class="mt10">
-                    <p class="mb10 ">业务负责人</p>
-                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
-                    <el-select v-model="changeToClientData.businessEmployeeId" placeholder="请选择">
-                        <el-option
-                        v-for="item in changeToClientData.businessEmployee"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
-                        </el-option>
-                    </el-select>
-                </div>
-                
-                <div class="mt10">
-                    <p class="mb10 ">服务部门</p>
-                     <el-cascader
-                        expand-trigger="hover"
-                        :value="changeToClientData.serviceDepartment"
-                        :options="companyDepartment"
-                        @change="selectServiceDepartment($event,'serviceDepartment')"
-                        clearable
-                        change-on-select
-                    >
-                    </el-cascader>
-                </div>
-                <div class="mt10">
-                    <p class="mb10 ">服务负责人</p>
-                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.serviceEmployeeId" placeholder="请选择"> -->
-                    <el-select v-model="changeToClientData.serviceEmployeeId" placeholder="请选择">
-                        <el-option
-                        v-for="item in changeToClientData.serviceEmployee"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
-                        </el-option>
-                    </el-select>
-                </div>
-                
-                <div class="mt10">
-                    <p class="mb10 ">售后部门</p>
-                     <el-cascader
-                        expand-trigger="hover"
-                        :value="changeToClientData.aftermarketDepartment"
-                        :options="companyDepartment"
-                        @change="selectServiceDepartment($event,'aftermarketDepartment')"
-                        clearable
-                        change-on-select
-                    >
-                    </el-cascader>
-                </div>
-                <div class="mt10">
-                    <p class="mb10 ">售后负责人</p>
-                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择"> -->
-                    <el-select v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择">
-                        <el-option
-                        v-for="item in changeToClientData.aftermarketEmployee"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
-                        </el-option>
-                    </el-select>
-                </div>
-                
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="turnIntoCustomersStatu = false">取 消</el-button>
-                    <el-button type="primary" @click="intoContract">确 定</el-button>
-                </span>
-            </el-dialog>
-         </div>
-         <!-- 转移客户 -->
-         <div class="shiftClue">
-             <el-dialog
-                title="转移客户"
-                :visible.sync="shiftClueStatu"
-                width="30%"
-                >
-                <div class="mt10">
-                    <p class="mb10 ">选择部门</p>
-                    <el-cascader
-                        expand-trigger="hover"
-                        :value="changeToClientData.businessDepartment"
-                        :options="companyDepartment"
-                        @change="selectServiceDepartment($event,'businessDepartment')"
-                        clearable
-                        change-on-select
-                    >
-                    </el-cascader>
-                </div>
-                <div class="mt10">
-                    <p class="mb10 ">选择负责人</p>
-                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
-                    <el-select v-model="shiftClueEmployeeId" placeholder="请选择">
-                        <el-option
-                        v-for="item in changeToClientData.businessEmployee"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
-                        </el-option>
-                    </el-select>
-                </div>
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="shiftClueStatu = false">取 消</el-button>
-                    <el-button type="primary" @click="shiftClue">确 定</el-button>
-                </span>
-            </el-dialog>
-         </div>
+      
+      
          <!-- 删除客户 -->
          <div class="shiftClue">
              <el-dialog
@@ -779,219 +369,6 @@
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="delContractStatu = false">取 消</el-button>
                     <el-button type="primary" @click="delContract">确 定</el-button>
-                </span>
-            </el-dialog>
-         </div>
-         <!-- 添加联系人 -->
-         <div class="shiftClue">
-             <el-dialog
-                title="添加联系人"
-                :visible.sync="addContactStatu"
-                width="30%"
-                >
-                <div>
-                    <div>
-                        <span class="iptName">姓名:</span>
-                        <el-input v-model="addContactData.contactName" placeholder="请输入姓名"></el-input>
-                    </div>
-                   <template v-if="clueType == 4">
-                        <div>
-                            <span class="iptName">关系:</span>
-                            <el-input v-model="addContactData.relationship" placeholder="请输入关系"></el-input>
-                        </div>
-                        <div>
-                            <span class="iptName">工作单位:</span>
-                            <el-input v-model="addContactData.company_name" placeholder="请输入工作单位"></el-input>
-                        </div>
-                   </template>
-                    <div>
-                        <span class="iptName">部门:</span>
-                        <el-input v-model="addContactData.department" placeholder="请输入部门"></el-input>
-                    </div>
-                    <div>
-                        <span class="iptName">职务:</span>
-                        <el-input v-model="addContactData.post" placeholder="请输入职务"></el-input>
-                    </div>
-                    <template v-if="clueType==1">
-                        <div class="mt10" >
-                            <p class="mb10 ">教授年级</p>
-                            <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
-                            <el-select v-model="addContactData.grade" placeholder="请选择">
-                                <el-option
-                                v-for="item in studentGradeArr"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                                </el-option>
-                            </el-select>
-                        </div>
-                        <div class="mt10">
-                            <p class="mb10 ">教授科目</p>
-                            <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
-                            <el-select v-model="addContactData.subject" placeholder="请选择">
-                                <el-option
-                                v-for="item in professorSubjectsArr"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                                </el-option>
-                            </el-select>
-                        </div>
-                    </template>
-                    <div>
-                        <span class="iptName">手机:</span>
-                        <el-input v-model="addContactData.phone" placeholder="请输入手机"></el-input>
-                    </div>
-                    <div>
-                        <span class="iptName">电话:</span>
-                        <el-input v-model="addContactData.tel" placeholder="请输入电话"></el-input>
-                    </div>
-                    <div>
-                        <span class="iptName">微信:</span>
-                        <el-input v-model="addContactData.weixin" placeholder="请输入微信"></el-input>
-                    </div>
-                    <div>
-                        <span class="iptName">QQ:</span>
-                        <el-input v-model="addContactData.qq" placeholder="请输入QQ"></el-input>
-                    </div>
-                    <div>
-                        <span class="iptName">邮箱:</span>
-                        <el-input v-model="addContactData.email" placeholder="请输入邮箱"></el-input>
-                    </div>
-                    <div class="mt10">
-                        <p class="mb10 ">地区</p>
-                         <el-cascader
-                            expand-trigger="hover"
-                            :value="addContactData.selectCityData"
-                            :options="cityList"
-                            @change="addContactSelectCity"
-                            clearable
-                            separator="-"
-                        >
-                        </el-cascader>
-                    </div>
-                    <div>
-                        <span class="iptName">地址:</span>
-                        <el-input v-model="addContactData.address" placeholder="请输入地址"></el-input>
-                    </div>
-                </div>  
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="addContactStatu = false">取 消</el-button>
-                    <el-button type="primary" @click="addContact('contact')">确 定</el-button>
-                </span>
-            </el-dialog>
-         </div>
-         <!-- 新增学生 -->
-         <div class="shiftClue">
-             <el-dialog
-                title="新增学生"
-                :visible.sync="addStudentStatu"
-                width="30%"
-                >
-                <div>
-                    <div>
-                        <span class="iptName">姓名:</span>
-                        <el-input v-model="addStudentData.name" placeholder="请输入姓名"></el-input>
-                    </div>
-                    <div class="mt10">
-                        <p class="mb10 ">性别</p>
-                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
-                        <el-select v-model="addStudentData.sex" placeholder="请选择">
-                            <el-option
-                            v-for="item in sexArr"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-                    <div class="mt10" >
-                        <p class="mb10 ">文理科</p>
-                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
-                        <el-select v-model="addStudentData.subject" placeholder="请选择">
-                            <el-option
-                            v-for="item in subjectArr"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-                    <div class="mt10" >
-                        <p class="mb10 ">年级</p>
-                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
-                        <el-select v-model="addStudentData.grade" placeholder="请选择">
-                            <el-option
-                            v-for="item in studentGradeArr"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-
-                    <!-- 机构教师x学生显示 -->
-                    <template v-if="clueType != 1">
-                        <div>
-                            <span class="iptName">学校名称:</span>
-                            <el-input v-model="addStudentData.schoolName" placeholder="请输入家长姓名"></el-input>
-                        </div>
-                        <div class="mt10" >
-                            <p class="mb10 ">等级</p>
-                            <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
-                            <el-select v-model="addStudentData.schoolLevel" placeholder="请选择">
-                                <el-option
-                                v-for="item in schoolLevelArr"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                                </el-option>
-                            </el-select>
-                        </div>
-                        <div class="mt10">
-                            <p class="mb10 ">学校所在地</p>
-                            <el-cascader
-                                expand-trigger="hover"
-                                :value="addStudentData.selectCityData"
-                                :options="cityList"
-                                @change="selectCity($event, 2, 'addStudent')"
-                                clearable
-                                separator="-"
-                            >
-                            </el-cascader>
-                        </div>
-                    </template>
-
-                    <template v-if="clueType != 4">
-                        <div>
-                            <span class="iptName">家长姓名:</span>
-                            <el-input v-model="addStudentData.parentsName" placeholder="请输入家长姓名"></el-input>
-                        </div>
-                        <div>
-                            <span class="iptName">手机:</span>
-                            <el-input v-model="addStudentData.phone" placeholder="请输入手机"></el-input>
-                        </div>
-                        <div>
-                            <span class="iptName">电话:</span>
-                            <el-input v-model="addStudentData.tel" placeholder="请输入电话"></el-input>
-                        </div>
-                        <div>
-                            <span class="iptName">微信:</span>
-                            <el-input v-model="addStudentData.weixin" placeholder="请输入微信"></el-input>
-                        </div>
-                        <div>
-                            <span class="iptName">QQ:</span>
-                            <el-input v-model="addStudentData.qq" placeholder="请输入QQ"></el-input>
-                        </div>
-                        <div>
-                            <span class="iptName">邮箱:</span>
-                            <el-input v-model="addStudentData.email" placeholder="请输入邮箱"></el-input>
-                        </div>
-                    </template>
-                </div>  
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="addStudentStatu = false">取 消</el-button>
-                    <el-button type="primary" @click="addContact('student')">确 定</el-button>
                 </span>
             </el-dialog>
          </div>
@@ -1050,48 +427,6 @@
                 </span>
              </el-dialog>
          </div>
-         <!-- 导入学生 -->
-        <el-dialog
-            title="批量导入--下载模板"
-            :visible.sync="importStatu"
-            width="30%"
-            >
-            <el-button type="text">点击下载导入数据模板</el-button>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="importStatu = false">取 消</el-button>
-                <el-button type="primary" @click="importStatu = false;importStatu2 = true">确 定</el-button>
-            </span>
-        </el-dialog>
-        <!-- 导入学生第二部 -->
-        <el-dialog
-            title="批量导入--上传数据文件"
-            :visible.sync="importStatu2"
-            width="30%"
-            >
-            
-            <el-upload
-            class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :before-remove="beforeRemove"
-            multiple
-            :limit="3"
-            :on-exceed="handleExceed"
-            :on-change="handChange"
-            >
-            <!-- :file-list="fileList"> -->
-            <el-button type="text">点击下载导入数据模板</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-            </el-upload>
-
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="importStatu2 = false">取 消</el-button>
-                <el-button type="primary" @click="importStatu2 = false">确 定</el-button>
-            </span>
-        </el-dialog>
-      
-        
      </div>
 </template>
 
@@ -1460,6 +795,24 @@
                     {
                         value: 3,
                         label: '小型'
+                    },
+                ],
+                clientType: [
+                    {
+                        value: 1,
+                        label: '学校'
+                    },
+                    {
+                        value: 2,
+                        label: '机构'
+                    },
+                    {
+                        value: 3,
+                        label: '教师'
+                    },
+                    {
+                        value: 4,
+                        label: '学生'
                     },
                 ],
                 // 联系人信息
@@ -2564,10 +1917,8 @@
         },
         created() {
              // 传来的参数
-            console.log(this.$route)
             this.clueType = this.$route.query.clueType;
             this.paramData = this.$route.query;
-            console.log(this.paramData.parentCompanyList);
             
             this.clueDetails();
             if (localStorage.getItem('cityData')) {
