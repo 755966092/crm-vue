@@ -1547,7 +1547,11 @@
                                    })
                                        .then(function (res) {
                                            if (res.data.code == 200) {
-
+                                            self.$message({
+                                              message: '批量删除线索成功',
+                                              type: 'success'
+                                           })
+                                              self.filterClue();
                                            } else {
                                                alert(res.data.msg)
                                            }

@@ -1725,9 +1725,14 @@ export default {
           token: localStorage.getItem("crm_token"),
           clueIds: JSON.stringify(arr)
         }
-      })
+             })
         .then(function(res) {
           if (res.data.code == 200) {
+              self.$message({
+                    message: '批量删除客户成功',
+                    type: 'success'
+                 })
+                    self.filterClue();
           } else {
             alert(res.data.msg);
           }
