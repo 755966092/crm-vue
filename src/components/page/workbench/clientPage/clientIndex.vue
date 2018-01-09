@@ -2058,7 +2058,8 @@ export default {
           cue_source: self.typeList.source.value,
           followup_statu: self.typeList.followUpStatus.value,
           grade: self.typeList.schoolLevel.value,
-          los: self.typeList.academicSystem.value
+          los: self.typeList.academicSystem.value,
+          service_user: self.typeList.serviceUser.value
         };
       } else if (self.clueType == 2) {
         // 机构   机构类型, 定位, 跟进状态, 来源
@@ -2084,7 +2085,8 @@ export default {
           cue_source: self.typeList.source.value,
           followup_statu: self.typeList.followUpStatus.value,
           type: self.typeList.organizationType.value,
-          location: self.typeList.positioning.value
+          location: self.typeList.positioning.value,
+          service_user: self.typeList.serviceUser.value
         };
       } else if (self.clueType == 3) {
         // 教师   学校等级, 教授年级, 教授科目, 跟进状态, 来源
@@ -2111,7 +2113,8 @@ export default {
           followup_statu: self.typeList.followUpStatus.value,
           grade: self.typeList.schoolLevel.value,
           professor_grade: self.typeList.professor_grade.value,
-          professor_subjects: self.typeList.professorSubjects.value
+          professor_subjects: self.typeList.professorSubjects.value,
+          service_user: self.typeList.serviceUser.value
         };
       } else if (self.clueType == 4) {
         // 学生   学校等级, 文理科, 年级, 性别, 来源类型, 跟进状态 来源
@@ -2140,7 +2143,8 @@ export default {
           the_science: self.typeList.artsAndSciences.value,
           student_grade: self.typeList.grade.value,
           sex: self.typeList.sex.value,
-          from_type: self.typeList.sourceType.value
+          from_type: self.typeList.sourceType.value,
+           service_user: self.typeList.serviceUser.value
         };
       } else {
       }
