@@ -756,6 +756,9 @@
                     <div class="addLogBtn">
                         <span @click="turnIntoCustomersFn('addLog')">新增日志</span>
                         <span class="delBtn" @click="delLogItem('log')">删除</span>
+                         <span class="btn">
+                              <el-button @click="exportData" type="success">导出</el-button>
+                         </span>
                     </div>
                     <div class="logTable">
                         <el-table
@@ -2255,8 +2258,8 @@
                     .then(function (res) {
                         if (res.data.code === 200) {
                             let data = res.data.data;
-                            
-                            
+
+
                             for (let i = 0; i < data.contacts.length; i++) {
                                 const element = data.contacts[i];
                                 if (element.id == data.list.contacts_id) {
@@ -2281,20 +2284,20 @@
                                 }
                             }
                             data.studentShowList = data.studentClueList;
-                            
+
                             self.allContacts = data.contacts;
                             // for (let i = 0; i < data.contacts.length; i++) {
                             //     const element = data.contacts[i];
-                               
+
                             // }
-                           
+
                             // self.school.cityArr.push(data.list.province_id)
                             // self.school.cityArr.push(data.list.city_id)
                             // self.school.cityArr.push(data.list.area_id)
                             self.selCityList = [data.list.province_id,data.list.city_id,data.list.area_id]
                             console.log(self.selCityList);
                             self.school = data.details;
-                            
+
                             if(!self.school.website) {
                                 self.school.website = ''
                             }
@@ -2316,6 +2319,29 @@
                             // alert(res.data.msg)
                             self.$message.error(res.data.msg);
                         }
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            },
+            // 日志导出
+            exportData() {
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/clueFollowup/clueFollowupLists',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        clue_id: self.$route.query.data.clue_id,
+                        type: 1,
+                        statutype:1
+                    }
+                })
+                 .then(function (res) {
+                       // console.log('返回参数:');
+                        console.log(JSON.stringify(res.data,null,4))
+                        window.open("https://crm.tonyliangli.cn"+res.data.url);
                     })
                     .catch(function (err) {
                         console.log(err);

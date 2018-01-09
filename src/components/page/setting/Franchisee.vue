@@ -15,21 +15,21 @@
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="companyName"
+                            prop="company_name"
                             label="公司"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="contact"
+                            prop="contacts"
                             label="联系人"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="phone"
+                            prop="contacts_phone"
                             label="联系电话"
                             min-width="130"
                         >
@@ -49,13 +49,13 @@
                             </template>
                         </el-table-column>
                         <el-table-column
-                            prop="toJoin"
+                            prop="apply_count"
                             label="已加盟"
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="remarks"
+                            prop="content"
                             label="说明"
                             min-width="130"
                         >
@@ -258,44 +258,9 @@
                     }],
                 },
                 // 加盟邀请
-                invitationData: [
-                    {
-                        companyName: '环球壹学教育科技有限公司',
-                        contact: '王小虎',
-                        phone: '18888888888',
-                        industry: '教育',
-                        toJoin: 3,
-                        remarks: '说明内容'
-                    }, {
-                        companyName: '环球壹学教育科技有限公司',
-                        contact: '王小虎',
-                        phone: '18888888888',
-                        industry: '科技',
-                        toJoin: 3,
-                        remarks: '说明内容'
-                    }, {
-                        companyName: '环球壹学教育科技有限公司',
-                        contact: '王小虎',
-                        phone: '18888888888',
-                        industry: 'IT',
-                        toJoin: 3,
-                        remarks: '说明内容'
-                    }, {
-                        companyName: '环球壹学教育科技有限公司',
-                        contact: '王小虎',
-                        phone: '18888888888',
-                        industry: '对外贸易',
-                        toJoin: 3,
-                        remarks: '说明内容'
-                    }, {
-                        companyName: '环球壹学教育科技有限公司',
-                        contact: '王小虎',
-                        phone: '18888888888',
-                        industry: '金融',
-                        toJoin: 3,
-                        remarks: '说明内容'
-                    },
-                ], // 加盟邀请
+                invitationData: [], // 加盟邀请
+                //可选加盟
+                applyFranchiseeList:[],
                 // 申请状态
                 applicationStatusData: [
                     {
@@ -361,15 +326,36 @@
                 })
                     .then(function (res) {
                         self.applicationStatusData = res.data.data.list;
+                        console.log(self.applicationStatusData);
 
                     })
                     .catch(function (err) {
                         console.log(err);
                     });
-            }
+            },
+                // 申请加盟--可选加盟
+            joiningTraderapplyFranchiseeList() {
+                var self = this;
+                self.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/joiningTrader/applyFranchiseeList',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                    }
+                })
+                    .then(function (res) {
+                        self.invitationData = res.data.data.list;
+                        console.log(self.invitationData);
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            },
         },
         created() {
             this.joiningTraderApplyFranchiseeStatu();
+            this.joiningTraderapplyFranchiseeList();
         }
     }
 </script>
