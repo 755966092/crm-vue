@@ -59,7 +59,17 @@ export default new Router({
                 },
                 {
                     path: '/contract',
-                    component: resolve => require(['../components/page/workbench/Contract.vue'], resolve)    // 拖拽列表组件
+                    component: resolve => require(['../components/page/workbench/Contract.vue'], resolve),    // 拖拽列表组件
+                    children: [
+                        {
+                            path: '/',
+                            component: resolve => require(['../components/page/workbench/contractPage/contractIndex.vue'], resolve)    // 拖拽列表组件
+                        },
+                        {
+                            path: 'contractInfo',
+                            component: resolve => require(['../components/page/workbench/contractPage/contractInfo.vue'], resolve)    // 拖拽列表组件
+                        }
+                    ]
                 },
                 {
                     path: '/logpage',

@@ -2412,7 +2412,6 @@ export default {
                 delete value.children
             }
         }
-
     },
   },
   created() {

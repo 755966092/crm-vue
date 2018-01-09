@@ -436,18 +436,13 @@
                     })
                         .then(function (res) {
                             if (res.data.code === 200) {
-                                // console.log('返回参数:');
-                                console.log(res);
-                                console.log('返回参数:'+JSON.stringify(res.data,null,4));
                                 for (var i = 0; i < res.data.data.list.length; i++) {
-
                                     for (let key in obj) {
                                         if (obj[key] == null) {
                                             obj[key] = '-'
                                         }
                                     }
                                 }
-                                console.log(JSON.stringify(res.data.data.list,null,4))
                                 self.tableData = res.data.data.list || [];
                                 self.tableDataAll = res.data.data;
                                 self.histogramDate = [];
