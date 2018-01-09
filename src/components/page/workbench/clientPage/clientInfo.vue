@@ -857,6 +857,9 @@
                     <div class="addLogBtn">
                         <span @click="turnIntoCustomersFn('addLog')">新增日志</span>
                         <span class="delBtn" @click="delLogItem('log')">删除</span>
+                         <span class="btn">
+                              <el-button @click="exportData" type="success">导出</el-button>
+                         </span>
                     </div>
                     <div class="showBtn">
                             <span class="mr10">显示</span>
@@ -2721,6 +2724,30 @@
                             // alert(res.data.msg)
                             self.$message.error(res.data.msg);
                         }
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            },
+             // 日志导出
+            exportData() {
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/clueFollowup/clueFollowupLists',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        clue_id: self.$route.query.data.clue_id,
+                        type: 1,
+                        statutype:1,
+                        status:this.logShowContent
+                    }
+                })
+                 .then(function (res) {
+                       // console.log('返回参数:');
+                        console.log(JSON.stringify(res.data,null,4))
+                        window.open("https://crm.tonyliangli.cn"+res.data.url);
                     })
                     .catch(function (err) {
                         console.log(err);
