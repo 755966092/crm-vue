@@ -2,10 +2,14 @@
      <div class="componentsRoot">
          <div>
              <span>
-                <span>合同：</span>
+                <span>合同：{{clueInfoData.details.contract_name}}</span>
              </span>
              <span class="defaultContact" style="margin-left:20px">
-                <span>学校：</span>
+                <span v-if="clueInfoData.details.cue_type == 1">学校：</span>
+                <span v-else-if="clueInfoData.details.cue_type == 2">机构：</span>
+                <span v-else-if="clueInfoData.details.cue_type == 3">学校：</span>
+                <span v-else>家长：</span>
+                {{clueInfoData.details.from_name}}
                     <template>
                     <!-- <el-select @change="selectDefaultContact"  placeholder="请选择">
                         <el-option
@@ -22,10 +26,10 @@
             <el-row  :gutter="20">
                 <el-col :span="5">
                      <template>
-                        <el-select v-model="statusModel"  @change="selClueStatus" placeholder="请选择">
+                        <el-select v-model="clueInfoData.details.statu"  @change="selClueStatus" placeholder="请选择">
                         <!-- <el-select   @change="selClueStatus" placeholder="请选择"> -->
                             <el-option
-                            v-for="item in statusArr"
+                            v-for="item in contractStatusArr"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value"
@@ -34,8 +38,19 @@
                         </el-select>
                     </template>
                 </el-col>
-                <el-col :span="4">
-                     <el-button @click="turnIntoCustomersFn('shiftClue')">转移给他人</el-button>
+                <el-col :span="5">
+                     <template>
+                        <el-select v-model="clueInfoData.details.payment_statu"  @change="selClueStatus" placeholder="请选择">
+                        <!-- <el-select   @change="selClueStatus" placeholder="请选择"> -->
+                            <el-option
+                            v-for="item in paymentStatusArr"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                            >
+                            </el-option>
+                        </el-select>
+                    </template>
                 </el-col>
                 <el-col :span="4">
                      <el-button @click="turnIntoCustomersFn('delClue')">删除客户</el-button>
@@ -160,8 +175,8 @@
                                 </el-col>
                                 <el-col :span="18">
                                     <el-date-picker
-                                        v-model="clueInfoData.details.contract_time"
-                                        type="date"
+                                        v-model="clueInfoData.details.start_time"
+                                        type="datetime"
                                         :disabled="schoolIptDis"
                                         placeholder="合同起始日期">
                                         </el-date-picker>
@@ -174,8 +189,8 @@
                                 </el-col>
                                 <el-col :span="18">
                                     <el-date-picker
-                                        v-model="clueInfoData.details.contract_time"
-                                        type="date"
+                                        v-model="clueInfoData.details.end_time"
+                                        type="datetime"
                                         :disabled="schoolIptDis"
                                         placeholder="合同到期日期">
                                         </el-date-picker>
@@ -210,7 +225,7 @@
                                 <el-col :span="18">
                                     <el-date-picker
                                         v-model="clueInfoData.details.contract_time"
-                                        type="date"
+                                        type="datetime"
                                         :disabled="schoolIptDis"
                                         placeholder="选择日期">
                                         </el-date-picker>
@@ -275,8 +290,59 @@
                         </div>
                      </div>
                 </el-tab-pane>
-                <el-tab-pane label="学生">
-                  
+                <el-tab-pane label="款项">
+                    <div class="addLogBtn">
+                        <span @click="turnIntoCustomersFn('addPayment')">新增款项</span>
+                        <span class="delBtn" @click="delLogItem('Payment')">删除</span>
+                    </div>
+                    <div style="margin-top:10px">
+                        <el-table
+                        border
+                        @selection-change="changeFun($event,'log')"
+                        :data="clueInfoData.fund"
+                        style="width: 100%">
+                        <el-table-column
+                            type="selection"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                        prop="create_time"
+                        label="时间"
+                        min-width="110">
+                        </el-table-column>
+                        <el-table-column
+                        prop="user_name"
+                        label="跟进人"
+                        align="center"
+                        min-width="60">
+                        </el-table-column>
+                        <el-table-column
+                        prop="type"
+                        label="款项"
+                        align="center"
+                        min-width="65">
+                        </el-table-column>
+                        <el-table-column
+                        prop="money"
+                        label="金额"
+                        align="center"
+                        min-width="65">
+                        </el-table-column>
+                        <el-table-column
+                        prop="remake"
+                        label="备注"
+                        min-width="180">
+                        </el-table-column>
+                        <el-table-column min-width="60" label="操作">
+                            <template slot-scope="scope">
+                                <el-button
+                                size="mini"
+                                type="danger"
+                                @click="handleEdit(scope.$index, scope.row,'payment')">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    </div>
                 </el-tab-pane>
                 <el-tab-pane label="跟进日志">
                     <div class="addLogBtn">
@@ -427,6 +493,57 @@
                 </span>
              </el-dialog>
          </div>
+         <!-- 新增款项 addPaymentStatu -->
+          <div class="shiftClue">
+             <el-dialog
+                title="新增日志"
+                :visible.sync="addPaymentStatu"
+                width="30%"
+                >
+                <div>
+                    <div>
+                        <span class="iptName">联系方式:</span>
+                        <el-select v-model="addPaymentData.type" placeholder="请选择">
+                                <el-option
+                                v-for="item in addPaymentType"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                                </el-option>
+                            </el-select>
+                    </div>
+                    <div>
+                        <span class="iptName">时间:</span>
+                        <el-date-picker
+                        v-model="addPaymentData.time"
+                        type="datetime"
+                        placeholder="选择日期时间">
+                        </el-date-picker>
+                    </div>
+                     <div>
+                        <span class="iptName">金额:</span>
+                        <el-input
+                        v-model="addPaymentData.money"
+                        placeholder="输入回款金额">
+                        </el-input>
+                    </div>
+                     <div>
+                        <span class="iptName">内容:</span>
+                        <el-input
+                        type="textarea"
+                        :rows="4"
+                        placeholder="请输入内容"
+                        resize="none"
+                        v-model="addPaymentData.remake">
+                        </el-input>
+                    </div>
+                </div>
+                 <span slot="footer" class="dialog-footer">
+                    <el-button @click="addPaymentStatu = false">取 消</el-button>
+                    <el-button type="primary" @click="addLog()">确 定</el-button>
+                </span>
+             </el-dialog>
+         </div>
      </div>
 </template>
 
@@ -437,6 +554,23 @@
         },
         data() {
             return {
+                // 新增回款
+                addPaymentData: {
+                    type: '',
+                    time: '',
+                    remake: '',
+                    time: ''
+                },
+                addPaymentType: [
+                    {
+                        label: '回款',
+                        value: 1
+                    },
+                    {
+                        label: '退款',
+                        value: 2
+                    },
+                ],
                 // 删除合同状态
                 delContractStatu: false,
                 delContractStatuFlag: false,
@@ -446,6 +580,8 @@
                 fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
                 // 新增合同
                 addContractStatu: false,
+                // 新增款项
+                addPaymentStatu: false,
                 addContractData: {
                     client_id: '',
                     name: '',
@@ -500,7 +636,7 @@
                     }
                 ],
                 // 日志显示内容
-                logShowContent: '1',
+                logShowContent: '',
                 // 新增日志
                 addLogData: {
                     addLogTime: '',
@@ -560,19 +696,21 @@
                 defaultContact: '',
                 clueInfoData: {
                      details: {
-                        contract_name: "王者合同",
-                        contract_number: "WZHT123",
-                        contract_business_type: 1,
-                        cue_type: 2,
-                        clue_name: "机构名称",
-                        money: 2000,
-                        start_time: "2018-01-05 13:26:29",
-                        end_time: "2018-01-05 13:26:32",
-                        company_name: "上一秒科技公司",
-                        user_name: "jj",
-                        from_name: "机构名称",
-                        contract_time: "2018-01-05 13:41:00",
-                        cue_source: "全部",
+                        contract_name: "",
+                        contract_number: "",
+                        statu:'',
+                        payment_statu:'',
+                        contract_business_type: '',
+                        cue_type: '',
+                        clue_name: "",
+                        money: '',
+                        start_time: "",
+                        end_time: "",
+                        company_name: "",
+                        user_name: "",
+                        from_name: "",
+                        contract_time: "",
+                        cue_source: "",
                         person_user: null,
                         before_person_user: null,
                         person_department: null,
@@ -585,9 +723,9 @@
                         before_customer_user: null,
                         customer_department: null,
                         before_customer_department: null,
-                        ClueCreate_time: "2018-01-02 11:06:39",
-                        ClueUpdate_time: "2018-01-03 10:19:02",
-                        remake: "无为"
+                        ClueCreate_time: "",
+                        ClueUpdate_time: "",
+                        remake: ""
                     },
                     fund: [{
                         create_time: "1970-01-01 08:00:00",
@@ -608,17 +746,35 @@
 
                 },
                 // 状态
-                statusArr: [
+                contractStatusArr: [
                     {
-                        value: 1,
-                        label:'未处理'
-                    },{
-                        value: 2,
-                        label:'联系方式有效'
-                    },{
-                        value: 3,
-                        label:'联系方式无效'
+                        label: '执行中', //1执行中  2成功结束  3意外终止  4未开始  1待付款   2部分结算    3全部结清
+                        value: 1
+                    },
+                    {
+                        label: '成功结束',
+                        value: 2
+                    },
+                    {
+                        label: '意外终止',
+                        value: 3
+                    },
+                    {
+                        label: '未开始',
+                        value: 4
                     }
+                ],
+                paymentStatusArr: [
+                    {
+                        label: '代付款',
+                        value: 1
+                    },{
+                        label: '部分结算',
+                        value: 2
+                    },{
+                        label: '全部结清',
+                        value: 3
+                    },
                 ],
                 statusModel: 1,
                 // 备注禁用状态
@@ -990,6 +1146,10 @@
                     this.logTableData = this.clueInfoData.followup.filter((value) => {
                         return value.status == this.logShowContent
                     })
+                    // this.clueInfoData.followup = this.clueInfoData.followup.filter((value) => {
+                    //     console.log(value);
+                    //     return value.status == this.logShowContent
+                    // })
                 }
             },
              // 转成客户
@@ -1023,9 +1183,6 @@
                         obj.clue_id = self.studentToCantract
                     }
                 }
-                // console.log(JSON.stringify(self.changeToClientData,null,4));
-               
-                    
                 this.$axios({
                     method: 'POST',
                     withCredentials: false,
@@ -1062,20 +1219,20 @@
                     url = '/api/clueFollowup/applyClueFollowup';
                     obj = {
                         token: localStorage.getItem('crm_token'),
-                        type: 2,
-                        clue_id: self.$route.query.data.clue_id,
+                        type: 3,
+                        clue_id: self.$route.query.data.contract_id,
                         contact_ifmt: self.addLogData.contactType,
                         content: self.addLogData.content,
                         status: self.addLogData.status,
                         time: self.addLogData.addLogTime
                     }
                 } else {
-                    // 添加合同
-                    url = '/api/clueContract/addClueContract';
-                    obj = self.addContractData;
+                    // 添加款项
+                    url = '/api/ContractFund/addFund';
+                    obj = self.addPaymentData;
                     obj.token = localStorage.getItem('crm_token')
-                    obj.client_id = self.$route.query.data.clue_id;
-                    obj.company_id = self.addContractData.company_id_arr[self.addContractData.company_id_arr.length-1]
+                    obj.contract_id = self.$route.query.data.contract_id;
+                    // obj.company_id = self.addContractData.company_id_arr[self.addContractData.company_id_arr.length-1]
                 }
                 console.log(JSON.stringify(obj,null,4));
                 
@@ -1093,6 +1250,7 @@
                         });
                         self.addLogStatu = false;
                         self.addContractStatu = false;
+                        self.addPaymentStatu = false;
                         self.clueDetails()
                     } else {
                         self.$message.error(res.data.msg);
@@ -1288,20 +1446,19 @@
             // 进入客户列表页
             openClueInfo() {
                 // 跳转到客户
-                this.$router.push({path: '/client'})
+                this.$router.push({path: '/contract'})
             },
             // 删除合同
             delClue(flag) {
                 this.delClueStatu = false;
-                // /clueContract/ContractdeleteDuo
                 let self = this;
                 this.$axios({
                     method: 'POST',
                     withCredentials: false,
-                    url: '/api/clue/deleteClue',
+                    url: '/api/clueContract/Contractdelete',
                     data: {
                         token: localStorage.getItem('crm_token'),
-                        clue_id: self.$route.query.data.clue_id,
+                        contract_id: self.$route.query.data.contract_id,
                     }
                 })
                 .then(function(res){
@@ -1390,7 +1547,6 @@
             turnIntoCustomersFn(flag) {
                 // 获取部门员工
                 // this.getDepartmentEmployee();
-                
                 if (flag == 'contract') {
                     this.turnIntoCustomersStatu = true;
                 } else if (flag == 'shiftClue') {
@@ -1404,6 +1560,10 @@
                 } else if (flag == 'addContract') {
                     // 新增合同
                     this.addContractStatu = true;
+                }
+                 else if (flag == 'addPayment') {
+                    // 新增款项
+                    this.addPaymentStatu = true;
                 }
                 else {
                     this.delClueStatu = true;
@@ -1436,47 +1596,35 @@
             delLogItem(flag) {
                 if (flag == 'log') {
                     // 删除日志
-                    
                     for (let i = 0; i < this.multipleSelection.length; i++) {
                         this.logTableData = this.logTableData.filter((value) => {
                             return value.id != this.multipleSelection[i].id
                         })
                     }
                     this.delServerData('log')
-                } else if (flag == 'contract') {
-                    // 删除合同
-                    this.delClueStatu = true;
-                }
-                else {
-                    // 删除学生
+                }  else if (flag == 'Payment') {
                     for (let i = 0; i < this.multipleSelection.length; i++) {
-                        this.clueInfoData.studentShowList = this.clueInfoData.studentShowList.filter((value) => {
-                            return value.student_id != this.multipleSelection[i].student_id
+                        this.clueInfoData.fund = this.clueInfoData.fund.filter((value) => {
+                            return value.id != this.multipleSelection[i].id
                         })
-                        this.clueInfoData.student = this.clueInfoData.student.filter((value) => {
-                            return value.student_id != this.multipleSelection[i].student_id
-                        })
-                        this.clueInfoData.studentClueList = this.clueInfoData.studentClueList.filter((value) => {
-                            return value.student_id != this.multipleSelection[i].student_id
-                        })
-                        this.clueInfoData.studentContractList = this.clueInfoData.studentContractList.filter((value) => {
-                            return value.student_id != this.multipleSelection[i].student_id
-                        })
-                        
-
                     }
-                    this.delServerData('student')
+                    // 删除回款
+                    this.delServerData('Payment')
+                } else {
+                    
                 }
             },
             // 删除线上信息
             delServerData(flag) {
-                
                 let url='',param={};
                 let obj=[];
                 for (let i = 0; i < this.multipleSelection.length; i++) {
                     if (flag == 'student') {
                         obj.push(this.multipleSelection[i].student_id);
-                    } else {
+                    } else if (flag == 'Payment') {
+                        obj.push(this.multipleSelection[i].id);
+                    } 
+                    else {
                         obj.push(this.multipleSelection[i].id);
                     }
                 }
@@ -1486,7 +1634,14 @@
                         token: localStorage.getItem('crm_token'),
                         clueIds: JSON.stringify(obj)
                     }
-                } else {
+                } else if (flag == 'Payment') {
+                    url = '/api/ContractFund/deleteFunds'
+                    param = {
+                        token: localStorage.getItem('crm_token'),
+                        fund_ids: JSON.stringify(obj)
+                    }
+                }
+                 else {
                     url = '/api/clueFollowup/deleteClueFollowups';
                     param = {
                         token: localStorage.getItem('crm_token'),
@@ -1495,7 +1650,6 @@
                 }
                 
                 let self = this;
-                // console.log(obj+'');
                 this.$axios({
                     method: 'POST',
                     withCredentials: false,
@@ -1534,7 +1688,6 @@
                     this.studentToCantract = data.student_id;
                 } else if (flag == 'delStudent') {
                     // 删除按钮
-
                     this.$axios({
                         method: 'POST',
                         withCredentials: false,
@@ -1550,6 +1703,7 @@
                                 message: '操作成功',
                                 type: 'success'
                             });
+                           
                             self.clueDetails();
                         } else {
                             self.$message.error(res.data.msg);
@@ -1558,35 +1712,69 @@
                     .catch(function(err){
                         console.log(err);
                     });
-                } else {
-                    // 删除日志按钮 logEdit
-                this.logTableData = this.logTableData.filter((value) => {
-                    return value.id != data.id
-                })
-                let self = this;
-                // console.log(obj+'');
-                this.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/apiclueFollowup/deleteClueFollowup',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        followup_id: data.id
-                    }
-                })
-                .then(function(res){
-                    if (res.data.code === 200) {
-                        self.$message({
-                            message: '操作成功',
-                            type: 'success'
+                } else if (flag == 'payment') {
+                    // 单选删除回款
+                        let self = this;
+                        this.$axios({
+                           method: 'POST',
+                           withCredentials: false,
+                           url: '/api/ContractFund/deleteFund',
+                           data: {
+                               token: localStorage.getItem('crm_token'),
+                               fund_id: data.id
+                           }
                         })
-                    } else {
-                        self.$message.error(res.data.msg);
-                    }
-                })
-                .catch(function(err){
-                    console.log(err);
-                });
+                        .then(function(res){
+                           if (res.data.code === 200) {
+                               self.$message({
+                                   message: '删除回款成功',
+                                   type: 'success'
+                               });
+                                self.clueInfoData.fund = self.clueInfoData.fund.filter((value) => {
+                                    return value.id != data.id
+                                })
+                           } else {
+                               self.$message.error(res.data.msg);
+                           }
+                        })
+                        .catch(function(err){
+                            console.log(err);
+                        });
+                }
+                else {
+                    // 删除日志按钮 logEdit
+                    
+                    let self = this;
+                    // console.log(obj+'');
+                    this.$axios({
+                        method: 'POST',
+                        withCredentials: false,
+                        url: '/apiclueFollowup/deleteClueFollowup',
+                        data: {
+                            token: localStorage.getItem('crm_token'),
+                            followup_id: data.id
+                        }
+                    })
+                    .then(function(res){
+                        if (res.data.code === 200) {
+                            self.$message({
+                                message: '操作成功',
+                                type: 'success'
+                            });
+                            self.clueInfoData.followup = self.clueInfoData.followup.filter((value) => {
+                                return value.id != data.id
+                            });
+                            console.log(self.logShowContent)
+                            self.logTableData = self.clueInfoData.followup.filter((value) => {
+                                return value.status == self.logShowContent
+                            });
+                        } else {
+                            self.$message.error(res.data.msg);
+                        }
+                    })
+                    .catch(function(err){
+                        console.log(err);
+                    });
                 }
                 
                 
@@ -1612,7 +1800,6 @@
                         if (res.data.code === 200) {
                             let data = res.data.data;
                             console.log(JSON.stringify(data));
-                            
                             // for (let i = 0; i < data.contacts.length; i++) {
                             //     const element = data.contacts[i];
                             //     if (element.id == data.list.contacts_id) {
@@ -1658,8 +1845,17 @@
                             //     element.contact_ifmt = contactIfmt[element.contact_ifmt-1];
                             // }
                             
-                            // // self.logTableData = data.followup;
-                            // self.clueInfoData = data;
+                            // self.logTableData = data.followup;
+                            self.clueInfoData = data;
+                            if (self.logShowContent) {
+                                self.logTableData = self.clueInfoData.followup.filter((value) => {
+                                    return value.status == self.logShowContent
+                                });
+                            } else {
+                                 self.logTableData = self.clueInfoData.followup
+                            }
+                            
+                           
                             // self.logTableData = self.clueInfoData.followup.filter((value) => {
                             //     return value.status == 1
                             // })
@@ -1917,8 +2113,10 @@
         },
         created() {
              // 传来的参数
+
             this.clueType = this.$route.query.clueType;
             this.paramData = this.$route.query;
+            console.log(this.paramData);
             
             this.clueDetails();
             if (localStorage.getItem('cityData')) {
@@ -1932,6 +2130,7 @@
 </script>
 
 <style scoped>
+    
     /* 按钮宽度 */
     .btnGroup .el-button {
         width: 100%
@@ -2013,8 +2212,10 @@
         display: inline-block;
         margin: 5px 0;
     }
+    
     /* 新增日志时间选择器 */
     .el-date-editor.el-input {
         width: 100%;
     }
+   
 </style>

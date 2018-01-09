@@ -567,7 +567,7 @@
                 console.log(JSON.stringify(data));
                 console.log(JSON.stringify(index));
                 // this.$router.push({ path: "/contract/contractInfo"});
-                this.$router.push({ path: "/contract/contractInfo",query:{data:data,clueType:this.clueType,parentCompanyList:this.parentCompanyList} });
+                this.$router.push({ path: "/contract/contractInfo",query:{data:data,clueType:this.selectedItems.clientType,parentCompanyList:this.parentCompanyList} });
             },
          // 删除合同
             delLogItem() {
