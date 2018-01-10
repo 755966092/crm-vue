@@ -2022,7 +2022,7 @@ export default {
     timeUpdata(data) {
       this.filterClue();
     },
-    // 所有子公司
+    // 所有子
     applyCompany() {
       let self = this;
       this.$axios({
