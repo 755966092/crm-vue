@@ -1522,8 +1522,11 @@
                 // 教授科目解析数组
                 professorSubjectsArr: ['语文', '英语', '数学', '物理', '化学'],
                 // 年级解析数组
-                studentGradeArr: ['初一', '初二', '初三', '高一', '高二', '高三']
-
+                studentGradeArr: ['初一', '初二', '初三', '高一', '高二', '高三'],
+                // 搜索关键字
+                searchName:'',
+                searchPhone:'',
+                searchCname:''
             }
         },
         methods: {
@@ -1531,7 +1534,21 @@
             searchBtn() {
                 console.log(this.searchType);
                 console.log(this.searchIptValue);
-                
+                if (this.searchType == 1) {
+                    this.searchName = this.searchIptValue,
+                    this.searchPhone = '',
+                    this.searchCname = '';
+                } else if (this.searchType == 2) {
+                    this.searchName = '',
+                    this.searchPhone = '',
+                    this.searchCname = this.searchIptValue;
+                } else {
+                    this.searchName = '',
+                    this.searchPhone = this.searchIptValue,
+                    this.searchCname = '';
+
+                }
+                this.filterClue();
             },
           // 删除线索
                 delLogItem() {
@@ -1892,6 +1909,10 @@
                         cue_type: self.clueType,
                         name: "",
 
+                        name: self.searchName,
+                        cname: self.searchCname,
+                        phone: self.searchPhone,
+
                         cue_source: self.typeList.source.value,
                         followup_statu: self.typeList.followUpStatus.value,
                         grade: self.typeList.schoolLevel.value,
@@ -1917,6 +1938,10 @@
                         area_id: self.selectCityData[2],
                         cue_type: self.clueType,
                         name: "",
+
+                        name: self.searchName,
+                        cname: self.searchCname,
+                        phone: self.searchPhone,
 
                         cue_source: self.typeList.source.value,
                         followup_statu: self.typeList.followUpStatus.value,
@@ -1944,6 +1969,10 @@
                         area_id: self.selectCityData[2],
                         cue_type: self.clueType,
                         name: "",
+
+                        name: self.searchName,
+                        cname: self.searchCname,
+                        phone: self.searchPhone,
 
                         cue_source: self.typeList.source.value,
                         followup_statu: self.typeList.followUpStatus.value,
@@ -1973,6 +2002,10 @@
                         area_id: self.selectCityData[2],
                         cue_type: self.clueType,
                         name: "",
+
+                        name: self.searchName,
+                        cname: self.searchCname,
+                        phone: self.searchPhone,
 
                         cue_source: self.typeList.source.value,
                         followup_statu: self.typeList.followUpStatus.value,

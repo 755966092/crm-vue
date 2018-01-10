@@ -286,7 +286,7 @@
                     </el-col>
                     <el-col :span="10" :offset="6">
                         <el-input placeholder="请输入内容" v-model="searchIptValue" class="input-with-select">
-                            <el-select v-model="optionsValue" slot="prepend" placeholder="请选择">
+                            <el-select v-model="searchType" slot="prepend" placeholder="请选择">
                                 <el-option
                                     v-for="item in options"
                                     :key="item.value"
@@ -294,7 +294,7 @@
                                     :value="item.value">
                                 </el-option>
                             </el-select>
-                            <el-button slot="append" icon="el-icon-search" class="el-icon-search"></el-button>
+                            <el-button slot="append" @click="searchBtn" icon="el-icon-search"></el-button>
                         </el-input>
                     </el-col>
                 </el-row>
@@ -538,27 +538,26 @@ export default {
       tableData: [],
       options: [
         {
-          label: "第一学",
-          value: 1
-        },
-        {
-          label: "第二学",
-          value: 2
-        },
-        {
-          label: "第三学",
-          value: 3
+            label: '合同名称',
+            value: 1
+        }, {
+            label: '合同编号',
+            value: 2
         }
       ],
       // 搜索框筛选列表
-      optionsValue: 2,
+      searchType: 2,
       // 搜索框内容
       searchIptValue: "",
       // 范围选中内容
-      selectRangeItem: 1
+      selectRangeItem: 1,
+      // 搜索关键字
+        searchName:'',
+        searchNumber:'',
     };
   },
   computed: {
+       
     // 是否禁用子公司选择框
     rangeFlag() {
       if (this.selectRangeItem == 1) {
@@ -571,6 +570,19 @@ export default {
     }
   },
   methods: {
+      // 搜索
+        searchBtn() {
+            console.log(this.searchType);
+            console.log(this.searchIptValue);
+            if (this.searchType == 1) {
+                this.searchName = this.searchIptValue,
+                this.searchNumber = '';
+            } else if (this.searchType == 2) {
+                this.searchName = '',
+                this.searchNumber = this.searchIptValue;
+            } 
+            this.filterClue();
+        },
     // 打开合同详情
     openContractInfo(index, data) {
       console.log(JSON.stringify(data));
@@ -744,12 +756,12 @@ export default {
         children_id: self.children_id,
         department_id: self.department_id,
         user_id: self.employees_id,
-        name: ""
+        name: self.searchName,
+        number: self.searchNumber
       };
 
       console.log("请求参数:" + JSON.stringify(obj, null, 4));
-      self
-        .$axios({
+      self.$axios({
           method: "POST",
           withCredentials: false,
           url: "/api/clueContract/getContractList",

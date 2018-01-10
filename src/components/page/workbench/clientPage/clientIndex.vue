@@ -297,7 +297,7 @@
                     </el-col>
                     <el-col :span="8" :offset="6">
                         <el-input placeholder="请输入内容" v-model="searchIptValue" class="input-with-select">
-                            <el-select v-model="optionsValue" slot="prepend" placeholder="请选择">
+                            <el-select v-model="searchType" slot="prepend" placeholder="请选择">
                                 <el-option
                                     v-for="item in options"
                                     :key="item.value"
@@ -305,7 +305,7 @@
                                     :value="item.value">
                                 </el-option>
                             </el-select>
-                            <el-button slot="append" icon="el-icon-search" class="el-icon-search"></el-button>
+                            <el-button slot="append" icon="el-icon-search" @click="searchBtn"></el-button>
                         </el-input>
                     </el-col>
                 </el-row>
@@ -1624,22 +1624,20 @@ export default {
       // 表格数据
       tableData: [],
       // 表格搜索下拉框
-      options: [
-        {
-          label: "第一学",
-          value: 1
-        },
-        {
-          label: "第二学",
-          value: 2
-        },
-        {
-          label: "第三学",
-          value: 3
-        }
-      ],
+       options: [
+            {
+                label: '名称',
+                value: 1
+            }, {
+                label: '联系人姓名',
+                value: 2
+            }, {
+                label: '联系人电话',
+                value: 3
+            }
+        ],
       // 表格搜索下拉框选择
-      optionsValue: 2,
+      searchType: 2,
       // 搜索框内容
       searchIptValue: "",
       // 学校客户
@@ -1700,10 +1698,34 @@ export default {
       // 教授科目解析数组
       professorSubjectsArr: ["语文", "英语", "数学", "物理", "化学"],
       // 年级解析数组
-      studentGradeArr: ["初一", "初二", "初三", "高一", "高二", "高三"]
+      studentGradeArr: ["初一", "初二", "初三", "高一", "高二", "高三"],
+       // 搜索关键字
+        searchName:'',
+        searchPhone:'',
+        searchCname:''
     };
   },
   methods: {
+       // 搜索
+        searchBtn() {
+            console.log(this.searchType);
+            console.log(this.searchIptValue);
+            if (this.searchType == 1) {
+                this.searchName = this.searchIptValue,
+                this.searchPhone = '',
+                this.searchCname = '';
+            } else if (this.searchType == 2) {
+                this.searchName = '',
+                this.searchPhone = '',
+                this.searchCname = this.searchIptValue;
+            } else {
+                this.searchName = '',
+                this.searchPhone = this.searchIptValue,
+                this.searchCname = '';
+
+            }
+            this.filterClue();
+        },
     // 删除客户
     delLogItem() {
       let arr = [];
@@ -2055,7 +2077,11 @@ export default {
           city_id: self.selectCityData[1],
           area_id: self.selectCityData[2],
           cue_type: self.clueType,
-          name: "",
+        //   name: "",
+          
+          name: self.searchName,
+          cname: self.searchCname,
+          phone: self.searchPhone,
 
           cue_source: self.typeList.source.value,
           followup_statu: self.typeList.followUpStatus.value,
@@ -2082,7 +2108,10 @@ export default {
           city_id: self.selectCityData[1],
           area_id: self.selectCityData[2],
           cue_type: self.clueType,
-          name: "",
+          
+           name: self.searchName,
+          cname: self.searchCname,
+          phone: self.searchPhone,
 
           cue_source: self.typeList.source.value,
           followup_statu: self.typeList.followUpStatus.value,
@@ -2109,7 +2138,10 @@ export default {
           city_id: self.selectCityData[1],
           area_id: self.selectCityData[2],
           cue_type: self.clueType,
-          name: "",
+          
+           name: self.searchName,
+          cname: self.searchCname,
+          phone: self.searchPhone,
 
           cue_source: self.typeList.source.value,
           followup_statu: self.typeList.followUpStatus.value,
@@ -2137,7 +2169,10 @@ export default {
           city_id: self.selectCityData[1],
           area_id: self.selectCityData[2],
           cue_type: self.clueType,
-          name: "",
+          
+           name: self.searchName,
+          cname: self.searchCname,
+          phone: self.searchPhone,
 
           cue_source: self.typeList.source.value,
           followup_statu: self.typeList.followUpStatus.value,
