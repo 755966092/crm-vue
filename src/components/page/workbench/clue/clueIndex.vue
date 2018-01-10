@@ -258,13 +258,14 @@
                         <el-button type="text" >导入线索</el-button>
                         <el-button type="text" style="color: #999">批量转移</el-button>
                         <el-button type="text" style="color: #999" @click="delLogItem">批量删除</el-button>
-                         <span class="btn">
-                          <el-button @click="exportData" type="success">导出</el-button>
-                         </span>
+                         <!-- <span class="btn">
+                          <el-button @click="exportData" type="success"></el-button>
+                         </span> -->
+                         <el-button @click="exportData" type="text" >导出</el-button>
                     </el-col>
                     <el-col :span="8" :offset="6">
                         <el-input placeholder="请输入内容" v-model="searchIptValue" class="input-with-select">
-                            <el-select v-model="optionsValue" slot="prepend" placeholder="请选择">
+                            <el-select v-model="searchType" slot="prepend" placeholder="请选择">
                                 <el-option
                                     v-for="item in options"
                                     :key="item.value"
@@ -272,7 +273,7 @@
                                     :value="item.value">
                                 </el-option>
                             </el-select>
-                            <el-button slot="append" icon="el-icon-search" class="el-icon-search"></el-button>
+                            <el-button slot="append" icon="el-icon-search" @click="searchBtn"></el-button>
                         </el-input>
                     </el-col>
                 </el-row>
@@ -1457,18 +1458,18 @@
                 // 表格搜索下拉框
                 options: [
                     {
-                        label: '第一学',
+                        label: '名称',
                         value: 1
                     }, {
-                        label: '第二学',
+                        label: '联系人姓名',
                         value: 2
                     }, {
-                        label: '第三学',
+                        label: '联系人电话',
                         value: 3
                     }
                 ],
                 // 表格搜索下拉框选择
-                optionsValue: 2,
+                searchType: 2,
                 // 搜索框内容
                 searchIptValue: '',
                 // 学校线索
@@ -1526,6 +1527,12 @@
             }
         },
         methods: {
+            // 搜索
+            searchBtn() {
+                console.log(this.searchType);
+                console.log(this.searchIptValue);
+                
+            },
           // 删除线索
                 delLogItem() {
                      let arr = [];

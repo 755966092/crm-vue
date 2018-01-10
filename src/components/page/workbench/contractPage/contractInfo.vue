@@ -208,6 +208,7 @@
                                         :options="parentCompanyList"
                                         :show-all-levels='false'
                                         filterable
+                                        @change="getChildrenCompanyEmployee"
                                         change-on-select
                                         clearable
                                         :disabled="schoolIptDis"
@@ -216,15 +217,26 @@
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <!-- childrenCompany_id -->
+                                <!-- childrenCompany_id companyEmployee -->
                                 <el-col :span="4">
                                     <p>我方签约人：</p>
                                 </el-col>
                                 <el-col :span="18">
-                                    <el-input
+                                    <!-- <el-input
                                         v-model="clueInfoData.details.user_name"
                                         :disabled="schoolIptDis"
-                                    ></el-input>
+                                    ></el-input> -->
+                                     <el-select 
+                                    v-model="clueInfoData.details.user_id"
+                                    placeholder="请选择"
+                                    :disabled="schoolIptDis">
+                                        <el-option
+                                        v-for="item in companyEmployee"
+                                        :key="item.id"
+                                        :label="item.name"
+                                        :value="item.id">
+                                        </el-option>
+                                    </el-select>
                                 </el-col>
                             </el-row>
                             <el-row>
@@ -574,6 +586,8 @@
         },
         data() {
             return {
+                //公司员工
+                companyEmployee: [],
                 // 新增回款
                 addPaymentData: {
                     type: '',
@@ -1085,6 +1099,43 @@
                 return this.$confirm(`确定移除 ${ file.name }？`);
             },
 
+
+            // 子公司下员工
+            getChildrenCompanyEmployee(flag) {
+                // /Company/contractCompanyUser
+                // data.company_idArr[data.company_idArr.length-1],
+              
+                    let self = this,
+                        data = self.clueInfoData.details;
+                    let obj = {
+                           token: localStorage.getItem('crm_token'),
+                           company_id: data.company_idArr[data.company_idArr.length-1]
+                       }
+                    if (flag == 'init') {
+                        // 初始化请求初始公司员工
+                        obj = {
+                           token: localStorage.getItem('crm_token'),
+                           company_id: data.company_id
+                       }
+                    } 
+                    this.$axios({
+                       method: 'POST',
+                       withCredentials: false,
+                       url: '/api/Company/contractCompanyUser',
+                       data: obj
+                    })
+                    .then(function(res){
+                       if (res.data.code === 200) {
+                           self.companyEmployee = res.data.data.list;
+                       } else {
+                           self.$message.error(res.data.msg);
+                       }
+                    })
+                    .catch(function(err){
+                        console.log(err);
+                    });
+
+            },
             // 删除合同对话框
             delContractDig(flag,index,data) {
                 if (flag=='all') {
@@ -1556,7 +1607,6 @@
                             // 当前用户只会有一个母公司
                             self.getMenuName(res.data.data.list);
                             self.parentCompanyList = res.data.data.list;
-                            console.log(self.parentCompanyList);
                             
                         } else {
                             alert(res.data.msg)
@@ -1914,7 +1964,7 @@
                             } else {
                                  self.logTableData = self.clueInfoData.followup
                             }
-                            
+                            self.getChildrenCompanyEmployee('init');
                            
                             // self.logTableData = self.clueInfoData.followup.filter((value) => {
                             //     return value.status == 1
@@ -1970,40 +2020,43 @@
             schoolIptStatus() {
                 this.schoolIptDis = !this.schoolIptDis;
                 let data = this.clueInfoData.details;
+                let self = this;
                  if (event.target.innerText == '编辑') {
                      
                     event.target.innerText = '保存'
                 } else {
                     event.target.innerText = '编辑';
                     // 保存备注
-                    console.log(JSON.stringify(self.clueInfoData.details,null,4));
-                    let self = this;
-                    this.axios({
-                        method: 'POST',
-                        withCredentials: false,
-                        url: '/api/clueContract/ClueContractEdit',
-                        data: {
-                            token: localStorage.getItem('crm_token'),
-                            contract_id: self.$route.query.data.contacts_id,
+                    
+
+                    let obj = {
+                        token: localStorage.getItem('crm_token'),
+                            contract_id: self.$route.query.data.contract_id,
                             name: data.contract_name,
                             number: data.contract_number,
                             business_type: data.contract_business_type,
                             money: data.money,
                             start_time: data.start_time,
                             end_time: data.end_time,
-                            // company_id: ,
-                            // user_id: '',
+                            company_id: data.company_idArr[data.company_idArr.length-1],
+                            user_id: data.user_id,
                             contract_time: data.contract_time,
-                        }
+                    }
+                                        console.log(JSON.stringify(obj,null,4));
+                    this.$axios({
+                        method: 'POST',
+                        withCredentials: false,
+                        url: '/api/clueContract/ClueContractEdit',
+                        data: obj
                     })
                     .then(function(res){
                         if (res.data.code === 200) {
-                            self.message({
+                            self.$message({
                                 message: '修改合同信息成功',
                                 type: 'success'
                             })
                         } else {
-                            self.message.error(res.data.msg);
+                            self.$message.error(res.data.msg);
                         }
                     })
                     .catch(function(err){

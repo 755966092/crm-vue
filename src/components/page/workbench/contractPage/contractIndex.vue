@@ -434,600 +434,598 @@
 </template>
 
 <script>
-
-    export default {
-        name: "clue",
-        data() {
-            return {
-         // 当前公司部门
-         currentCompanyDepartment: [],
-         // 当前公司下的部门
-         parentCompanyDepartment: [],
-         // 当前部门员工列表
-         currentDepartmentStaff: [],
-                // 选项
-                selectedItems: {
-                    // 客户类型
-                    clientType: '',
-                    //业务类型
-                    businessType: '',
-                     // 合同状态
-                    contractStatue: '',
-                     // 回款状态
-                    repaymentsStatus: '',
-                    // 来源
-                    sourceType :'',
-                    // 地区
-                    area:[],
-                    // area:[1,2,115],
-                    // 最后跟进时间
-                    lastFollowupTime: '',
-                    // 起始时间
-                    startAndEndTime: '',
-                    // 到期时间
-                    maturityTime: '',
-                    // 签约时间
-                    signingTime: '',
-                    // 范围
-                    parentCompanyList: [],
-                  // 选中行
-                    multipleSelection: []
-                },
-                  // 母公司id
-                  mother_id: '',
-                  // 当前子公司id
-                  children_id: '',
-                  // 当前部门id
-                  department_id: '',
-                  // 当前员工id
-                  employees_id: '',
-                  // 当前员工姓名
-                employees_id: '',
-                // 城市选择器数据
-                cityList: [],
-                // 时间选择器
-                pickerOptions2: {
-                    shortcuts: [{
-                        text: '最近一周',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近一个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近三个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }]
-                },
-                    // 范围
-                   parentCompanyList: [],
-                   // 范围数据
-                   rangeData: [
-                       {
-                           label: '母公司',
-                           value: 1
-                       }, {
-                           label: '子公司',
-                           value: 2
-                       }, {
-                           label: '加盟商',
-                           value: 3
-                       }
-                   ],
-
-                // 表格数据
-                tableData: [],
-                options: [{
-                    label: '第一学',
-                    value: 1
-                }, {
-                    label: '第二学',
-                    value: 2
-                }, {
-                    label: '第三学',
-                    value: 3
-                }],
-                // 搜索框筛选列表
-                optionsValue: 2,
-                // 搜索框内容
-                searchIptValue: '',
-                 // 范围选中内容
-                selectRangeItem: 1
+export default {
+  name: "clue",
+  data() {
+    return {
+      // 当前公司部门
+      currentCompanyDepartment: [],
+      // 当前公司下的部门
+      parentCompanyDepartment: [],
+      // 当前部门员工列表
+      currentDepartmentStaff: [],
+      // 选项
+      selectedItems: {
+        // 客户类型
+        clientType: "",
+        //业务类型
+        businessType: "",
+        // 合同状态
+        contractStatue: "",
+        // 回款状态
+        repaymentsStatus: "",
+        // 来源
+        sourceType: "",
+        // 地区
+        area: [],
+        // area:[1,2,115],
+        // 最后跟进时间
+        lastFollowupTime: "",
+        // 起始时间
+        startAndEndTime: "",
+        // 到期时间
+        maturityTime: "",
+        // 签约时间
+        signingTime: "",
+        // 范围
+        parentCompanyList: [],
+        // 选中行
+        multipleSelection: []
+      },
+      // 母公司id
+      mother_id: "",
+      // 当前子公司id
+      children_id: "",
+      // 当前部门id
+      department_id: "",
+      // 当前员工id
+      employees_id: "",
+      // 当前员工姓名
+      employees_id: "",
+      // 城市选择器数据
+      cityList: [],
+      // 时间选择器
+      pickerOptions2: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
             }
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
+      },
+      // 范围
+      parentCompanyList: [],
+      // 范围数据
+      rangeData: [
+        {
+          label: "母公司",
+          value: 1
         },
-        computed: {
-           // 是否禁用子公司选择框
-           rangeFlag() {
-               if (this.selectRangeItem == 1) {
-                   // 如果选择母公司, 禁用选公司列表, 请求母公司部门
-                   this.getDepartment();
-                   return true
-               } else {
-                   return false
-               }
-           },
+        {
+          label: "子公司",
+          value: 2
         },
-        methods: {
-            // 打开合同详情
-            openContractInfo(index,data) {
-                console.log(JSON.stringify(data));
-                console.log(JSON.stringify(index));
-                // this.$router.push({ path: "/contract/contractInfo"});
-                this.$router.push({ path: "/contract/contractInfo",query:{data:data,clueType:this.selectedItems.clientType,parentCompanyList:this.parentCompanyList} });
-            },
-         // 删除合同
-            delLogItem() {
-                 let arr = [];
-                 for (let i = 0; i < this.multipleSelection.length; i++) {
-                        this.tableData = this.tableData.filter((value) => {
-                            return value.contract_id != this.multipleSelection[i].contract_id
-                        })
-                        arr.push(this.multipleSelection[i].contract_id)
-                    }
-
-                   this.$axios({
-                               method: 'POST',
-                               withCredentials: false,
-                               url: '/api/clueContract/ContractdeleteDuo',
-                               data: {
-                                   token: localStorage.getItem('crm_token'),
-                                   contractIds: JSON.stringify(arr),
-                               }
-                           })
-                               .then(function (res) {
-                                   if (res.data.code == 200) {
-
-                                   } else {
-                                       alert(res.data.msg)
-                                   }
-                               })
-                               .catch(function (err) {
-                                   console.log(err);
-                               });
-
-            },
-              //复选框状态改变
-            changeFun(val) {
-                this.multipleSelection = val;
-            },
-            // 更新时间
-            timeUpdata(data) {
-                
-                this.filterClue();
-            },
-         // 子公司/ 母公司/ 加盟商修改
-         bigRangeChange(data) {
-             this.selectRangeItem = data;
-             // if (data === 2) {
-             //     // 获取子公司
-             //     this.applyCompany();
-             // }
-             this.filterClue();
-         },
-            // 当前母公司下的所有部门
-            getDepartment() {
-                let self = this;
-                this.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/department/getChildrenDepartment',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        mother_id: self.mother_id
-                    }
-                })
-                    .then(function (res) {
-                        if (res.data.code === 200) {
-                            // 当前母公司下的部门 parentCompanyDepartment
-                            // console.log(JSON.stringify(res.data.data,null,4))
-                            // console.log(self.mother_id)
-                            self.currentCompanyDepartment = res.data.data.list
-                        } else {
-                            alert(res.data.msg)
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-                   // 选择部门
-                   selectDepartment(data) {
-                       // department_id
-                       console.log(data);
-                       let department = this.department_id;
-                       this.department_id = data[data.length - 1];
-                       // 获取部门所有员工
-                       if (department !== this.department_id) {
-                           this.getDepartmentEmployees();
-                           this.filterClue()
-                       }
-
-                   },
-            // 获取部门所有员工
-            getDepartmentEmployees() {
-                console.log('获取部门所有员工')
-                let self = this;
-                self.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/department/makeAdminDepartmentList',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        department_id: self.department_id
-                    }
-                })
-                    .then(function (res) {
-                        if (res.data.code == 200) {
-                            console.log('获取部门所有员工:' + self.department_id)
-
-                            for (var i = 0; i < res.data.data.list.length; i++) {
-                                var obj = res.data.data.list[i];
-                                obj.label = obj.user_name
-                                obj.value = obj.user_id
-                            }
-                            console.log('获取部门所有员工数据:' + JSON.stringify(res.data, null, 4))
-                            self.currentDepartmentStaff = res.data.data.list
-                        } else {
-                            alert(res.data.msg)
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-            // selectEmployees 选择员工
-            selectEmployees(data) {
-                console.log(this.employees_id)
-                console.log(data);
-                // this.employees_id =
-                this.filterClue();
-            },
-           filterClue() {
-                    console.log('筛选表格数据')
-                    // 筛选表格数据
-                    let self = this;
-                    for (const key in self.selectedItems) {
-                        if (self.selectedItems.hasOwnProperty(key)) {
-                            let element = self.selectedItems[key];
-                            if (element == null) {
-                                self.selectedItems[key] = "";
-                            }
-                        }
-                    }
-                    let obj = {
-                      type: self.selectRangeItem,
-                      token: localStorage.getItem('crm_token'),
-                      page_num: "",
-                      cue_type: self.selectedItems.clientType,
-                      business_type: self.selectedItems.businessType,
-                      statu: self.selectedItems.contractStatue,
-                      payment_statu:self.selectedItems.repaymentsStatus,
-                      cue_source:self.selectedItems.sourceType,
-                      province_id: self.selectedItems.area[0],
-                      city_id: self.selectedItems.area[1],
-                      area_id: self.selectedItems.area[2],
-                      followup_start: self.selectedItems.lastFollowupTime[0] || '',
-                      followup_end: self.selectedItems.lastFollowupTime[1] || '',
-                      start_start: self.selectedItems.startAndEndTime[0] || '',
-                      start_end: self.selectedItems.startAndEndTime[1] || '',
-                      end_start: self.selectedItems.maturityTime[0] || '',
-                      end_end: self.selectedItems.maturityTime[1] || '',
-                      contract_start: self.selectedItems.signingTime[0] || '',
-                      contract_end: self.selectedItems.signingTime[1] || '',
-                     children_id: self.children_id,
-                     department_id: self.department_id,
-                     user_id: self.employees_id,
-                      name: "",
-                    };
-
-                    console.log('请求参数:'+JSON.stringify(obj,null,4))
-                    self.$axios({
-                        method: 'POST',
-                        withCredentials: false,
-                        url: '/api/clueContract/getContractList',
-                        data: obj
-                    })
-                        .then(function (res) {
-                            if (res.data.code === 200) {
-                                // console.log('返回参数:');
-                                console.log(res);
-                                console.log('返回参数:'+JSON.stringify(res.data,null,4));
-                                for (var i = 0; i < res.data.data.list.length; i++) {
-                                   if (res.data.data.list[i].cue_type == 1)
-                                   {
-                                          res.data.data.list[i].cue_type =  "学校"
-                                    }else if(res.data.data.list[i].cue_type == 2){
-                                         res.data.data.list[i].cue_type =  "机构"
-                                    }else if(res.data.data.list[i].cue_type == 3){
-                                         res.data.data.list[i].cue_type =  "教师"
-                                    }else if(res.data.data.list[i].cue_type == 4){
-                                          res.data.data.list[i].cue_type =  "学生"
-                                    }
-                                    if (res.data.data.list[i].cue_type != 3)
-                                   {
-                                      res.data.data.list[i].school_name = res.data.data.list[i].school_name
-                                    }else{
-                                       res.data.data.list[i].school_name = res.data.data.list[i].contacts_name
-                                    }
-                                    if (res.data.data.list[i].contract_business_type == 1)
-                                   {
-                                          res.data.data.list[i].contract_business_type = "自主招生"
-                                    }else if(res.data.data.list[i].contract_business_type == 2){
-                                        res.data.data.list[i].contract_business_type = "竞赛"
-                                    }else if(res.data.data.list[i].contract_business_type == 3){
-                                           res.data.data.list[i].contract_business_type = "论文"
-                                     }
-                                    if (res.data.data.list[i].contract_statu == 1)
-                                   {
-                                      res.data.data.list[i].contract_statu = "执行中"
-                                    }else if(res.data.data.list[i].contract_statu == 2){
-                                      res.data.data.list[i].contract_statu = "成功结束"
-                                    }else if(res.data.data.list[i].contract_statu == 3){
-                                       res.data.data.list[i].contract_statu = "意外终止"
-                                    }else if(res.data.data.list[i].contract_statu == 4){
-                                        res.data.data.list[i].contract_statu = "未开始"
-                                    }
-                                    if (res.data.data.list[i].payment_statu == 1)
-                                   {
-                                        res.data.data.list[i].payment_statu = "待付款"
-                                    }else if(res.data.data.list[i].payment_statu  == 2){
-                                       res.data.data.list[i].payment_statu = "部分结算"
-                                    }else if(res.data.data.list[i].payment_statu == 3){
-                                       res.data.data.list[i].payment_statu = "全部结清"
-                                    }
-
-                                    for (let key in obj) {
-                                        if (obj[key] == null) {
-                                            obj[key] = '-'
-                                        }
-                                    }
-                                }
-                                console.log(JSON.stringify(res.data.data.list,null,4))
-                                self.tableData = res.data.data.list
-                            } else {
-                                alert(res.data.msg)
-                            }
-                        })
-                        .catch(function (err) {
-                            console.log(err);
-                        });
-                },
-            // 所有子公司
-             getMenuName(menus){
-        for (var value of menus) {
-            if (value.children) {
-                this.getMenuName(value.children)
-            }
-            if (value.children.length == 0) {
-                delete value.children
-            }
+        {
+          label: "加盟商",
+          value: 3
         }
-    },
-       applyCompany() {
-           let self = this;
-           this.$axios({
-               method: 'POST',
-               withCredentials: false,
-               url: '/api/company/CompanyMyList',
-               data: {
-                   token: localStorage.getItem('crm_token'),
-               }
-           })
-               .then(function (res) {
-                   if (res.data.code == 200) {
-                       // 当前用户只会有一个母公司
-                       self.getMenuName(res.data.data.list);
-                       self.parentCompanyList = res.data.data.list;
-                       self.mother_id = res.data.data.list[0].id
-                   } else {
-                       alert(res.data.msg)
-                   }
-               })
-               .catch(function (err) {
-                   console.log(err);
-               });
-       },
-                 // 子公司变化
-                 handleChange(data) {
-                     let children = this.children_id;
-                     this.children_id = data[data.length - 1];
-                     // 获取子公司所有部门
-                     if (children !== this.children_id) {
-                         this.getChildrenDepartment();
-                         this.filterClue();
-                     }
-                 },
-            clueTypeChange(data) {
-                console.log(data)
-                this.filterClue();
-            },
+      ],
 
-            // 省市县数据
-            requestCity() {
-                let self = this;
-                this.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/area/evepce',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                    }
-                })
-                    .then(function (res) {
-                        var arr = [];
-                        self.cityList = res.data.data.list;
-                        localStorage.setItem('cityData', JSON.stringify(res.data.data.list))
-                        // console.log(JSON.stringify(res.data.data.list));
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-              // 当前子公司下的所有部门
-              getChildrenDepartment() {
-                  let self = this;
-                  this.$axios({
-                      method: 'POST',
-                      withCredentials: false,
-                      url: '/api/department/getChildrenDepartmentTo',
-                      data: {
-                          token: localStorage.getItem('crm_token'),
-                          mother_id: self.children_id
-                      }
-                  })
-                      .then(function (res) {
-                          if (res.data.code === 200) {
-                              self.getMenuName(res.data.data.list);
-                              // 当前子公司下的部门 parentCompanyDepartment
-                              self.currentCompanyDepartment = res.data.data.list
-                          } else {
-                              alert(res.data.msg)
-                          }
-                      })
-                      .catch(function (err) {
-                          console.log(err);
-                      });
-              },
-            // 表格数据
-            getTableData() {
-                var self = this;
-                self.$axios({
-                    method: 'GET',
-                    withCredentials: false,
-                    url: 'http://localhost:8081/mock/clueTableData',
-                })
-                    .then(function (res) {
-                        // console.log(JSON.stringify(res,null,4));
-                        self.tableData = res.data
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-            // 点击c城市级联选择器
-            selCity(data) {
-                 this.selectedItems.area = data;
-                 console.log('选择'+this.selectedItems.area);
-                 this.filterClue();
-            },
-            // 表格按钮
-            // 单选删除合同
-                showModelTable(index,data,flag) {
-                console.log(data);
-
-                if(flag == 'deleteBtn'){
-                   let paramObj = {};
-                   console.log();
-                   let self = this;
-                      paramObj = {
-                        token: localStorage.getItem('crm_token'),
-                        contract_id: data.contract_id,
-                        }
-                 console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
-                        self.$axios({
-                            method: 'POST',
-                            withCredentials: false,
-                            url: '/api/clueContract/Contractdelete',
-                            data: paramObj
-                        })
-                            .then(function (res) {
-                                if (res.data.code == 200) {
-                                    console.log('删除成功:'+ res.data.data.list.contract_id +'-'+ res.data.data.list.update_time)
-                                } else {
-                                    alert(res.data.msg)
-                                }
-                            })
-                            .catch(function (err) {
-                                console.log(err);
-                            });
-                     }else if(flag == 'handover'){
-
-
-                      }
-                },
+      // 表格数据
+      tableData: [],
+      options: [
+        {
+          label: "第一学",
+          value: 1
         },
-        created() {
-            this.getTableData();
-            this.applyCompany();
-            this.filterClue();
-            if (localStorage.getItem('cityData')) {
-                console.log('有缓存')
-                this.cityList = JSON.parse(localStorage.getItem('cityData'))
-            } else {
-                console.log('无缓存')
-                this.requestCity();
-            }
+        {
+          label: "第二学",
+          value: 2
+        },
+        {
+          label: "第三学",
+          value: 3
         }
+      ],
+      // 搜索框筛选列表
+      optionsValue: 2,
+      // 搜索框内容
+      searchIptValue: "",
+      // 范围选中内容
+      selectRangeItem: 1
+    };
+  },
+  computed: {
+    // 是否禁用子公司选择框
+    rangeFlag() {
+      if (this.selectRangeItem == 1) {
+        // 如果选择母公司, 禁用选公司列表, 请求母公司部门
+        this.getDepartment();
+        return true;
+      } else {
+        return false;
+      }
     }
+  },
+  methods: {
+    // 打开合同详情
+    openContractInfo(index, data) {
+      console.log(JSON.stringify(data));
+      console.log(JSON.stringify(index));
+      // this.$router.push({ path: "/contract/contractInfo"});
+      this.$router.push({
+        path: "/contract/contractInfo",
+        query: {
+          data: data,
+          clueType: this.selectedItems.clientType,
+          parentCompanyList: this.parentCompanyList
+        }
+      });
+    },
+    // 删除合同
+    delLogItem() {
+      let arr = [];
+      for (let i = 0; i < this.multipleSelection.length; i++) {
+        this.tableData = this.tableData.filter(value => {
+          return value.contract_id != this.multipleSelection[i].contract_id;
+        });
+        arr.push(this.multipleSelection[i].contract_id);
+      }
+
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/clueContract/ContractdeleteDuo",
+        data: {
+          token: localStorage.getItem("crm_token"),
+          contractIds: JSON.stringify(arr)
+        }
+      })
+        .then(function(res) {
+          if (res.data.code == 200) {
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    //复选框状态改变
+    changeFun(val) {
+      this.multipleSelection = val;
+    },
+    // 更新时间
+    timeUpdata(data) {
+      this.filterClue();
+    },
+    // 子公司/ 母公司/ 加盟商修改
+    bigRangeChange(data) {
+      this.selectRangeItem = data;
+      // if (data === 2) {
+      //     // 获取子公司
+      //     this.applyCompany();
+      // }
+      this.filterClue();
+    },
+    // 当前母公司下的所有部门
+    getDepartment() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/department/getChildrenDepartment",
+        data: {
+          token: localStorage.getItem("crm_token"),
+          mother_id: self.mother_id
+        }
+      })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            // 当前母公司下的部门 parentCompanyDepartment
+            // console.log(JSON.stringify(res.data.data,null,4))
+            // console.log(self.mother_id)
+            self.currentCompanyDepartment = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 选择部门
+    selectDepartment(data) {
+      // department_id
+      console.log(data);
+      let department = this.department_id;
+      this.department_id = data[data.length - 1];
+      // 获取部门所有员工
+      if (department !== this.department_id) {
+        this.getDepartmentEmployees();
+        this.filterClue();
+      }
+    },
+    // 获取部门所有员工
+    getDepartmentEmployees() {
+      console.log("获取部门所有员工");
+      let self = this;
+      self
+        .$axios({
+          method: "POST",
+          withCredentials: false,
+          url: "/api/department/makeAdminDepartmentList",
+          data: {
+            token: localStorage.getItem("crm_token"),
+            department_id: self.department_id
+          }
+        })
+        .then(function(res) {
+          if (res.data.code == 200) {
+            console.log("获取部门所有员工:" + self.department_id);
+
+            for (var i = 0; i < res.data.data.list.length; i++) {
+              var obj = res.data.data.list[i];
+              obj.label = obj.user_name;
+              obj.value = obj.user_id;
+            }
+            console.log("获取部门所有员工数据:" + JSON.stringify(res.data, null, 4));
+            self.currentDepartmentStaff = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // selectEmployees 选择员工
+    selectEmployees(data) {
+      console.log(this.employees_id);
+      console.log(data);
+      // this.employees_id =
+      this.filterClue();
+    },
+    filterClue() {
+      console.log("筛选表格数据");
+      // 筛选表格数据
+      let self = this;
+      for (const key in self.selectedItems) {
+        if (self.selectedItems.hasOwnProperty(key)) {
+          let element = self.selectedItems[key];
+          if (element == null) {
+            self.selectedItems[key] = "";
+          }
+        }
+      }
+      let obj = {
+        type: self.selectRangeItem,
+        token: localStorage.getItem("crm_token"),
+        page_num: "",
+        cue_type: self.selectedItems.clientType,
+        business_type: self.selectedItems.businessType,
+        statu: self.selectedItems.contractStatue,
+        payment_statu: self.selectedItems.repaymentsStatus,
+        cue_source: self.selectedItems.sourceType,
+        province_id: self.selectedItems.area[0],
+        city_id: self.selectedItems.area[1],
+        area_id: self.selectedItems.area[2],
+        followup_start: self.selectedItems.lastFollowupTime[0] || "",
+        followup_end: self.selectedItems.lastFollowupTime[1] || "",
+        start_start: self.selectedItems.startAndEndTime[0] || "",
+        start_end: self.selectedItems.startAndEndTime[1] || "",
+        end_start: self.selectedItems.maturityTime[0] || "",
+        end_end: self.selectedItems.maturityTime[1] || "",
+        contract_start: self.selectedItems.signingTime[0] || "",
+        contract_end: self.selectedItems.signingTime[1] || "",
+        children_id: self.children_id,
+        department_id: self.department_id,
+        user_id: self.employees_id,
+        name: ""
+      };
+
+      console.log("请求参数:" + JSON.stringify(obj, null, 4));
+      self
+        .$axios({
+          method: "POST",
+          withCredentials: false,
+          url: "/api/clueContract/getContractList",
+          data: obj
+        })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            // console.log('返回参数:');
+            console.log(res);
+            console.log("返回参数:" + JSON.stringify(res.data, null, 4));
+            for (var i = 0; i < res.data.data.list.length; i++) {
+              if (res.data.data.list[i].cue_type == 1) {
+                res.data.data.list[i].cue_type = "学校";
+              } else if (res.data.data.list[i].cue_type == 2) {
+                res.data.data.list[i].cue_type = "机构";
+              } else if (res.data.data.list[i].cue_type == 3) {
+                res.data.data.list[i].cue_type = "教师";
+              } else if (res.data.data.list[i].cue_type == 4) {
+                res.data.data.list[i].cue_type = "学生";
+              }
+              if (res.data.data.list[i].cue_type != 3) {
+                res.data.data.list[i].school_name =
+                  res.data.data.list[i].school_name;
+              } else {
+                res.data.data.list[i].school_name =
+                  res.data.data.list[i].contacts_name;
+              }
+              if (res.data.data.list[i].contract_business_type == 1) {
+                res.data.data.list[i].contract_business_type = "自主招生";
+              } else if (res.data.data.list[i].contract_business_type == 2) {
+                res.data.data.list[i].contract_business_type = "竞赛";
+              } else if (res.data.data.list[i].contract_business_type == 3) {
+                res.data.data.list[i].contract_business_type = "论文";
+              }
+              if (res.data.data.list[i].contract_statu == 1) {
+                res.data.data.list[i].contract_statu = "执行中";
+              } else if (res.data.data.list[i].contract_statu == 2) {
+                res.data.data.list[i].contract_statu = "成功结束";
+              } else if (res.data.data.list[i].contract_statu == 3) {
+                res.data.data.list[i].contract_statu = "意外终止";
+              } else if (res.data.data.list[i].contract_statu == 4) {
+                res.data.data.list[i].contract_statu = "未开始";
+              }
+              if (res.data.data.list[i].payment_statu == 1) {
+                res.data.data.list[i].payment_statu = "待付款";
+              } else if (res.data.data.list[i].payment_statu == 2) {
+                res.data.data.list[i].payment_statu = "部分结算";
+              } else if (res.data.data.list[i].payment_statu == 3) {
+                res.data.data.list[i].payment_statu = "全部结清";
+              }
+
+              for (let key in obj) {
+                if (obj[key] == null) {
+                  obj[key] = "-";
+                }
+              }
+            }
+            console.log(JSON.stringify(res.data.data.list, null, 4));
+            self.tableData = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 所有子公司
+    getMenuName(menus) {
+      for (var value of menus) {
+        if (value.children) {
+          this.getMenuName(value.children);
+        }
+        if (value.children.length == 0) {
+          delete value.children;
+        }
+      }
+    },
+    applyCompany() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/company/CompanyMyList",
+        data: {
+          token: localStorage.getItem("crm_token")
+        }
+      })
+        .then(function(res) {
+          if (res.data.code == 200) {
+            // 当前用户只会有一个母公司
+            self.getMenuName(res.data.data.list);
+            self.parentCompanyList = res.data.data.list;
+            self.mother_id = res.data.data.list[0].id;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 子公司变化
+    handleChange(data) {
+      let children = this.children_id;
+      this.children_id = data[data.length - 1];
+      // 获取子公司所有部门
+      if (children !== this.children_id) {
+        this.getChildrenDepartment();
+        this.filterClue();
+      }
+    },
+    clueTypeChange(data) {
+      console.log(data);
+      this.filterClue();
+    },
+
+    // 省市县数据
+    requestCity() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/area/evepce",
+        data: {
+          token: localStorage.getItem("crm_token")
+        }
+      })
+        .then(function(res) {
+          var arr = [];
+          self.cityList = res.data.data.list;
+          localStorage.setItem("cityData", JSON.stringify(res.data.data.list));
+          // console.log(JSON.stringify(res.data.data.list));
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 当前子公司下的所有部门
+    getChildrenDepartment() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/department/getChildrenDepartmentTo",
+        data: {
+          token: localStorage.getItem("crm_token"),
+          mother_id: self.children_id
+        }
+      })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            self.getMenuName(res.data.data.list);
+            // 当前子公司下的部门 parentCompanyDepartment
+            self.currentCompanyDepartment = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 点击c城市级联选择器
+    selCity(data) {
+      this.selectedItems.area = data;
+      console.log("选择" + this.selectedItems.area);
+      this.filterClue();
+    },
+    // 表格按钮
+    // 单选删除合同
+    showModelTable(index, data, flag) {
+      console.log(data);
+
+      if (flag == "deleteBtn") {
+        let paramObj = {};
+        console.log();
+        let self = this;
+        paramObj = {
+          token: localStorage.getItem("crm_token"),
+          contract_id: data.contract_id
+        };
+        console.log("提交线索参数:" + JSON.stringify(paramObj, null, 4));
+        self
+          .$axios({
+            method: "POST",
+            withCredentials: false,
+            url: "/api/clueContract/Contractdelete",
+            data: paramObj
+          })
+          .then(function(res) {
+            if (res.data.code == 200) {
+              console.log(
+                "删除成功:" +
+                  res.data.data.list.contract_id +
+                  "-" +
+                  res.data.data.list.update_time
+              );
+            } else {
+              alert(res.data.msg);
+            }
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+      } else if (flag == "handover") {
+      }
+    }
+  },
+  created() {
+    this.applyCompany();
+    this.filterClue();
+    if (localStorage.getItem("cityData")) {
+      console.log("有缓存");
+      this.cityList = JSON.parse(localStorage.getItem("cityData"));
+    } else {
+      console.log("无缓存");
+      this.requestCity();
+    }
+  }
+};
 </script>
 
 <style scoped>
-    @import "../css/clue.css";
-     .leftWrap,
-     .rightWrap {
-         line-height: 40px;
-         height: 40px;
-     }
+@import "../css/clue.css";
+.leftWrap,
+.rightWrap {
+  line-height: 40px;
+  height: 40px;
+}
 
-     .el-row {
-         margin: 5px 0;
-     }
+.el-row {
+  margin: 5px 0;
+}
 
-     /* 省市区选着器 */
-     .el-cascader {
-         width: 95%;
-     }
+/* 省市区选着器 */
+.el-cascader {
+  width: 95%;
+}
 
-     /* 新增线索选着 */
-     .dialogWrap .el-cascader {
-         width: 100%;
-     }
+/* 新增线索选着 */
+.dialogWrap .el-cascader {
+  width: 100%;
+}
 
-     .wrap {
-         border: 1px solid #d9d9d9;
-         padding: 10px;
-         border-radius: 10px;
-         margin-bottom: 10px;
-     }
+.wrap {
+  border: 1px solid #d9d9d9;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
 
-     .tableTitle {
-         margin-bottom: 10px;
-         padding: 10px 0;
-     }
+.tableTitle {
+  margin-bottom: 10px;
+  padding: 10px 0;
+}
 
-     .el-button i {
-         width: 100%;
-         height: 100%;
-     }
+.el-button i {
+  width: 100%;
+  height: 100%;
+}
 
-     .iptName {
-         display: inline-block;
-         margin: 5px 0;
-     }
+.iptName {
+  display: inline-block;
+  margin: 5px 0;
+}
 
-     .colorBlue {
-         cursor: pointer
-     }
+.colorBlue {
+  cursor: pointer;
+}
 
-     .select .el-select {
-         width: 90%;
-     }
+.select .el-select {
+  width: 90%;
+}
 
-     .hide {
-         display: none;
-     }
+.hide {
+  display: none;
+}
 </style>
