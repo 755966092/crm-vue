@@ -760,7 +760,7 @@ export default {
         number: self.searchNumber
       };
 
-      console.log("请求参数:" + JSON.stringify(obj, null, 4));
+      console.log("请求2参数:" + JSON.stringify(obj, null, 4));
       self.$axios({
           method: "POST",
           withCredentials: false,
@@ -935,7 +935,6 @@ export default {
     // 单选删除合同
     showModelTable(index, data, flag) {
       console.log(data);
-
       if (flag == "deleteBtn") {
         let paramObj = {};
         console.log();

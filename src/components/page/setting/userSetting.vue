@@ -87,7 +87,7 @@
                             </el-table-column>
                             <el-table-column
                                 label="操作"
-                                width="200"
+                                width="250"
                             >
                                 <template slot-scope="scope">
                                     <el-button
@@ -560,9 +560,9 @@
             handleChange(data) {
                 console.log(JSON.stringify(data))
                 this.subsidiaryId = data[data.length-1];
-
+                this.getChildrenDepartment();
             },
-            // 公司所有部门
+            // 母公司所有部门
             childrenDepartment() {
                 var self = this;
                 self.$axios({
@@ -571,10 +571,11 @@
                     url: '/api/department/getChildrenDepartment',
                     data: {
                         token: localStorage.getItem('crm_token'),
-                        mother_id: 0
+                        mother_id: localStorage.getItem('motherCompanyId'),
                     }
                 })
                     .then(function (res) {
+                        
                         self.treeData = res.data.data.list;
                         // 初始化页面, 显示第一个部门的员工
                         self.departmentName = res.data.data.list[0].label;
@@ -584,6 +585,36 @@
                         self.departmentMakeAdminDepartmentList();
                     })
                     .catch(function (err) {
+                        console.log(err);
+                    });
+            },
+            // 子公司所有部门
+            getChildrenDepartment() {
+                // /department/getChildrenDepartmentTo
+                    let self = this;
+                    this.$axios({
+                       method: 'POST',
+                       withCredentials: false,
+                       url: '/api/department/getChildrenDepartmentTo',
+                       data: {
+                           token: localStorage.getItem('crm_token'),
+                           mother_id: this.subsidiaryId
+                       }
+                    })
+                    .then(function(res){
+                       if (res.data.code === 200) {
+                           console.log(JSON.stringify(res.data.data, null, 4))
+                            self.getMenuName(res.data.data.list);
+                            self.treeData = res.data.data.list;
+                            self.departmentName = res.data.data.list[0].label;
+                            self.departmentNewName = res.data.data.list[0].label;
+                            self.departmentId = res.data.data.list[0].id;
+                             self.departmentMakeAdminDepartmentList();
+                       } else {
+                           self.$message.error(res.data.msg);
+                       }
+                    })
+                    .catch(function(err){
                         console.log(err);
                     });
             },
@@ -599,12 +630,24 @@
                     }
                 })
                     .then(function (res) {
+                        self.getMenuName(res.data.data.list);
                         self.parentCompanyList = res.data.data.list
                         console.log(JSON.stringify(res.data.data.list))
                     })
                     .catch(function (err) {
                         console.log(err);
                     });
+            },
+             // 处理树形数据, 删除空的children
+            getMenuName(menus){
+                for (var value of menus) {
+                    if (value.children) {
+                        this.getMenuName(value.children)
+                    }
+                    if (value.children.length == 0) {
+                        delete value.children
+                    }
+                }
             },
             nodeClick(data, note, self) {
                 // data 节点原始数据
@@ -656,7 +699,6 @@
                         console.log(JSON.stringify(self.departmentStaff))
                         for (let i = 0; i < res.data.data.list.length; i++) {
                             let obj = res.data.data.list[i];
-
                             self.departmentStaffOption.push({
                                 label: obj.user_name,
                                 value: obj.user_id

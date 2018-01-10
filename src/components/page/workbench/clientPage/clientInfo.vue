@@ -1436,6 +1436,7 @@
                             expand-trigger="hover"
                             v-model="addContractData.company_id_arr"
                             :options="paramData.parentCompanyList"
+                            @change="getChildrenCompanyStaff"
                             clearable
                             :show-all-levels='false'
                             :change-on-select='true'
@@ -1448,10 +1449,10 @@
                         <el-select v-model="addContractData.user_id" placeholder="请选择">
                             <el-option
                             placeholder="选择签约人"
-                            v-for="item in studentGradeArr"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
+                            v-for="item in childrenCompanyStaffList"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
                             </el-option>
                         </el-select>
                     </div>
@@ -1935,11 +1936,37 @@
                 // 多选删除学生
                 studentToCantractArr: [],
                 studentToCantractFlag: '',
-
+                // 公司员工
+                childrenCompanyStaffList: [],
             }
         },
         
         methods: {
+            // 获取公司员工
+            getChildrenCompanyStaff() {
+                let id = this.addContractData.company_id_arr[this.addContractData.company_id_arr.length - 1];
+                    let self = this;
+                    this.$axios({
+                       method: 'POST',
+                       withCredentials: false,
+                       url: '/api/Company/contractCompanyUser',
+                       data: {
+                           token: localStorage.getItem('crm_token'),
+                           company_id: id
+                       }
+                    })
+                    .then(function(res){
+                       if (res.data.code === 200) {
+                           console.log(JSON.stringify(res.data.data, null, 4))
+                           self.childrenCompanyStaffList = res.data.data.list;
+                       } else {
+                           self.$message.error(res.data.msg);
+                       }
+                    })
+                    .catch(function(err){
+                        console.log(err);
+                    });
+            },
             handChange(file, fileList) {
                 console.log(JSON.stringify(file));
                 console.log(JSON.stringify(fileList,null,4));

@@ -832,9 +832,9 @@
                     <el-select v-model="changeToClientData.businessEmployeeId" placeholder="请选择">
                         <el-option
                         v-for="item in changeToClientData.businessEmployee"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
+                        :key="item.user_id"
+                        :label="item.user_name"
+                        :value="item.user_id">
                         </el-option>
                     </el-select>
                 </div>
@@ -857,9 +857,9 @@
                     <el-select v-model="changeToClientData.serviceEmployeeId" placeholder="请选择">
                         <el-option
                         v-for="item in changeToClientData.serviceEmployee"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
+                        :key="item.user_id"
+                        :label="item.user_name"
+                        :value="item.user_id">
                         </el-option>
                     </el-select>
                 </div>
@@ -882,9 +882,9 @@
                     <el-select v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择">
                         <el-option
                         v-for="item in changeToClientData.aftermarketEmployee"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
+                        :key="item.user_id"
+                        :label="item.user_name"
+                        :value="item.user_id">
                         </el-option>
                     </el-select>
                 </div>
@@ -920,9 +920,9 @@
                     <el-select v-model="shiftClueEmployeeId" placeholder="请选择">
                         <el-option
                         v-for="item in changeToClientData.businessEmployee"
-                        :key="item.id"
+                        :key="item.user_id"
                         :label="item.name"
-                        :value="item.id">
+                        :value="item.user_id">
                         </el-option>
                     </el-select>
                 </div>
@@ -1978,7 +1978,7 @@
                 this.$axios({
                     method: 'POST',
                     withCredentials: false,
-                    url: '/api/company/companyUsers',
+                    url: '/api/department/makeAdminCDepartmentList',
                     data: {
                         token: localStorage.getItem('crm_token'),
                         department_id: department_id
