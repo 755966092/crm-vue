@@ -1091,6 +1091,93 @@
                 </el-dialog>
             </div>
         </template>
+         <!-- 转成客户 -->
+         <div class="changeToClient">
+             <el-dialog
+                title="转成客户"
+                :visible.sync="turnIntoCustomersStatu"
+                width="30%"
+                >
+                <div class="mt10">
+                    <p class="mb10 ">业务部门</p>
+                    <el-cascader
+                        expand-trigger="hover"
+                        :value="changeToClientData.businessDepartment"
+                        :options="currentCompanyDepartment"
+                        @change="selectServiceDepartment($event,'businessDepartment')"
+                        clearable
+                        change-on-select
+                    >
+                    </el-cascader>
+                </div>
+                <div class="mt10">
+                    <p class="mb10 ">业务负责人</p>
+                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                    <el-select v-model="changeToClientData.businessEmployeeId" placeholder="请选择">
+                        <el-option
+                        v-for="item in changeToClientData.businessEmployee"
+                        :key="item.user_id"
+                        :label="item.user_name"
+                        :value="item.user_id">
+                        </el-option>
+                    </el-select>
+                </div>
+                
+                <div class="mt10">
+                    <p class="mb10 ">服务部门</p>
+                     <el-cascader
+                        expand-trigger="hover"
+                        :value="changeToClientData.serviceDepartment"
+                        :options="currentCompanyDepartment"
+                        @change="selectServiceDepartment($event,'serviceDepartment')"
+                        clearable
+                        change-on-select
+                    >
+                    </el-cascader>
+                </div>
+                <div class="mt10">
+                    <p class="mb10 ">服务负责人</p>
+                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.serviceEmployeeId" placeholder="请选择"> -->
+                    <el-select v-model="changeToClientData.serviceEmployeeId" placeholder="请选择">
+                        <el-option
+                        v-for="item in changeToClientData.serviceEmployee"
+                        :key="item.user_id"
+                        :label="item.user_name"
+                        :value="item.user_id">
+                        </el-option>
+                    </el-select>
+                </div>
+                
+                <div class="mt10">
+                    <p class="mb10 ">售后部门</p>
+                     <el-cascader
+                        expand-trigger="hover"
+                        :value="changeToClientData.aftermarketDepartment"
+                        :options="currentCompanyDepartment"
+                        @change="selectServiceDepartment($event,'aftermarketDepartment')"
+                        clearable
+                        change-on-select
+                    >
+                    </el-cascader>
+                </div>
+                <div class="mt10">
+                    <p class="mb10 ">售后负责人</p>
+                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择"> -->
+                    <el-select v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择">
+                        <el-option
+                        v-for="item in changeToClientData.aftermarketEmployee"
+                        :key="item.user_id"
+                        :label="item.user_name"
+                        :value="item.user_id">
+                        </el-option>
+                    </el-select>
+                </div>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="turnIntoCustomersStatu = false">取 消</el-button>
+                    <el-button type="primary" @click="intoContract">确 定</el-button>
+                </span>
+            </el-dialog>
+         </div>
     </div>
 </template>
 
@@ -1099,6 +1186,34 @@ export default {
   name: "clue",
   data() {
     return {
+         
+    // z转成客户
+    turnIntoCustomersStatu: false,
+    // 公司所有部门
+    currentCompanyDepartment: [],
+    changeToClientData: {
+        
+        // 业务部门
+        businessDepartment: [],
+        // 业务部门员工
+        businessEmployee: [],
+        businessEmployeeId:'',
+            // 服务部门
+        serviceDepartment: [],
+        // 服务部门员工
+        serviceEmployee: [],
+        serviceEmployeeId:'',
+        // 售后部门
+        aftermarketDepartment: [],
+        // 售后部门员工
+        aftermarketEmployee: [],
+        aftermarketEmployeeId:'',
+        // 标记当前选择的是哪一个, 默认业务部门
+        flagDepartment: 'businessDepartment'
+    },
+    // 转移线索部门员工
+    shiftClueDepatment: [],
+    shiftClueEmployeeId: '',
       addClueData: {
         clueType: "1",
         sourceTypeValue: "全部",
@@ -1706,6 +1821,111 @@ export default {
     };
   },
   methods: {
+    // 选择服务部门
+    selectServiceDepartment(data,flag) {
+        this.changeToClientData.flagDepartment = flag;
+        this.changeToClientData[flag] = data;
+        // 获取部门员工
+        this.getDepartmentEmployee2();
+    },
+    getDepartmentEmployee2() {
+        let self = this;
+        // 跟进selectIpt 来判断当前应该获取哪一个部门的员工
+        let slectIpt = '';
+        let flagDepartment = self.changeToClientData.flagDepartment;
+        let changeToClientData = self.changeToClientData;
+        let department_id = changeToClientData[flagDepartment][changeToClientData[flagDepartment].length-1];
+        if (flagDepartment == 'businessDepartment') {
+            slectIpt = 'businessEmployee'
+        } else if (flagDepartment== 'serviceDepartment') {
+            slectIpt = 'serviceEmployee'
+        } else {
+            slectIpt = 'aftermarketEmployee'
+        }
+        this.$axios({
+            method: 'POST',
+            withCredentials: false,
+            url: '/api/department/makeAdminCDepartmentList',
+            data: {
+                token: localStorage.getItem('crm_token'),
+                department_id: department_id
+            }
+        })
+            .then(function (res) {
+                if (res.data.code === 200) {
+                    self.changeToClientData[slectIpt] = res.data.data.list;
+                    // console.log(JSON.stringify(self.changeToClientData));
+                    // console.log(department_id);
+                    
+                } else {
+                    alert(res.data.msg)
+                }
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    },
+      // 交接客户
+      intoContract() {
+          console.log(JSON.stringify(this.changeToClientData));
+          this.turnIntoCustomersStatu = false;
+                let self = this;
+                let changeToClientData = self.changeToClientData;
+                let url = '/api/clue/clueTurnCustomer';
+                let obj = {
+                    token: localStorage.getItem('crm_token'),
+                    person_user: changeToClientData.businessEmployeeId,
+                    person_department: changeToClientData.businessDepartment[changeToClientData.businessDepartment.length - 1],
+                    service_user: changeToClientData.serviceEmployeeId,
+                    service_department: changeToClientData.serviceDepartment[changeToClientData.serviceDepartment.length - 1],
+                    customer_user: changeToClientData.aftermarketEmployeeId,
+                    customer_department: changeToClientData.aftermarketDepartment[changeToClientData.aftermarketDepartment.length - 1]
+                }
+                
+                if (self.studentToCantractFlag == 'multiple') {
+                    obj.clueIds = [];
+                    url = '/api/clue/clueTurnCustomerDuo';
+                    // 多选删除学生
+                    obj.clueIds = JSON.stringify(this.studentToCantractArr);
+                } else {
+                    if (self.studentOrClueToCantract) {
+                        // 线索转客户
+                        obj.clue_id = self.$route.query.data.clue_id;
+                    } else {
+                        // 学生转客户
+                        obj.clue_id = self.studentToCantract
+                    }
+                }
+                console.log(JSON.stringify(self.changeToClientData,null,4));
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: url,
+                    data: obj
+                })
+                    .then(function (res) {
+                        if (res.data.code === 200) {
+                            self.$message({
+                                message: '转成客户成功',
+                                type: 'success',
+                            });
+                            if (self.studentOrClueToCantract) {
+                                // 线索
+                                self.openClueInfo();    
+                            } else {
+                                // 学生
+                                self.clueDetails();
+                            }
+                            self.studentOrClueToCantract = true;
+                        } else {
+                            alert(res.data.msg)
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+          
+      },
        // 搜索
         searchBtn() {
             console.log(this.searchType);
@@ -1838,13 +2058,13 @@ export default {
         url: "/api/department/getChildrenDepartment",
         data: {
           token: localStorage.getItem("crm_token"),
-          mother_id: self.mother_id
+          mother_id: localStorage.getItem("motherCompanyId")
         }
       })
         .then(function(res) {
           if (res.data.code === 200) {
             // 当前母公司下的部门 parentCompanyDepartment
-            // console.log(JSON.stringify(res.data.data,null,4))
+            console.log(JSON.stringify(res.data.data,null,4))
             // console.log(self.mother_id)
             self.getMenuName(res.data.data.list);
             self.currentCompanyDepartment = res.data.data.list;
@@ -2315,8 +2535,11 @@ export default {
             console.log(err);
           });
       } else if (flag == "handover") {
-          self.$message.error('Jiaojie ');
           console.log(JSON.stringify(data));
+          console.log(JSON.stringify(this.children_id));
+          console.log(JSON.stringify(this.mother_id));
+
+          this.turnIntoCustomersStatu = true;
           
       }
     },

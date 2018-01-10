@@ -1967,7 +1967,7 @@
                 let slectIpt = '';
                 let flagDepartment = self.changeToClientData.flagDepartment;
                 let changeToClientData = self.changeToClientData;
-                let department_id = department_id = changeToClientData[flagDepartment][changeToClientData[flagDepartment].length-1];
+                let department_id = changeToClientData[flagDepartment][changeToClientData[flagDepartment].length-1];
                 if (flagDepartment == 'businessDepartment') {
                     slectIpt = 'businessEmployee'
                 } else if (flagDepartment== 'serviceDepartment') {

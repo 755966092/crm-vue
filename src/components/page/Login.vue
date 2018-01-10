@@ -81,6 +81,8 @@
             },
             // 当前用户所属公司
             selfCompany() {
+                console.log('执行');
+                
                 let self = this;
                 this.$axios({
                     method: 'POST',
@@ -91,7 +93,9 @@
                     }
                 })
                 .then(function(res){
+                        console.log(res);
                     if (res.data.code === 200) {
+                        
                         localStorage.setItem('motherCompanyId', res.data.data.mother.id);
                         localStorage.setItem('chirdrenCompanyId', res.data.data.chirdren.id);
                     } else {
