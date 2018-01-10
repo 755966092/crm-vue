@@ -652,7 +652,7 @@ export default {
         url: "/api/department/getChildrenDepartment",
         data: {
           token: localStorage.getItem("crm_token"),
-          mother_id: self.mother_id
+          mother_id: localStorage.getItem("motherCompanyId")
         }
       })
         .then(function(res) {
