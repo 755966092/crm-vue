@@ -411,7 +411,7 @@
                         <el-table-column
                             label="操作"
                             align="center"
-                            width="140"
+                            width="180"
                         >
                             <template slot-scope="scope">
                                 <el-button
@@ -529,7 +529,7 @@
                         <el-table-column
                             label="操作"
                             align="center"
-                            width="140"
+                            width="180"
                         >
                             <template slot-scope="scope">
                                 <el-button
@@ -649,7 +649,7 @@
                         <el-table-column
                             label="操作"
                             align="center"
-                            width="140"
+                            width="180"
                         >
                             <template slot-scope="scope">
                                 <el-button
@@ -798,7 +798,7 @@
                         <el-table-column
                             label="操作"
                             align="center"
-                            width="140"
+                            width="180"
                         >
                             <template slot-scope="scope">
                                 <el-button
@@ -2315,6 +2315,9 @@ export default {
             console.log(err);
           });
       } else if (flag == "handover") {
+          self.$message.error('Jiaojie ');
+          console.log(JSON.stringify(data));
+          
       }
     },
     // 新增客户按钮
@@ -2376,7 +2379,7 @@ export default {
           cue_source: self.addClueData.sourceTypeValue,
           cue_type: self.addClueData.clueType,
           name: self.addClueData.schoolName,
-
+            // teacherName
           los: self.addClueData.academicSystem,
           grade: self.addClueData.schoolLevel,
 
@@ -2387,7 +2390,7 @@ export default {
           city_id: self.addClueData.selectCityData[1],
           area_id: self.addClueData.selectCityData[2],
           address: self.addClueData.address,
-          contacts_name: self.addClueData.contactName,
+          contacts_name: self.addClueData.teacherName,
           contacts_post: self.addClueData.contactPosition,
           contacts_mobile: self.addClueData.contactPhone,
           contacts_telephone: self.addClueData.contactTel,
@@ -2422,21 +2425,17 @@ export default {
         };
       }
       console.log("提交客户参数:" + JSON.stringify(paramObj, null, 4));
-      self
-        .$axios({
+      self.$axios({
           method: "POST",
           withCredentials: false,
-          url: "/api/clue/applyClue",
+          url: "/api/customer/applyCustomer",
           data: paramObj
         })
         .then(function(res) {
           if (res.data.code == 200) {
             console.log(
-              "提交成功:" +
-                res.data.data.list.clue_id +
-                "-" +
-                res.data.data.list.update_time
-            );
+              "提交成功:");
+              self.filterClue();
           } else {
             alert(res.data.msg);
           }
