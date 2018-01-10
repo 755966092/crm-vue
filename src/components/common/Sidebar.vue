@@ -1,11 +1,18 @@
 <template>
-    <div class="sidebar">
+    <div class="sidebar" :class="{minW: !isCollapse}">
+        <div class="btnGround">
+            <!-- <span class="btn" @click="toggleCls(1)" :class="{hide:!isCollapse}">展开</span> -->
+            <!-- <span class="btn" @click="toggleCls(2)" :class="{hide:isCollapse}">收缩</span> -->
+            <el-button class="btn" @click="toggleCls(1)" :class="{hide:!isCollapse}" size="mini">展开</el-button>
+            <el-button class="btn" @click="toggleCls(2)" :class="{hide:isCollapse}" size="mini">收缩</el-button>
+        </div>
         <!--<el-menu  :default-active="$route.path"  class="el-menu-vertical-demo" theme="dark" unique-opened router>-->
         <el-menu
             :default-active="onRoutes"
             @select="selectEvent"
             class="el-menu-vertical-demo"
             theme="dark"
+            :collapse="isCollapse"
             unique-opened
             router>
             <template v-for="item in items">
@@ -35,6 +42,7 @@
     export default {
         data() {
             return {
+                isCollapse: false,
                 currentIndex: '/workbench',
                 items: [
                     {
@@ -108,17 +116,33 @@
             win() {
                 window.onresize = function(){
                     console.log(document.body.clientWidth)
+                    if (document.body.clientWidth == 800) {
+                        self.isCollapse = true;
+                        
+                    } else {
+                        self.isCollapse = false
+                    }
+                }
+            },
+              toggleCls(flag) {
+                if (flag == 1) {
+                    this.isCollapse = false;
+                    this.$emit('increment','2')
+                } else {
+                    this.isCollapse = true;
+                    this.$emit('increment','1')
                 }
             }
         },
         mounted() {
             const that = this;
             window.onresize = function temp() {
-                console.log(document.body.clientWidth)
-                if (document.body.clientWidth< 800) {
+                console.log('methos::'+document.body.clientWidth)
+                if (document.body.clientWidth< 850) {
+                    that.$emit('increment','1')
                     that.isCollapse = true
-
                 } else {
+                    that.$emit('increment','2')
                     that.isCollapse = false
                 }
                 // that.clientHeight = `${document.documentElement.clientHeight}px`;
@@ -132,14 +156,16 @@
         display: block;
         position: absolute;
         /* width: 250px; */
-        min-width: 180px;
+        /* min-width: 180px; */
         padding: 0 5px;
         left: 0;
         top: 70px;
         bottom: 0;
-        background: #324157;
+        /* background: #324157; */
     }
-
+    .minW {
+        min-width: 180px;
+    }
     .sidebar > ul {
         height: 100%;
     }
@@ -151,5 +177,14 @@
 
     .el-submenu .el-menu-item {
         padding: 0;
+    }
+
+    .btnGround {
+        line-height: 30px;
+        text-align: center;
+        border-right: 1px solid #e6e6e6;
+    }
+    .hide {
+        display: none;
     }
 </style>
