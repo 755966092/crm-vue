@@ -61,7 +61,7 @@
                                 localStorage.setItem('crm_username', res.data.data.list.user_name);
                                 // token缓存
                                 localStorage.setItem('crm_token', res.data.data.list.user_token);
-                                // 当前用户是否为管理员 为1是母公司超管  为2是子公司超管 为3不是管理员
+                                // 当前用户是否为管理员 为1是母公司超管   为2不是管理员
                                  localStorage.setItem('adminRole', res.data.data.adminRole);
                                  //是否有权限进入设置
                                  localStorage.setItem('isGoWeb', res.data.data.isGoWeb);

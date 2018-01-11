@@ -143,34 +143,40 @@
                     >
 
                         <el-table-column
-                            prop="higherCompany"
+                            prop="trader_company_name"
                             label="上级公司"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="applicant"
+                            prop="contacts"
                             label="申请人"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="phone"
+                            prop="contacts_phone"
                             label="联系电话"
                             sortable
                             min-width="130"
                         >
+                         <el-table-column
+                                prop="apply_company_name"
+                                label="加盟公司"
+                                sortable
+                                min-width="130"
+                            >
                         </el-table-column>
                         <el-table-column
-                            prop="applicationTime"
+                            prop="create_time"
                             label="申请时间"
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="joinTime"
+                            prop="jiameng_time"
                             label="加盟时间"
                             min-width="130"
                         >
@@ -307,23 +313,82 @@
                 this.cancelApplication = true
             },
             // 加盟商加盟状态
-            joiningTraderApplyFranchiseeStatu() {
-                var self = this;
-                self.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/joiningTrader/applyFranchiseeStatu',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                    }
-                })
-                    .then(function (res) {
-                             self.applicationStatusData = res.data.data.list;
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
+                          joiningTraderApplyFranchiseeStatu() {
+                              var self = this;
+                              if(localStorage.getItem('adminRole') == 1){
+                              //超管
+                               self.$axios({
+                                              method: 'POST',
+                                              withCredentials: false,
+                                              url: '/api/joiningTrader/applyFranchiseeStatu',
+                                              data: {
+                                                  token: localStorage.getItem('crm_token'),
+                                              }
+                                          })
+
+                                             .then(function (res) {
+                                                       self.applicationStatusData = res.data.data.list;
+                                              })
+                                              .catch(function (err) {
+                                                  console.log(err);
+                                              });
+                              }else{
+                              //普通用户
+                               self.$axios({
+                                              method: 'POST',
+                                              withCredentials: false,
+                                              url: '/api/joiningTrader/applyFranchiseeStatuZi',
+                                              data: {
+                                                  token: localStorage.getItem('crm_token'),
+                                              }
+                                          })
+                                            .then(function (res) {
+                                                       self.applicationStatusData = res.data.data.list;
+                                              })
+                                              .catch(function (err) {
+                                                  console.log(err);
+                                              });
+                               }
+
+                          },
+                           // 现已加盟
+                        joiningTraderapplyFranchiseeXianYi() {
+                            var self = this;
+                            if(localStorage.getItem('adminRole') == 1){
+                            //超管
+                             self.$axios({
+                                            method: 'POST',
+                                            withCredentials: false,
+                                            url: '/api/joiningTrader/applyFranchiseeXianYi',
+                                            data: {
+                                                token: localStorage.getItem('crm_token'),
+                                            }
+                                        })
+                                           .then(function (res) {
+                                                     self.alreadyJoinedData = res.data.data.list;
+                                            })
+                                            .catch(function (err) {
+                                                console.log(err);
+                                            });
+                            }else{
+                            //普通用户
+                             self.$axios({
+                                            method: 'POST',
+                                            withCredentials: false,
+                                            url: '/api/joiningTrader/applyFranchiseeXianYiZi',
+                                            data: {
+                                                token: localStorage.getItem('crm_token'),
+                                            }
+                                        })
+                                          .then(function (res) {
+                                                     self.alreadyJoinedData = res.data.data.list;
+                                            })
+                                            .catch(function (err) {
+                                                console.log(err);
+                                            });
+                             }
+
+                        },
                 // 申请加盟--可选加盟
             joiningTraderapplyFranchiseeList() {
                 var self = this;
@@ -347,6 +412,7 @@
         created() {
             this.joiningTraderApplyFranchiseeStatu();
             this.joiningTraderapplyFranchiseeList();
+            this.joiningTraderapplyFranchiseeXianYi();
         }
     }
 </script>
