@@ -4,7 +4,7 @@
             <a class="el-dropdown-link" href="#/workbench">后台管理系统</a>
         </div>
         <div class="user-info">
-             <a class="el-dropdown-link" href="#/setting">
+            <a class="el-dropdown-link" href="#/setting" v-if = "isGoWeb == 1">
                     设置
                 </a>
             <el-dropdown trigger="click" @command="handleCommand">
@@ -22,6 +22,7 @@
     export default {
         data() {
             return {
+                isGoWeb:'',
                 name: 'linxin'
             }
         },
@@ -39,6 +40,9 @@
                 }
             },
 
+        },
+        created(){
+            this.isGoWeb =  localStorage.getItem('isGoWeb');
         }
     }
 </script>
