@@ -468,8 +468,8 @@
                       let self = this;
                       
                       let obj = {
-                      type: self.selectRangeItem,
-                      token: localStorage.getItem('crm_token'),
+                       type: self.selectRangeItem,
+                        token: localStorage.getItem('crm_token'),
                        statu:1,
                        followup_start: self.lastFollowUpTime[0],
                        followup_end: self.lastFollowUpTime[1],
@@ -490,7 +490,7 @@
 
                                 // console.log('返回参数:');
                               console.log(JSON.stringify(res.data,null,4))
-                              window.open("https://crm.tonyliangli.cn"+res.data.url);
+                              window.open("http://crm.tonyliangli.cn"+res.data.url);
                           })
                           .catch(function (err) {
                               console.log(err);

@@ -294,6 +294,7 @@
                         <el-button type="text" >导入客户</el-button>
                         <el-button type="text" style="color: #999">批量转移</el-button>
                         <el-button type="text" style="color: #999"  @click="delLogItem">批量删除</el-button>
+                         <el-button @click="exportData" type="text" >导出</el-button>
                     </el-col>
                     <el-col :span="8" :offset="6">
                         <el-input placeholder="请输入内容" v-model="searchIptValue" class="input-with-select">
@@ -447,7 +448,7 @@
                         <el-table-column
                             prop="clue_name"
                             align="center"
-                            label="学校名称"
+                            label="机构名称"
                             fixed
                             show-overflow-tooltip
                             min-width="130"
@@ -1048,6 +1049,80 @@
 
 
                     <!-- 以下为固定内容, 每个类型的客户都应该填写 -->
+                       <div class="mt10">
+                            <p class="mb10 ">业务部门</p>
+                            <el-cascader
+                                expand-trigger="hover"
+                                :value="changeToClientData.businessDepartment"
+                                :options="companyDepartment"
+                                @change="selectServiceDepartment($event,'businessDepartment')"
+                                clearable
+                                change-on-select
+                            >
+                            </el-cascader>
+                        </div>
+                     <div class="mt10">
+                        <p class="mb10 ">业务负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="changeToClientData.businessEmployeeId" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.businessEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="mt10">
+                        <p class="mb10 ">服务部门</p>
+                         <el-cascader
+                            expand-trigger="hover"
+                            :value="changeToClientData.serviceDepartment"
+                            :options="companyDepartment"
+                            @change="selectServiceDepartment($event,'serviceDepartment')"
+                            clearable
+                            change-on-select
+                        >
+                        </el-cascader>
+                    </div>
+                    <div class="mt10">
+                        <p class="mb10 ">服务负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.serviceEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="changeToClientData.serviceEmployeeId" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.serviceEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="mt10">
+                        <p class="mb10 ">售后部门</p>
+                         <el-cascader
+                            expand-trigger="hover"
+                            :value="changeToClientData.aftermarketDepartment"
+                            :options="companyDepartment"
+                            @change="selectServiceDepartment($event,'aftermarketDepartment')"
+                            clearable
+                            change-on-select
+                        >
+                        </el-cascader>
+                    </div>
+                    <div class="mt10">
+                        <p class="mb10 ">售后负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.aftermarketEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
                     <div style="width:100%">
                         <span class="iptName">所在地:</span>
                         <el-cascader
@@ -1186,13 +1261,14 @@ export default {
   name: "clue",
   data() {
     return {
-         
+    // 公司所有部门
+    companyDepartment: [],
     // z转成客户
     turnIntoCustomersStatu: false,
     // 公司所有部门
     currentCompanyDepartment: [],
     changeToClientData: {
-        
+
         // 业务部门
         businessDepartment: [],
         // 业务部门员工
@@ -1252,7 +1328,27 @@ export default {
         teacherTable: true,
         studentTable: true,
         // 选中行
-        multipleSelection: []
+        multipleSelection: [],
+        changeToClientData: {
+
+            // 业务部门
+            businessDepartment: [],
+            // 业务部门员工
+            businessEmployee: [],
+            businessEmployeeId:'',
+                // 服务部门
+            serviceDepartment: [],
+            // 服务部门员工
+            serviceEmployee: [],
+            serviceEmployeeId:'',
+            // 售后部门
+            aftermarketDepartment: [],
+            // 售后部门员工
+            aftermarketEmployee: [],
+            aftermarketEmployeeId:'',
+            // 标记当前选择的是哪一个, 默认业务部门
+            flagDepartment: 'businessDepartment'
+        }
       },
       dialogShow: {
         schoolShow: false,
@@ -1881,7 +1977,7 @@ export default {
                     customer_user: changeToClientData.aftermarketEmployeeId,
                     customer_department: changeToClientData.aftermarketDepartment[changeToClientData.aftermarketDepartment.length - 1]
                 }
-                
+
                 if (self.studentToCantractFlag == 'multiple') {
                     obj.clueIds = [];
                     url = '/api/clue/clueTurnCustomerDuo';
@@ -1911,7 +2007,7 @@ export default {
                             });
                             if (self.studentOrClueToCantract) {
                                 // 线索
-                                self.openClueInfo();    
+                                self.openClueInfo();
                             } else {
                                 // 学生
                                 self.clueDetails();
@@ -2076,6 +2172,75 @@ export default {
           console.log(err);
         });
     },
+        // 选择服务部门
+        selectServiceDepartment(data,flag) {
+            this.changeToClientData.flagDepartment = flag;
+            this.changeToClientData[flag] = data;
+            // 获取部门员工
+            this.getDepartmentEmployee();
+        },
+         // 获取部门员工
+        getDepartmentEmployee() {
+            let self = this;
+            // 跟进selectIpt 来判断当前应该获取哪一个部门的员工
+            let slectIpt = '';
+            let flagDepartment = self.changeToClientData.flagDepartment;
+            let changeToClientData = self.changeToClientData;
+            let department_id = changeToClientData[flagDepartment][changeToClientData[flagDepartment].length-1];
+            if (flagDepartment == 'businessDepartment') {
+                slectIpt = 'businessEmployee'
+            } else if (flagDepartment== 'serviceDepartment') {
+                slectIpt = 'serviceEmployee'
+            } else {
+                slectIpt = 'aftermarketEmployee'
+            }
+            this.$axios({
+                method: 'POST',
+                withCredentials: false,
+                url: '/api/department/makeAdminCDepartmentList',
+                data: {
+                    token: localStorage.getItem('crm_token'),
+                    department_id: department_id
+                }
+            })
+                .then(function (res) {
+                    if (res.data.code === 200) {
+                        self.changeToClientData[slectIpt] = res.data.data.list;
+                        // console.log(JSON.stringify(self.changeToClientData));
+                        // console.log(department_id);
+
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+                .catch(function (err) {
+                    console.log(err);
+                });
+        },
+       // 获取母公司部门
+        getCompanyDepartment() {
+            let self = this;
+            this.$axios({
+                method: 'POST',
+                withCredentials: false,
+                url: '/api/department/getChildrenDepartmentTo',
+                data: {
+                    token: localStorage.getItem('crm_token'),
+                    mother_id: localStorage.getItem('motherCompanyId')
+                }
+            })
+                .then(function (res) {
+                    if (res.data.code === 200) {
+                        self.getMenuName(res.data.data.list);
+                        self.companyDepartment = res.data.data.list
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+                .catch(function (err) {
+                    console.log(err);
+                });
+        },
     // 当前子公司下的所有部门
     getChildrenDepartment() {
       let self = this;
@@ -2304,10 +2469,11 @@ export default {
           phone: self.searchPhone,
 
           cue_source: self.typeList.source.value,
-          followup_statu: self.typeList.followUpStatus.value,
+          followup_statu: self.typeList.businessStatu.value,
           grade: self.typeList.schoolLevel.value,
           los: self.typeList.academicSystem.value,
-          service_user: self.typeList.serviceUser.value
+          service_user: self.typeList.serviceUser.value,
+          payment_statu: self.typeList.paymentStatu.value
         };
       } else if (self.clueType == 2) {
         // 机构   机构类型, 定位, 跟进状态, 来源
@@ -2334,10 +2500,11 @@ export default {
           phone: self.searchPhone,
 
           cue_source: self.typeList.source.value,
-          followup_statu: self.typeList.followUpStatus.value,
+          followup_statu: self.typeList.businessStatu.value,
           type: self.typeList.organizationType.value,
           location: self.typeList.positioning.value,
-          service_user: self.typeList.serviceUser.value
+          service_user: self.typeList.serviceUser.value,
+          payment_statu: self.typeList.paymentStatu.value
         };
       } else if (self.clueType == 3) {
         // 教师   学校等级, 教授年级, 教授科目, 跟进状态, 来源
@@ -2364,11 +2531,12 @@ export default {
           phone: self.searchPhone,
 
           cue_source: self.typeList.source.value,
-          followup_statu: self.typeList.followUpStatus.value,
+          followup_statu: self.typeList.businessStatu.value,
           grade: self.typeList.schoolLevel.value,
           professor_grade: self.typeList.professor_grade.value,
           professor_subjects: self.typeList.professorSubjects.value,
-          service_user: self.typeList.serviceUser.value
+          service_user: self.typeList.serviceUser.value,
+          payment_statu: self.typeList.paymentStatu.value
         };
       } else if (self.clueType == 4) {
         // 学生   学校等级, 文理科, 年级, 性别, 来源类型, 跟进状态 来源
@@ -2395,13 +2563,14 @@ export default {
           phone: self.searchPhone,
 
           cue_source: self.typeList.source.value,
-          followup_statu: self.typeList.followUpStatus.value,
+          followup_statu: self.typeList.businessStatu.value,
           grade: self.typeList.schoolLevel.value,
           the_science: self.typeList.artsAndSciences.value,
           student_grade: self.typeList.grade.value,
           sex: self.typeList.sex.value,
           from_type: self.typeList.sourceType.value,
-           service_user: self.typeList.serviceUser.value
+          service_user: self.typeList.serviceUser.value,
+          payment_statu: self.typeList.paymentStatu.value
         };
       } else {
       }
@@ -2455,6 +2624,175 @@ export default {
           console.log(err);
         });
     },
+      exportData() {
+          console.log("筛选表格数据");
+          // 筛选表格数据
+          // console.log(this.clueType)
+          let self = this;
+          for (const key in self.filterTime) {
+                if (self.filterTime.hasOwnProperty(key)) {
+                    let element = self.filterTime[key];
+                    if (element == null) {
+                        self.filterTime[key] = "";
+                    }
+                }
+            }
+          let token = localStorage.getItem("crm_token");
+          let obj = {
+
+          };
+        if (self.clueType == 1) {
+                // 学校   学校等级, 学制, 跟进状态, 来源
+                obj = {
+                  token: token,
+                  statutype: 1,
+                  page_num: "",
+                  typebig: self.selectRangeItem,
+                  followup_start: self.filterTime.lastFollowUpTime[0],
+                  followup_end: self.filterTime.lastFollowUpTime[1],
+                  update_start: self.filterTime.updateTime[0],
+                  update_end: self.filterTime.updateTime[1],
+                  create_start: self.filterTime.createTime[0],
+                  create_end: self.filterTime.createTime[1],
+                  children_id: self.children_id,
+                  department_id: self.department_id,
+                  user_id: self.employees_id,
+                  province_id: self.selectCityData[0],
+                  city_id: self.selectCityData[1],
+                  area_id: self.selectCityData[2],
+                  cue_type: self.clueType,
+                //   name: "",
+
+                  name: self.searchName,
+                  cname: self.searchCname,
+                  phone: self.searchPhone,
+
+                  cue_source: self.typeList.source.value,
+                  followup_statu: self.typeList.businessStatu.value,
+                  grade: self.typeList.schoolLevel.value,
+                  los: self.typeList.academicSystem.value,
+                  service_user: self.typeList.serviceUser.value,
+                  payment_statu: self.typeList.paymentStatu.value
+                };
+              } else if (self.clueType == 2) {
+                // 机构   机构类型, 定位, 跟进状态, 来源
+                obj = {
+                  token: token,
+                  statutype: 1,
+                  page_num: "",
+                  typebig: self.selectRangeItem,
+                  followup_start: self.filterTime.lastFollowUpTime[0],
+                  followup_end: self.filterTime.lastFollowUpTime[1],
+                  update_start: self.filterTime.updateTime[0],
+                  update_end: self.filterTime.updateTime[1],
+                  create_start: self.filterTime.createTime[0],
+                  create_end: self.filterTime.createTime[1],
+                  children_id: self.children_id,
+                  department_id: self.department_id,
+                  user_id: self.employees_id,
+                  province_id: self.selectCityData[0],
+                  city_id: self.selectCityData[1],
+                  area_id: self.selectCityData[2],
+                  cue_type: self.clueType,
+
+                   name: self.searchName,
+                  cname: self.searchCname,
+                  phone: self.searchPhone,
+
+                  cue_source: self.typeList.source.value,
+                  followup_statu: self.typeList.businessStatu.value,
+                  type: self.typeList.organizationType.value,
+                  location: self.typeList.positioning.value,
+                  service_user: self.typeList.serviceUser.value,
+                  payment_statu: self.typeList.paymentStatu.value
+                };
+              } else if (self.clueType == 3) {
+                // 教师   学校等级, 教授年级, 教授科目, 跟进状态, 来源
+                obj = {
+                  token: token,
+                  statutype: 1,
+                  page_num: "",
+                  typebig: self.selectRangeItem,
+                  followup_start: self.filterTime.lastFollowUpTime[0],
+                  followup_end: self.filterTime.lastFollowUpTime[1],
+                  update_start: self.filterTime.updateTime[0],
+                  update_end: self.filterTime.updateTime[1],
+                  create_start: self.filterTime.createTime[0],
+                  create_end: self.filterTime.createTime[1],
+                  children_id: self.children_id,
+                  department_id: self.department_id,
+                  user_id: self.employees_id,
+                  province_id: self.selectCityData[0],
+                  city_id: self.selectCityData[1],
+                  area_id: self.selectCityData[2],
+                  cue_type: self.clueType,
+
+                   name: self.searchName,
+                  cname: self.searchCname,
+                  phone: self.searchPhone,
+
+                  cue_source: self.typeList.source.value,
+                  followup_statu: self.typeList.businessStatu.value,
+                  grade: self.typeList.schoolLevel.value,
+                  professor_grade: self.typeList.professor_grade.value,
+                  professor_subjects: self.typeList.professorSubjects.value,
+                  service_user: self.typeList.serviceUser.value,
+                  payment_statu: self.typeList.paymentStatu.value
+                };
+              } else if (self.clueType == 4) {
+                // 学生   学校等级, 文理科, 年级, 性别, 来源类型, 跟进状态 来源
+                obj = {
+                  token: token,
+                  statutype: 1,
+                  page_num: "",
+                  typebig: self.selectRangeItem,
+                  followup_start: self.filterTime.lastFollowUpTime[0],
+                  followup_end: self.filterTime.lastFollowUpTime[1],
+                  update_start: self.filterTime.updateTime[0],
+                  update_end: self.filterTime.updateTime[1],
+                  create_start: self.filterTime.createTime[0],
+                  create_end: self.filterTime.createTime[1],
+                  children_id: self.children_id,
+                  department_id: self.department_id,
+                  user_id: self.employees_id,
+                  province_id: self.selectCityData[0],
+                  city_id: self.selectCityData[1],
+                  area_id: self.selectCityData[2],
+                  cue_type: self.clueType,
+
+                   name: self.searchName,
+                  cname: self.searchCname,
+                  phone: self.searchPhone,
+
+                  cue_source: self.typeList.source.value,
+                  followup_statu: self.typeList.businessStatu.value,
+                  grade: self.typeList.schoolLevel.value,
+                  the_science: self.typeList.artsAndSciences.value,
+                  student_grade: self.typeList.grade.value,
+                  sex: self.typeList.sex.value,
+                  from_type: self.typeList.sourceType.value,
+                  service_user: self.typeList.serviceUser.value,
+                  payment_statu: self.typeList.paymentStatu.value
+                };
+              } else {
+              }
+          console.log("请求参数:" + JSON.stringify(obj, null, 4));
+          self
+            .$axios({
+              method: "POST",
+              withCredentials: false,
+              url: "/api/customer/getCustomerList",
+              data: obj
+            })
+            .then(function(res) {
+                   // console.log('返回参数:');
+                 console.log(JSON.stringify(res.data,null,4))
+                 window.open("http://crm.tonyliangli.cn"+res.data.url);
+            })
+            .catch(function(err) {
+              console.log(err);
+            });
+        },
     // 类型转变
     radioChange(data) {
       for (var i = 0; i < this.typeList[data].content.length; i++) {
@@ -2554,6 +2892,7 @@ export default {
       console.log("新增客户");
       let paramObj = {};
       let self = this;
+      let changeToClientData = self.changeToClientData;
       // 判断当前客户类型
       if (this.addClueData.clueType == "1") {
         paramObj = {
@@ -2573,7 +2912,13 @@ export default {
           contacts_telephone: self.addClueData.contactTel,
           contacts_wechat: self.addClueData.contactWeixin,
           contacts_qq: self.addClueData.contactQq,
-          contacts_email: self.addClueData.contactEmail
+          contacts_email: self.addClueData.contactEmail,
+          person_user: changeToClientData.businessEmployeeId,
+          person_department: changeToClientData.businessDepartment[changeToClientData.businessDepartment.length - 1],
+          service_user: changeToClientData.serviceEmployeeId,
+          service_department: changeToClientData.serviceDepartment[changeToClientData.serviceDepartment.length - 1],
+          customer_user: changeToClientData.aftermarketEmployeeId,
+          customer_department: changeToClientData.aftermarketDepartment[changeToClientData.aftermarketDepartment.length - 1]
         };
       } else if (this.addClueData.clueType == "2") {
         paramObj = {
@@ -2594,7 +2939,13 @@ export default {
           contacts_telephone: self.addClueData.contactTel,
           contacts_wechat: self.addClueData.contactWeixin,
           contacts_qq: self.addClueData.contactQq,
-          contacts_email: self.addClueData.contactEmail
+          contacts_email: self.addClueData.contactEmail,
+          person_user: changeToClientData.businessEmployeeId,
+          person_department: changeToClientData.businessDepartment[changeToClientData.businessDepartment.length - 1],
+          service_user: changeToClientData.serviceEmployeeId,
+          service_department: changeToClientData.serviceDepartment[changeToClientData.serviceDepartment.length - 1],
+          customer_user: changeToClientData.aftermarketEmployeeId,
+          customer_department: changeToClientData.aftermarketDepartment[changeToClientData.aftermarketDepartment.length - 1]
         };
       } else if (this.addClueData.clueType == "3") {
         paramObj = {
@@ -2619,7 +2970,13 @@ export default {
           contacts_telephone: self.addClueData.contactTel,
           contacts_wechat: self.addClueData.contactWeixin,
           contacts_qq: self.addClueData.contactQq,
-          contacts_email: self.addClueData.contactEmail
+          contacts_email: self.addClueData.contactEmail,
+          person_user: changeToClientData.businessEmployeeId,
+          person_department: changeToClientData.businessDepartment[changeToClientData.businessDepartment.length - 1],
+          service_user: changeToClientData.serviceEmployeeId,
+          service_department: changeToClientData.serviceDepartment[changeToClientData.serviceDepartment.length - 1],
+          customer_user: changeToClientData.aftermarketEmployeeId,
+          customer_department: changeToClientData.aftermarketDepartment[changeToClientData.aftermarketDepartment.length - 1]
         };
       } else {
         paramObj = {
@@ -2644,7 +3001,13 @@ export default {
           contacts_telephone: self.addClueData.contactTel,
           contacts_wechat: self.addClueData.contactWeixin,
           contacts_qq: self.addClueData.contactQq,
-          contacts_email: self.addClueData.contactEmail
+          contacts_email: self.addClueData.contactEmail,
+          person_user: changeToClientData.businessEmployeeId,
+          person_department: changeToClientData.businessDepartment[changeToClientData.businessDepartment.length - 1],
+          service_user: changeToClientData.serviceEmployeeId,
+          service_department: changeToClientData.serviceDepartment[changeToClientData.serviceDepartment.length - 1],
+          customer_user: changeToClientData.aftermarketEmployeeId,
+          customer_department: changeToClientData.aftermarketDepartment[changeToClientData.aftermarketDepartment.length - 1]
         };
       }
       console.log("提交客户参数:" + JSON.stringify(paramObj, null, 4));
@@ -2683,6 +3046,7 @@ export default {
   created() {
     this.applyCompany();
     this.filterClue();
+    this.getCompanyDepartment();
 
     this.typeList.schoolLevel.show = true;
     this.typeList.academicSystem.show = true;

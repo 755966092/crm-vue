@@ -188,7 +188,7 @@
                                     ></el-input>
                                 </el-col>
                             </el-row>
-                             <el-row v-if="clueType==2">
+                              <el-row>
                                 <el-col :span="2">
                                     <p>网址：</p>
                                 </el-col>
@@ -406,50 +406,124 @@
                         </el-row>
                         <div class="school schoolColor" >
                             <el-row>
-                                <el-col :span="3">
+                                <el-col :span="4">
                                     <p>来源：</p>
                                 </el-col>
-                                <el-col :span="21">
+                                <el-col :span="25">
                                    <p class="infoLabel">{{clueInfoData.details.cue_source}}</p>
                                 </el-col>
                             </el-row>
-                            <el-row>
-                                <el-col :span="3">
-                                    <p>所属机构：</p>
+                             <el-row>
+                                <el-col :span="4">
+                                    <p>业务负责人：</p>
                                 </el-col>
-                                <el-col :span="21">
-                                   <p class="infoLabel">{{clueInfoData.details.company_name}}</p>
-                                </el-col>
-                            </el-row>
-                            <el-row>
-                                <el-col :span="3">
-                                    <p>负责人：</p>
-                                </el-col>
-                                <el-col :span="21">
-                                   <p class="infoLabel">{{clueInfoData.details.user_name}}</p>
+                                <el-col :span="25">
+                                   <p class="infoLabel">{{clueInfoData.details.person_user}}</p>
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="3">
-                                    <p>前负责人：</p>
+                                <el-col :span="4">
+                                    <p>业务部门：</p>
                                 </el-col>
-                                <el-col :span="21">
-                                   <p class="infoLabel">{{clueInfoData.details.user_before_name|| '无'}}</p>
+                                <el-col :span="25">
+                                   <p class="infoLabel">{{clueInfoData.details.person_department|| '无'}}</p>
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="3">
+                                <el-col :span="4">
+                                    <p>前业务负责人：</p>
+                                </el-col>
+                                <el-col :span="25">
+                                   <p class="infoLabel">{{clueInfoData.details.before_person_user}}</p>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :span="4">
+                                    <p>前业务部门：</p>
+                                </el-col>
+                                <el-col :span="25">
+                                   <p class="infoLabel">{{clueInfoData.details.before_person_department}}</p>
+                                </el-col>
+                            </el-row>
+
+                           <el-row>
+                                <el-col :span="4">
+                                    <p>服务负责人：</p>
+                                </el-col>
+                                <el-col :span="25">
+                                   <p class="infoLabel">{{clueInfoData.details.service_user}}</p>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :span="4">
+                                    <p>服务部门：</p>
+                                </el-col>
+                                <el-col :span="25">
+                                   <p class="infoLabel">{{clueInfoData.details.service_department|| '无'}}</p>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :span="4">
+                                    <p>前服务负责人：</p>
+                                </el-col>
+                                <el-col :span="25">
+                                   <p class="infoLabel">{{clueInfoData.details.before_service_user}}</p>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :span="4">
+                                    <p>前服务部门：</p>
+                                </el-col>
+                                <el-col :span="25">
+                                   <p class="infoLabel">{{clueInfoData.details.before_service_department}}</p>
+                                </el-col>
+                            </el-row>
+
+                            <el-row>
+                                <el-col :span="4">
+                                    <p>售后负责人：</p>
+                                </el-col>
+                                <el-col :span="25">
+                                   <p class="infoLabel">{{clueInfoData.details.customer_user}}</p>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :span="4">
+                                    <p>售后部门：</p>
+                                </el-col>
+                                <el-col :span="25">
+                                   <p class="infoLabel">{{clueInfoData.details.customer_department|| '无'}}</p>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :span="4">
+                                    <p>前售后负责人：</p>
+                                </el-col>
+                                <el-col :span="25">
+                                   <p class="infoLabel">{{clueInfoData.details.before_customer_user}}</p>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :span="4">
+                                    <p>前售后部门：</p>
+                                </el-col>
+                                <el-col :span="25">
+                                   <p class="infoLabel">{{clueInfoData.details.before_customer_department}}</p>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :span="4">
                                     <p>创建时间：</p>
                                 </el-col>
-                                <el-col :span="21">
+                                <el-col :span="25">
                                    <p class="infoLabel">{{clueInfoData.details.create_time}}</p>
                                 </el-col>
                             </el-row>
                             <el-row>
-                                <el-col :span="3">
+                                <el-col :span="4">
                                     <p>更新时间：</p>
                                 </el-col>
-                                <el-col :span="21">
+                                <el-col :span="25">
                                    <p class="infoLabel">{{clueInfoData.details.update_time}}</p>
                                 </el-col>
                             </el-row>
@@ -2766,7 +2840,7 @@
                     data: {
                         token: localStorage.getItem('crm_token'),
                         clue_id: self.$route.query.data.clue_id,
-                        type: 1,
+                        type: 2,
                         statutype:1,
                         status:this.logShowContent
                     }
@@ -2774,7 +2848,7 @@
                  .then(function (res) {
                        // console.log('返回参数:');
                         console.log(JSON.stringify(res.data,null,4))
-                        window.open("https://crm.tonyliangli.cn"+res.data.url);
+                        window.open("http://crm.tonyliangli.cn"+res.data.url);
                     })
                     .catch(function (err) {
                         console.log(err);

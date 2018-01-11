@@ -2223,7 +2223,7 @@
                     .then(function (res) {
                    // console.log('返回参数:');
                   console.log(JSON.stringify(res.data,null,4))
-                  window.open("https://crm.tonyliangli.cn"+res.data.url);
+                  window.open("http://crm.tonyliangli.cn"+res.data.url);
 
                     })
                     .catch(function (err) {

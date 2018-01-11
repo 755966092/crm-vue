@@ -283,6 +283,7 @@
                 <el-row>
                     <el-col :span="8">
                         <el-button type="text" style="color: #999"  @click="delLogItem">批量删除</el-button>
+                        <el-button @click="exportData" type="text" >导出</el-button>
                     </el-col>
                     <el-col :span="10" :offset="6">
                         <el-input placeholder="请输入内容" v-model="searchIptValue" class="input-with-select">
@@ -829,6 +830,63 @@ export default {
           console.log(err);
         });
     },
+    //导出
+     exportData() {
+          console.log("筛选表格数据");
+          // 筛选表格数据
+          let self = this;
+          for (const key in self.selectedItems) {
+            if (self.selectedItems.hasOwnProperty(key)) {
+              let element = self.selectedItems[key];
+              if (element == null) {
+                self.selectedItems[key] = "";
+              }
+            }
+          }
+          let obj = {
+            type: self.selectRangeItem,
+            statutype: 1,
+            token: localStorage.getItem("crm_token"),
+            page_num: "",
+            cue_type: self.selectedItems.clientType,
+            business_type: self.selectedItems.businessType,
+            statu: self.selectedItems.contractStatue,
+            payment_statu: self.selectedItems.repaymentsStatus,
+            cue_source: self.selectedItems.sourceType,
+            province_id: self.selectedItems.area[0],
+            city_id: self.selectedItems.area[1],
+            area_id: self.selectedItems.area[2],
+            followup_start: self.selectedItems.lastFollowupTime[0] || "",
+            followup_end: self.selectedItems.lastFollowupTime[1] || "",
+            start_start: self.selectedItems.startAndEndTime[0] || "",
+            start_end: self.selectedItems.startAndEndTime[1] || "",
+            end_start: self.selectedItems.maturityTime[0] || "",
+            end_end: self.selectedItems.maturityTime[1] || "",
+            contract_start: self.selectedItems.signingTime[0] || "",
+            contract_end: self.selectedItems.signingTime[1] || "",
+            children_id: self.children_id,
+            department_id: self.department_id,
+            user_id: self.employees_id,
+            name: self.searchName,
+            number: self.searchNumber
+          };
+
+          console.log("请求2参数:" + JSON.stringify(obj, null, 4));
+          self.$axios({
+              method: "POST",
+              withCredentials: false,
+              url: "/api/clueContract/getContractList",
+              data: obj
+            })
+            .then(function(res) {
+             // console.log('返回参数:');
+             console.log(JSON.stringify(res.data,null,4))
+             window.open("http://crm.tonyliangli.cn"+res.data.url);
+            })
+            .catch(function(err) {
+              console.log(err);
+            });
+        },
     // 所有子公司
     getMenuName(menus) {
       for (var value of menus) {
