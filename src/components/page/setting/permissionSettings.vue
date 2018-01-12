@@ -7,15 +7,16 @@
                     <el-button type="text">新建角色</el-button>
                 </div>
                 <div class="block">
-                    <el-cascader
-                        expand-trigger="hover"
-                        :options="parentCompanyList"
-                        v-model="selectedOptions2"
-                        @change="handleChange">
-                    </el-cascader>
+                <el-cascader
+                   expand-trigger="hover"
+                   :options="parentCompanyList"
+                   @change="handleChange"
+                   change-on-select
+               >
+               </el-cascader>
                 </div>
                 <div id="radioBtn">
-                    <el-radio-group v-model="radio3">
+                    <el-radio-group v-model="radio3"  @change="handRole">
                         <el-radio-button class="radioBtn" v-for="item in allRoleList" :label="item.name"></el-radio-button>
                     </el-radio-group>
                 </div>
@@ -29,8 +30,8 @@
                                 <el-row class="checkWrap">
                                     <template v-for="item in items">
                                         <el-col class="checkCol" :span="4">
-                                            <el-checkbox @change="checkChange" :name="item.name" v-model="item.checked">
-                                                {{item.text}}
+                                            <el-checkbox @change="checkChange" :name="item.role_name" v-model="item.checked">
+                                                {{item.role_name}}
                                             </el-checkbox>
                                         </el-col>
                                     </template>
@@ -80,223 +81,6 @@
                         checked: true,
                         text: '备选项',
                         name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }],
-                    '客户': [{
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }],
-                    '合同': [{
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }],
-                    '款项': [{
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }],
-                    '报表': [{
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }],
-                    '系统': [{
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项2',
-                        name: "xuanz"
-                    }, {
-                        checked: true,
-                        text: '备选项3',
-                        name: "xuanz"
                     }]
 
                 },
@@ -305,13 +89,42 @@
                 parentCompanyList: [],
                 allRoleList: [],
                 selectedOptions: [],
-                selectedOptions2: []
+                selectedOptions2: [],
+                companyId: localStorage.getItem('motherCompanyId'),
+                 // 当前子公司id
+                children_id: '',
             };
         },
         methods: {
-            handleChange(value) {
-                console.log(value);
-            },
+        //当前选中角色操作权限id
+                handRole(data) {
+                 console.log(data);
+                    let self = this;
+                    this.$axios({
+                        method: 'POST',
+                        withCredentials: false,
+                        url: '/api/role/roleListForUser',
+                        data: {
+                            token: localStorage.getItem('crm_token'),
+                            role_id: 1,
+                        }
+                    })
+                    .then(function (res) {
+                        self.opat_auth = res.data.data.list
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+                },
+               handleChange(data) {
+                  let companyId = this.children_id;
+                  this.companyId = data[data.length - 1];
+                  this.getAllRole();
+                  // 获取子公司所有部门
+                    //this.getChildrenDepartment();
+                   //this.getCompanyDetails();
+
+              },
             handleClick(tab, event) {
                 console.log(tab, event);
             },
@@ -337,6 +150,24 @@
                     console.log(err);
                 });
             },
+         // 所有权限
+            opatRole() {
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/OpatAuth/roleList',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                    }
+                })
+                    .then(function (res) {
+                        self.checkBoxData = res.data.data.list
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            },
             // 所有角色
             getAllRole() {
                 let self = this;
@@ -346,20 +177,25 @@
                     url: '/api/Role/roleList',
                     data: {
                         token: localStorage.getItem('crm_token'),
+                        company_id: self.companyId
                     }
                 })
                     .then(function (res) {
                         self.allRoleList = res.data.data.list
                         self.radio3 = res.data.data.list[0].name
                         self.dataPermission = res.data.data.list[0].data_auth
+                        self.opat_auth = res.data.data.list[0].opat_auth
+                       // console.log(this.checkBoxData);
                     })
                     .catch(function (err) {
                         console.log(err);
                     });
             },
+
         },
         created() {
             this.applyCompany();
+            this.opatRole();
             this.getAllRole();
         }
     };

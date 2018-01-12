@@ -575,7 +575,7 @@
                     }
                 })
                     .then(function (res) {
-                        
+
                         self.treeData = res.data.data.list;
                         // 初始化页面, 显示第一个部门的员工
                         self.departmentName = res.data.data.list[0].label;

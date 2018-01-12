@@ -4,7 +4,13 @@
             <el-col :span="7">
                 <h3>公司信息</h3>
                 <div class="select">
-                    <el-cascader expand-trigger="hover" :options="parentCompanyList" @change="handleChange">
+                    <el-cascader
+                        expand-trigger="hover"
+                        :options="parentCompanyList"
+                        @change="handleChange"
+
+                        change-on-select
+                    >
                     </el-cascader>
                 </div>
             </el-col>
@@ -62,6 +68,8 @@
     export default {
         data: function () {
             return {
+                // 当前子公司id
+                children_id: '',
                 parentCompanyList: [],
                 //公司详情
                 detailsCompanyList: [],
@@ -146,11 +154,17 @@
                         console.log(err);
                     });
             },
-            // 点击级联选择器
+              // 子公司变化
             handleChange(data) {
-                this.parentCompanyList = data;
-                this.getCompanyDetails();
+                let companyId = this.children_id;
+                this.companyId = data[data.length - 1];
+                // 获取子公司所有部门
+
+                    //this.getChildrenDepartment();
+                     this.getCompanyDetails();
+
             },
+
         },
 
         created() {
