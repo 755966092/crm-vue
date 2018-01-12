@@ -162,6 +162,7 @@
                             sortable
                             min-width="130"
                         >
+                             </el-table-column>
                          <el-table-column
                                 prop="apply_company_name"
                                 label="加盟公司"
@@ -313,82 +314,104 @@
                 this.cancelApplication = true
             },
             // 加盟商加盟状态
-                          joiningTraderApplyFranchiseeStatu() {
-                              var self = this;
-                              if(localStorage.getItem('adminRole') == 1){
-                              //超管
-                               self.$axios({
-                                              method: 'POST',
-                                              withCredentials: false,
-                                              url: '/api/joiningTrader/applyFranchiseeStatu',
-                                              data: {
-                                                  token: localStorage.getItem('crm_token'),
-                                              }
-                                          })
+          joiningTraderApplyFranchiseeStatu() {
+              var self = this;
+              if(localStorage.getItem('adminRole') == 1){
+              //超管
+               self.$axios({
+                              method: 'POST',
+                              withCredentials: false,
+                              url: '/api/joiningTrader/applyFranchiseeStatu',
+                              data: {
+                                  token: localStorage.getItem('crm_token'),
+                              }
+                          })
 
-                                             .then(function (res) {
-                                                       self.applicationStatusData = res.data.data.list;
-                                              })
-                                              .catch(function (err) {
-                                                  console.log(err);
-                                              });
-                              }else{
-                              //普通用户
-                               self.$axios({
-                                              method: 'POST',
-                                              withCredentials: false,
-                                              url: '/api/joiningTrader/applyFranchiseeStatuZi',
-                                              data: {
-                                                  token: localStorage.getItem('crm_token'),
-                                              }
-                                          })
-                                            .then(function (res) {
-                                                       self.applicationStatusData = res.data.data.list;
-                                              })
-                                              .catch(function (err) {
-                                                  console.log(err);
-                                              });
-                               }
+                             .then(function (res) {
+                                       for (var i = 0; i < res.data.data.list.length; i++) {
+                                       //审批状态 1待审批   2通过  3失败  4取消
+                                       if(res.data.data.list[i].statu == 1){
+                                            res.data.data.list[i].statu = "待审批";
+                                        }else if(res.data.data.list[i].statu == 2){
+                                            res.data.data.list[i].statu = "通过";
+                                        }else if(res.data.data.list[i].statu == 3){
+                                            res.data.data.list[i].statu = "失败";
+                                        }else if(res.data.data.list[i].statu == 4){
+                                             res.data.data.list[i].statu = "取消";
+                                         }
+                                       }
+                                       self.applicationStatusData = res.data.data.list;
+                              })
+                              .catch(function (err) {
+                                  console.log(err);
+                              });
+              }else{
+              //普通用户
+               self.$axios({
+                              method: 'POST',
+                              withCredentials: false,
+                              url: '/api/joiningTrader/applyFranchiseeStatuZi',
+                              data: {
+                                  token: localStorage.getItem('crm_token'),
+                              }
+                          })
+                            .then(function (res) {
+                                    //审批状态 1待审批   2通过  3失败  4取消
+                                     if(res.data.data.list[i].statu == 1){
+                                          res.data.data.list[i].statu = "待审批";
+                                      }else if(res.data.data.list[i].statu == 2){
+                                          res.data.data.list[i].statu = "通过";
+                                      }else if(res.data.data.list[i].statu == 3){
+                                          res.data.data.list[i].statu = "失败";
+                                      }else if(res.data.data.list[i].statu == 4){
+                                           res.data.data.list[i].statu = "取消";
+                                       }
+                                       self.applicationStatusData = res.data.data.list;
+                              })
+                              .catch(function (err) {
+                                  console.log(err);
+                              });
+               }
 
-                          },
-                           // 现已加盟
-                        joiningTraderapplyFranchiseeXianYi() {
-                            var self = this;
-                            if(localStorage.getItem('adminRole') == 1){
-                            //超管
-                             self.$axios({
-                                            method: 'POST',
-                                            withCredentials: false,
-                                            url: '/api/joiningTrader/applyFranchiseeXianYi',
-                                            data: {
-                                                token: localStorage.getItem('crm_token'),
-                                            }
-                                        })
-                                           .then(function (res) {
-                                                     self.alreadyJoinedData = res.data.data.list;
-                                            })
-                                            .catch(function (err) {
-                                                console.log(err);
-                                            });
-                            }else{
-                            //普通用户
-                             self.$axios({
-                                            method: 'POST',
-                                            withCredentials: false,
-                                            url: '/api/joiningTrader/applyFranchiseeXianYiZi',
-                                            data: {
-                                                token: localStorage.getItem('crm_token'),
-                                            }
-                                        })
-                                          .then(function (res) {
-                                                     self.alreadyJoinedData = res.data.data.list;
-                                            })
-                                            .catch(function (err) {
-                                                console.log(err);
-                                            });
-                             }
+          },
+               // 现已加盟
+            joiningTraderapplyFranchiseeXianYi() {
+                var self = this;
+                if(localStorage.getItem('adminRole') == 1){
+                //超管
+                 self.$axios({
+                                method: 'POST',
+                                withCredentials: false,
+                                url: '/api/joiningTrader/applyFranchiseeXianYi',
+                                data: {
+                                    token: localStorage.getItem('crm_token'),
+                                }
+                            })
+                               .then(function (res) {
+                                         self.alreadyJoinedData = res.data.data.list;
+                                })
+                                .catch(function (err) {
+                                    console.log(err);
+                                });
+                }else{
+                //普通用户
+                 self.$axios({
+                                method: 'POST',
+                                withCredentials: false,
+                                url: '/api/joiningTrader/applyFranchiseeXianYiZi',
+                                data: {
+                                    token: localStorage.getItem('crm_token'),
+                                }
+                            })
+                              .then(function (res) {
+                                         self.alreadyJoinedData = res.data.data.list;
+                                })
+                                .catch(function (err) {
+                                    console.log(err);
+                                });
+                 }
 
-                        },
+            },
                 // 申请加盟--可选加盟
             joiningTraderapplyFranchiseeList() {
                 var self = this;

@@ -10,17 +10,17 @@
             </el-col>
             <el-col :span="17">
                 <div class="el-col-wrap">
-                    <h3>LOGO</h3>
+                    <h3></h3>
                     <div>
-                        <img src="../../../images/defaultHead.png" alt="">
+                        <img :src="detailsCompanyList.company_logo"  alt="公司LOGO" >
                     </div>
                     <div class="iptWrap">
-                        <el-form label-position="top" label-width="80px" :model="formData">
+                        <el-form label-position="top" label-width="80px" :model="detailsCompanyList">
                             <el-form-item label="名称">
-                                <el-input placeholder="请输入全称" v-model="formData.fullName"></el-input>
+                                <el-input placeholder="请输入全称" v-model="detailsCompanyList.company_name"></el-input>
                             </el-form-item>
                             <el-form-item label="简称">
-                                <el-input v-model="formData.shortName"></el-input>
+                                <el-input v-model="detailsCompanyList.company_nickname"></el-input>
                             </el-form-item>
                             <el-form-item label="地区">
                                 <el-cascader expand-trigger="hover" :options="cityList" @change="handleChange">
@@ -29,22 +29,22 @@
 
 
                             <el-form-item label="网址">
-                                <el-input v-model="formData.website"></el-input>
+                                <el-input v-model="detailsCompanyList.company_website"></el-input>
                             </el-form-item>
                             <el-form-item label="联系人">
-                                <el-input v-model="formData.contact"></el-input>
+                                <el-input v-model="detailsCompanyList.company_contacts"></el-input>
                             </el-form-item>
                             <el-form-item label="手机">
-                                <el-input v-model="formData.phone"></el-input>
+                                <el-input v-model="detailsCompanyList.company_mobile"></el-input>
                             </el-form-item>
                             <el-form-item label="座机">
-                                <el-input v-model="formData.landline"></el-input>
+                                <el-input v-model="detailsCompanyList.company_telephone"></el-input>
                             </el-form-item>
                             <el-form-item label="邮箱">
-                                <el-input v-model="formData.email"></el-input>
+                                <el-input v-model="detailsCompanyList.company_email"></el-input>
                             </el-form-item>
                             <el-form-item label="备注">
-                                <el-input type="textarea" v-model="formData.remarks"></el-input>
+                                <el-input type="textarea" v-model="detailsCompanyList.company_remarks"></el-input>
 
                             </el-form-item>
                             <el-form-item>
@@ -63,7 +63,10 @@
         data: function () {
             return {
                 parentCompanyList: [],
+                //公司详情
+                detailsCompanyList: [],
                 cityList: [],
+                companyId: localStorage.getItem('motherCompanyId'),
                 formData: {
                     fullName: '', // 全称
                     shortName: '',	//简称
@@ -79,6 +82,27 @@
             }
         },
         methods: {
+        //公司详情
+            getCompanyDetails(){
+             let self = this;
+                this.$axios({
+                method: 'POST',
+                withCredentials: false,
+                url: '/api/company/companyDetails',
+                data: {
+                    token: localStorage.getItem('crm_token'),
+                    company_id: self.companyId
+                }
+            })
+                .then(function (res) {
+                    var arr = [];
+                    self.detailsCompanyList = res.data.data.list
+                    // console.log(JSON.stringify(res.data.data.list));
+                })
+                .catch(function (err) {
+                    console.log(err);
+                });
+            },
             // 所有子公司
             applyCompany() {
                 let self = this;
@@ -98,6 +122,8 @@
                     .catch(function (err) {
                         console.log(err);
                     });
+            },
+            onSubmit(){
             },
             // 省市县数据
             requestCity() {
@@ -121,13 +147,15 @@
                     });
             },
             // 点击级联选择器
-            handleChange() {
-
+            handleChange(data) {
+                this.parentCompanyList = data;
+                this.getCompanyDetails();
             },
         },
 
         created() {
             this.applyCompany();
+            this.getCompanyDetails();
             if (localStorage.getItem('cityData')) {
                 console.log('有缓存')
                 // console.log(typeof localStorage.getItem('cityData'))

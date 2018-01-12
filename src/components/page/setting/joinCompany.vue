@@ -11,25 +11,43 @@
                         border
                     >
                         <el-table-column
-                            prop="date"
-                            label="日期"
+                            prop="company_name"
+                            label="公司"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="name"
-                            label="姓名"
+                            prop="contacts"
+                            label="联系人"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="address"
-                            label="地址"
+                            prop="contacts_phone"
+                            label="联系电话"
                             min-width="130"
                         >
                         </el-table-column>
+                          <el-table-column
+                                prop="industry"
+                                label="行业"
+                                min-width="130"
+                            >
+                            </el-table-column>
+                            <el-table-column
+                                prop="apply_count"
+                                label="已加盟"
+                                min-width="130"
+                            >
+                            </el-table-column>
+                             <el-table-column
+                                    prop="content"
+                                    label="说明"
+                                    min-width="130"
+                                >
+                                </el-table-column>
                         <el-table-column min-width="130" label="操作">
                             <template slot-scope="scope">
                                 <el-button
@@ -52,44 +70,44 @@
                         border
                     >
                         <el-table-column
-                            prop="franchisee"
+                            prop="apply_company_name"
                             label="加盟商"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="contact"
+                            prop="apply_user_name"
                             label="联系人"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="phone"
+                            prop="contacts_phone"
                             label="联系电话"
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="applicationDate"
+                            prop="create_time"
                             label="申请时间"
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="name"
+                            prop="approver_name"
                             label="审批人"
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="byDate"
+                            prop="jiameng_time"
                             label="审批通过时间"
                             min-width="130"
                         ></el-table-column>
                         <el-table-column
-                            prop="remarks"
+                            prop="content"
                             label="备注"
                             min-width="130"
                         >
@@ -115,45 +133,45 @@
                         border
                     >
                         <el-table-column
-                            prop="franchisee"
+                            prop="apply_company_name"
                             label="加盟商"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="contact"
+                            prop="apply_user_name"
                             label="联系人"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="phone"
+                            prop="contacts_phone"
                             label="联系电话"
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="companyName"
+                            prop="trader_company_name"
                             label="拟加盟"
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="applicationDate"
+                            prop="create_time"
                             label="申请时间"
                             min-width="130"
                         >
                         </el-table-column>
 
                         <el-table-column
-                            prop="applicationState"
+                            prop="statu"
                             label="申请状态"
                             min-width="130"
                         ></el-table-column>
                         <el-table-column
-                            prop="remarks"
+                            prop="content"
                             label="说明"
                             min-width="130"
                         >
@@ -182,57 +200,63 @@
                         border
                     >
                         <el-table-column
-                            prop="franchisee"
+                            prop="apply_company_name"
                             label="加盟商"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="contact"
+                            prop="apply_user_name"
                             label="联系人"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="phone"
+                            prop="contacts_phone"
                             label="联系电话"
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="companyName"
+                            prop="trader_company_name"
                             label="拟加盟"
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="applicationDate"
+                            prop="create_time"
                             label="申请时间"
                             min-width="130"
                         >
                         </el-table-column>
 
                         <el-table-column
-                            prop="approvedName"
+                            prop="approver_name"
                             label="加盟审批人"
                             min-width="130"
                         ></el-table-column>
                         <el-table-column
-                            prop="addTime"
+                            prop="jiameng_time"
                             label="加盟时间"
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="cancelName"
+                            prop="no_approver_name"
                             label="取消审批人"
                             min-width="130"
                         >
                         </el-table-column>
+                           <el-table-column
+                            prop="no_approver_content"
+                            label="取消原因"
+                            min-width="130"
+                        >
+                        </el-table-column>
                         <el-table-column
-                            prop="cancelTime"
+                            prop="no_approver_time"
                             label="取消加盟时间"
                             min-width="130"
                         >
@@ -242,56 +266,56 @@
                 <h3 class="h3Title">已拒绝</h3>
                 <template>
                     <el-table
-                        :data="pendingData"
+                        :data="cancelledJvData"
                         :default-sort="{prop: 'date', order: 'descending'}"
                         border
                     >
                         <el-table-column
-                            prop="franchisee"
+                            prop="apply_company_name"
                             label="申请公司"
                             sortable
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="contact"
+                            prop="apply_user_name"
                             min-width="130"
                             label="联系人"
                             sortable
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="phone"
+                            prop="contacts_phone"
                             label="联系电话"
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="companyName"
+                            prop="trader_company_name"
                             label="拟加盟"
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="applicationDate"
+                            prop="create_time"
                             label="申请时间"
                             min-width="130"
                         >
                         </el-table-column>
 
                         <el-table-column
-                            prop="applicationState"
+                            prop="approver_name"
                             label="审批人"
                             min-width="130"
                         ></el-table-column>
                         <el-table-column
-                            prop="remarks"
+                            prop="no_approver_content"
                             label="拒绝原因"
                             min-width="130"
                         >
                         </el-table-column>
                         <el-table-column
-                            prop="remarks"
+                            prop="jvjve_time"
                             label="审批拒绝时间"
                             min-width="130"
                         >
@@ -496,6 +520,8 @@
                     addTime: '2017-09-09',
                     cancelTime: '2017-09-09',
                 }],
+                // 已拒绝
+                cancelledJvData: [],
             };
         },
 
@@ -533,29 +559,210 @@
                 this.refusedJoin = false;
                 this.refusedJoin2 = true
             },
-            // 请求加盟商列表
+            // 请求加盟邀请列表
+            joiningTraderFranchiseeMyList() {
+                var self = this;
+                 if(localStorage.getItem('adminRole') == 1){
+                 //超管
+                    self.$axios({
+                        method: 'POST',
+                        withCredentials: false,
+                        url: '/api/joiningTrader/applyFranchiseeMyList',
+                        data: {
+                            token: localStorage.getItem('crm_token'),
+                        }
+                    })
+                    .then(function (res) {
+                        self.invitationData = res.data.data.list;
+                        console.log(JSON.stringify(res.data.data.list))
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+                 }else{
+                    //普通用户
+                         self.$axios({
+                            method: 'POST',
+                            withCredentials: false,
+                            url: '/api/joiningTrader/applyFranchiseeMyListZi',
+                            data: {
+                                token: localStorage.getItem('crm_token'),
+                            }
+                        })
+                        .then(function (res) {
+                            self.invitationData = res.data.data.list;
+                            console.log(JSON.stringify(res.data.data.list))
+                        })
+                        .catch(function (err) {
+                            console.log(err);
+                        });
+                 }
+
+            },
+         // 请求加盟商列表
             joiningTraderFranchiseeList() {
                 var self = this;
-                self.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/joiningTrader/FranchiseeList',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                    }
-                })
-                .then(function (res) {
-                    self.franchiseeData = res.data.data.list;
-                    console.log(JSON.stringify(res.data.data.list))
-                })
-                .catch(function (err) {
-                    console.log(err);
-                });
-            }
+                 if(localStorage.getItem('adminRole') == 1){
+                 //超管
+                    self.$axios({
+                        method: 'POST',
+                        withCredentials: false,
+                        url: '/api/joiningTrader/FranchiseeList',
+                        data: {
+                            token: localStorage.getItem('crm_token'),
+                        }
+                    })
+                    .then(function (res) {
+                        self.franchiseeData = res.data.data.list;
+                        console.log(JSON.stringify(res.data.data.list))
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+                 }else{
+                    //普通用户
+                         self.$axios({
+                            method: 'POST',
+                            withCredentials: false,
+                            url: '/api/joiningTrader/FranchiseeMyList',
+                            data: {
+                                token: localStorage.getItem('crm_token'),
+                            }
+                        })
+                        .then(function (res) {
+                            self.franchiseeData = res.data.data.list;
+                            console.log(JSON.stringify(res.data.data.list))
+                        })
+                        .catch(function (err) {
+                            console.log(err);
+                        });
+                 }
 
+            },
+              // 加盟审批
+            joiningTraderFranchiseeListEve() {
+                var self = this;
+                 if(localStorage.getItem('adminRole') == 1){
+                 //超管
+                    //待审批
+                    self.$axios({
+                        method: 'POST',
+                        withCredentials: false,
+                        url: '/api/joiningTrader/franchiseeListEve',
+                        data: {
+                            token: localStorage.getItem('crm_token'),
+                            type: 1
+                        }
+                    })
+                    .then(function (res) {
+                      for (var i = 0; i < res.data.data.list.length; i++) {
+                        res.data.data.list[i].statu = '待审批';
+                    }
+                        self.pendingData = res.data.data.list;
+                        console.log(JSON.stringify(res.data.data.list))
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+                    //已取消
+                     self.$axios({
+                            method: 'POST',
+                            withCredentials: false,
+                            url: '/api/joiningTrader/franchiseeListEve',
+                            data: {
+                                token: localStorage.getItem('crm_token'),
+                                type: 2
+                            }
+                        })
+                        .then(function (res) {
+
+                            self.cancelledData = res.data.data.list;
+                            console.log(JSON.stringify(res.data.data.list))
+                        })
+                        .catch(function (err) {
+                            console.log(err);
+                        });
+                     //已拒绝
+                     self.$axios({
+                            method: 'POST',
+                            withCredentials: false,
+                            url: '/api/joiningTrader/franchiseeListEve',
+                            data: {
+                                token: localStorage.getItem('crm_token'),
+                                type: 3
+                            }
+                        })
+                        .then(function (res) {
+                            self.cancelledJvData = res.data.data.list;
+                            console.log(JSON.stringify(res.data.data.list))
+                        })
+                        .catch(function (err) {
+                            console.log(err);
+                        });
+                 }else{
+                    //普通用户
+                         self.$axios({
+                            method: 'POST',
+                            withCredentials: false,
+                            url: '/api/joiningTrader/franchiseeListEveZi',
+                            data: {
+                                token: localStorage.getItem('crm_token'),
+                                 type: 1
+                            }
+                        })
+                        .then(function (res) {
+                             for (var i = 0; i < res.data.data.list.length; i++) {
+                                    res.data.data.list[i].statu = '待审批';
+                                }
+                            self.pendingData = res.data.data.list;
+                            console.log(JSON.stringify(res.data.data.list))
+                        })
+                        .catch(function (err) {
+                            console.log(err);
+                        });
+                            //已取消
+                         self.$axios({
+                                method: 'POST',
+                                withCredentials: false,
+                                url: '/api/joiningTrader/franchiseeListEveZi',
+                                data: {
+                                    token: localStorage.getItem('crm_token'),
+                                    type: 2
+                                }
+                            })
+                            .then(function (res) {
+
+                                self.cancelledData = res.data.data.list;
+                                console.log(JSON.stringify(res.data.data.list))
+                            })
+                            .catch(function (err) {
+                                console.log(err);
+                            });
+                                //已拒绝
+                             self.$axios({
+                                    method: 'POST',
+                                    withCredentials: false,
+                                    url: '/api/joiningTrader/franchiseeListEveZi',
+                                    data: {
+                                        token: localStorage.getItem('crm_token'),
+                                        type: 3
+                                    }
+                                })
+                                .then(function (res) {
+                                    self.cancelledJvData = res.data.data.list;
+                                    console.log(JSON.stringify(res.data.data.list))
+                                })
+                                .catch(function (err) {
+                                    console.log(err);
+                                });
+                 }
+
+            }
         },
         created() {
+            this.joiningTraderFranchiseeMyList();
             this.joiningTraderFranchiseeList();
+            this.joiningTraderFranchiseeListEve();
         }
     };
 </script>
