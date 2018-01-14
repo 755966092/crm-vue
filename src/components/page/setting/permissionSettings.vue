@@ -12,6 +12,9 @@
                    :options="parentCompanyList"
                    @change="handleChange"
                    change-on-select
+                    filterable
+                    :show-all-levels="false"
+                    v-model="selCompanyList"
                >
                </el-cascader>
                 </div>
@@ -75,14 +78,10 @@
     export default {
         data() {
             return {
+                // 选中的子公司
+                selCompanyList: [parseInt(localStorage.getItem('motherCompanyId'))],
                 dataPermission: '1',
                 checkBoxData: {
-                    '线索': [{
-                        checked: true,
-                        text: '备选项',
-                        name: "xuanz"
-                    }]
-
                 },
                 activeName2: "first",
                 radio3: '',
@@ -163,6 +162,8 @@
                 })
                     .then(function (res) {
                         self.checkBoxData = res.data.data.list
+                        console.log(JSON.stringify(res.data.data.list));
+                        
                     })
                     .catch(function (err) {
                         console.log(err);

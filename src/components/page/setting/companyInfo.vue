@@ -8,8 +8,10 @@
                         expand-trigger="hover"
                         :options="parentCompanyList"
                         @change="handleChange"
-
                         change-on-select
+                        filterable
+                        :show-all-levels="false"
+                        v-model="selCompanyList"
                     >
                     </el-cascader>
                 </div>
@@ -29,7 +31,7 @@
                                 <el-input v-model="detailsCompanyList.company_nickname"></el-input>
                             </el-form-item>
                             <el-form-item label="地区">
-                                <el-cascader expand-trigger="hover" :options="cityList" @change="handleChange">
+                                <el-cascader v-model="detailsCompanyList.cityArr" expand-trigger="hover" :options="cityList" @change="handleChange">
                                 </el-cascader>
                             </el-form-item>
 
@@ -68,13 +70,15 @@
     export default {
         data: function () {
             return {
+                // 选中的子公司
+                selCompanyList: [parseInt(localStorage.getItem('motherCompanyId'))],
                 // 当前子公司id
                 children_id: '',
                 parentCompanyList: [],
                 //公司详情
-                detailsCompanyList: [],
+                detailsCompanyList: {},
                 cityList: [],
-                companyId: localStorage.getItem('motherCompanyId'),
+                companyId: parseInt(localStorage.getItem('motherCompanyId')),
                 formData: {
                     fullName: '', // 全称
                     shortName: '',	//简称
@@ -90,6 +94,17 @@
             }
         },
         methods: {
+            // 处理树形数据, 删除空的children
+            getMenuName(menus){
+                for (var value of menus) {
+                    if (value.children) {
+                        this.getMenuName(value.children)
+                    }
+                    if (value.children.length == 0) {
+                        delete value.children
+                    }
+                }
+            },
         //公司详情
             getCompanyDetails(){
              let self = this;
@@ -103,9 +118,10 @@
                 }
             })
                 .then(function (res) {
-                    var arr = [];
-                    self.detailsCompanyList = res.data.data.list
-                    // console.log(JSON.stringify(res.data.data.list));
+                    var data = res.data.data.list;
+                    data.cityArr = [data.province_id,data.city_id,data.area_id]
+                    self.detailsCompanyList = data
+                    console.log(JSON.stringify(self.detailsCompanyList));
                 })
                 .catch(function (err) {
                     console.log(err);
@@ -124,6 +140,7 @@
                 })
                     .then(function (res) {
                         var arr = [];
+                        self.getMenuName(res.data.data.list);
                         self.parentCompanyList = res.data.data.list
                         // console.log(JSON.stringify(res.data.data.list));
                     })
@@ -195,10 +212,11 @@
 
     .el-col-wrap {
         padding: 0 20px;
+        width: 100%;
     }
 
     img {
-        width: 180px;
+        width: auto;
         height: 180px;
         border-radius: 5px;
     }
@@ -212,4 +230,5 @@
     .iptWrap .el-cascader {
         width: 70%;
     }
+    
 </style>

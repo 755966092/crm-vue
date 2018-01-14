@@ -18,14 +18,16 @@
                             prop="company_name"
                             label="公司"
                             sortable
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="180"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="contacts"
                             label="联系人"
                             sortable
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="100"
                         >
                         </el-table-column>
                         <el-table-column
@@ -57,7 +59,8 @@
                         <el-table-column
                             prop="content"
                             label="说明"
-                            min-width="130"
+                            min-width="180"
+                            show-overflow-tooltip
                         >
                         </el-table-column>
                         <el-table-column min-width="130" label="操作">
@@ -85,40 +88,44 @@
                             prop="trader_company_name"
                             label="拟加盟"
                             sortable
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="180"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="apply_company_name"
                             label="申请公司"
                             sortable
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="180"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="apply_user_name"
                             label="申请人"
                             sortable
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="100"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="create_time"
                             label="申请时间"
                             sortable
-                            min-width="130"
+                            min-width="160"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="statu"
                             label="申请状态"
-                            min-width="130"
+                            min-width="100"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="content"
                             label="说明"
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="180"
                         >
                         </el-table-column>
                         <el-table-column min-width="130" label="操作">
@@ -146,14 +153,15 @@
                             prop="trader_company_name"
                             label="上级公司"
                             sortable
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="180"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="contacts"
                             label="申请人"
                             sortable
-                            min-width="130"
+                            min-width="100"
                         >
                         </el-table-column>
                         <el-table-column
@@ -167,19 +175,20 @@
                                 prop="apply_company_name"
                                 label="加盟公司"
                                 sortable
-                                min-width="130"
+                                show-overflow-tooltip
+                                min-width="180"
                             >
                         </el-table-column>
                         <el-table-column
                             prop="create_time"
                             label="申请时间"
-                            min-width="130"
+                            min-width="160"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="jiameng_time"
                             label="加盟时间"
-                            min-width="130"
+                            min-width="160"
                         >
                         </el-table-column>
                         </el-table-column>

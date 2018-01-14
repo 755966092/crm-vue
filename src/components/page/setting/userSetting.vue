@@ -14,7 +14,9 @@
                         :options="parentCompanyList"
                         @change="handleChange"
                         change-on-select
-
+                        filterable
+                        :show-all-levels="false"
+                        v-model="selCompanyList"
                     >
                     </el-cascader>
                 </div>
@@ -460,6 +462,8 @@
         },
         data() {
             return {
+                // g公司列表
+                selCompanyList: [parseInt(localStorage.getItem('motherCompanyId'))],
                 dialogVisible: false,
                 rename: false,
                 subDepartment: false,
@@ -558,7 +562,6 @@
             },
             // 点击级联选择器
             handleChange(data) {
-                console.log(JSON.stringify(data))
                 this.subsidiaryId = data[data.length-1];
                 this.getChildrenDepartment();
             },
@@ -603,7 +606,7 @@
                     })
                     .then(function(res){
                        if (res.data.code === 200) {
-                           console.log(JSON.stringify(res.data.data, null, 4))
+                        //    console.log(JSON.stringify(res.data.data, null, 4))
                             self.getMenuName(res.data.data.list);
                             self.treeData = res.data.data.list;
                             self.departmentName = res.data.data.list[0].label;
@@ -632,13 +635,13 @@
                     .then(function (res) {
                         self.getMenuName(res.data.data.list);
                         self.parentCompanyList = res.data.data.list
-                        console.log(JSON.stringify(res.data.data.list))
+                        // console.log(JSON.stringify(self.parentCompanyList))
                     })
                     .catch(function (err) {
                         console.log(err);
                     });
             },
-             // 处理树形数据, 删除空的children
+            // 处理树形数据, 删除空的children
             getMenuName(menus){
                 for (var value of menus) {
                     if (value.children) {
@@ -696,7 +699,7 @@
                     .then(function (res) {
                         self.departmentStaff = res.data.data.list;
                         self.departmentStaffOption.length = 0;
-                        console.log(JSON.stringify(self.departmentStaff))
+                        // console.log(JSON.stringify(self.departmentStaff))
                         for (let i = 0; i < res.data.data.list.length; i++) {
                             let obj = res.data.data.list[i];
                             self.departmentStaffOption.push({
@@ -775,5 +778,8 @@
         width: 150px;
         line-height: 34px;
     }
-
+    /* 级联选择框 */
+    .el-cascader {
+        width: 100%;
+    }
 </style>

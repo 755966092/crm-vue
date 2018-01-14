@@ -18,7 +18,7 @@
                     <el-submenu :index="item.index">
                         <template slot="title">
                             <i :class="item.icon"></i>
-                            <span>{{ item.title }}</span>
+                            <span slot="title">{{ item.title }}</span>
                         </template>
                         <el-menu-item 
                             v-for="(subItem,i) in item.subs" 
@@ -31,7 +31,7 @@
                 <template v-else>
                     <el-menu-item :index="item.index">
                         <i :class="item.icon"></i>
-                        <span>{{ item.title }}</span>
+                        <span slot="title">{{ item.title }}</span>
                     </el-menu-item>
                 </template>
             </template>

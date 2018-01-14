@@ -14,14 +14,15 @@
                             prop="company_name"
                             label="公司"
                             sortable
-                            min-width="130"
+                            min-width="180"
+                            show-overflow-tooltip
                         >
                         </el-table-column>
                         <el-table-column
                             prop="contacts"
                             label="联系人"
                             sortable
-                            min-width="130"
+                            min-width="100"
                         >
                         </el-table-column>
                         <el-table-column
@@ -45,7 +46,8 @@
                              <el-table-column
                                     prop="content"
                                     label="说明"
-                                    min-width="130"
+                                    min-width="180"
+                                    show-overflow-tooltip
                                 >
                                 </el-table-column>
                         <el-table-column min-width="130" label="操作">
@@ -61,7 +63,12 @@
                 </template>
             </el-tab-pane>
             <el-tab-pane label="加盟商" class="franchisee">
-                <el-cascader expand-trigger="hover" :options="formData.companyList">
+                <el-cascader 
+                    expand-trigger="hover" :options="formData.companyList"
+                    filterable
+                    change-on-select
+                    :show-all-levels="false"
+                    >
                 </el-cascader>
                 <template>
                     <el-table
@@ -73,14 +80,16 @@
                             prop="apply_company_name"
                             label="加盟商"
                             sortable
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="180"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="apply_user_name"
                             label="联系人"
                             sortable
-                            min-width="130"
+                            min-width="100"
+                            show-overflow-tooltip
                         >
                         </el-table-column>
                         <el-table-column
@@ -92,24 +101,25 @@
                         <el-table-column
                             prop="create_time"
                             label="申请时间"
-                            min-width="130"
+                            min-width="160"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="approver_name"
                             label="审批人"
-                            min-width="130"
+                            min-width="100"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="jiameng_time"
                             label="审批通过时间"
-                            min-width="130"
+                            min-width="160"
                         ></el-table-column>
                         <el-table-column
                             prop="content"
                             label="备注"
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="180"
                         >
                         </el-table-column>
                         <el-table-column min-width="130" label="操作">
@@ -136,14 +146,15 @@
                             prop="apply_company_name"
                             label="加盟商"
                             sortable
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="180"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="apply_user_name"
                             label="联系人"
                             sortable
-                            min-width="130"
+                            min-width="100"
                         >
                         </el-table-column>
                         <el-table-column
@@ -155,13 +166,14 @@
                         <el-table-column
                             prop="trader_company_name"
                             label="拟加盟"
-                            min-width="130"
+                            min-width="180"
+                            show-overflow-tooltip
                         >
                         </el-table-column>
                         <el-table-column
                             prop="create_time"
                             label="申请时间"
-                            min-width="130"
+                            min-width="160"
                         >
                         </el-table-column>
 
@@ -173,10 +185,11 @@
                         <el-table-column
                             prop="content"
                             label="说明"
-                            min-width="130"
+                            min-width="180"
+                            show-overflow-tooltip
                         >
                         </el-table-column>
-                        <el-table-column min-width="130" label="操作">
+                        <el-table-column min-width="180" label="操作">
                             <template slot-scope="scope">
                                 <el-button
                                     size="mini"
@@ -203,14 +216,16 @@
                             prop="apply_company_name"
                             label="加盟商"
                             sortable
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="180"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="apply_user_name"
                             label="联系人"
                             sortable
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="100"
                         >
                         </el-table-column>
                         <el-table-column
@@ -222,43 +237,45 @@
                         <el-table-column
                             prop="trader_company_name"
                             label="拟加盟"
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="180"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="create_time"
                             label="申请时间"
-                            min-width="130"
+                            min-width="160"
                         >
                         </el-table-column>
 
                         <el-table-column
                             prop="approver_name"
                             label="加盟审批人"
-                            min-width="130"
+                            min-width="100"
                         ></el-table-column>
                         <el-table-column
                             prop="jiameng_time"
                             label="加盟时间"
-                            min-width="130"
+                            min-width="160"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="no_approver_name"
                             label="取消审批人"
-                            min-width="130"
+                            min-width="100"
                         >
                         </el-table-column>
                            <el-table-column
                             prop="no_approver_content"
                             label="取消原因"
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="180"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="no_approver_time"
                             label="取消加盟时间"
-                            min-width="130"
+                            min-width="160"
                         >
                         </el-table-column>
                     </el-table>
@@ -274,12 +291,14 @@
                             prop="apply_company_name"
                             label="申请公司"
                             sortable
-                            min-width="130"
+                            show-overflow-tooltip
+                            min-width="180"
                         >
                         </el-table-column>
                         <el-table-column
                             prop="apply_user_name"
-                            min-width="130"
+                            min-width="100"
+                            show-overflow-tooltip
                             label="联系人"
                             sortable
                         >
@@ -293,31 +312,33 @@
                         <el-table-column
                             prop="trader_company_name"
                             label="拟加盟"
-                            min-width="130"
+                            min-width="180"
+                            show-overflow-tooltip
                         >
                         </el-table-column>
                         <el-table-column
                             prop="create_time"
                             label="申请时间"
-                            min-width="130"
+                            min-width="160"
                         >
                         </el-table-column>
 
                         <el-table-column
                             prop="approver_name"
                             label="审批人"
-                            min-width="130"
+                            min-width="100"
                         ></el-table-column>
                         <el-table-column
                             prop="no_approver_content"
                             label="拒绝原因"
-                            min-width="130"
+                            min-width="180"
+                            show-overflow-tooltip
                         >
                         </el-table-column>
                         <el-table-column
                             prop="jvjve_time"
                             label="审批拒绝时间"
-                            min-width="130"
+                            min-width="160"
                         >
                         </el-table-column>
                     </el-table>
@@ -346,7 +367,13 @@
             >
                 <el-form label-position="top" label-width="80px" :model="formData">
                     <el-form-item label="加盟公司">
-                        <el-cascader expand-trigger="hover" :options="formData.companyList">
+                        <el-cascader 
+                            filterable
+                            change-on-select
+                            :show-all-levels="false"
+                            expand-trigger="hover" 
+                            v-model="addCompany"
+                            :options="formData.companyList">
                         </el-cascader>
                     </el-form-item>
                     <el-form-item label="联系人">
@@ -434,6 +461,8 @@
         components: {ElForm},
         data() {
             return {
+                // 加盟公司
+                addCompany: [],
                 joinInvitation: false,
                 addInvitation: false,
                 cancelFranchisee: false,
