@@ -109,11 +109,8 @@ export default {
       parentCompanyList: [],
       
       allRoleList: [],
-      selectedOptions: [],
-      selectedOptions2: [],
       companyId: localStorage.getItem("motherCompanyId"),
-      // 当前子公司id
-      children_id: ""
+      
     };
   },
   methods: {
@@ -131,7 +128,6 @@ export default {
                      data_auth: '',
                      data_auths: ''
                  }
-                 console.log('添加角色参数:'+JSON.stringify(obj));
               this.$axios({
                  method: 'POST',
                  withCredentials: false,
@@ -176,20 +172,8 @@ export default {
     },
     // 选择子公司
     handleChange(data) {
-      let companyId = this.children_id;
       this.companyId = data[data.length - 1];
       this.getAllRole();
-    },
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
-    // 点击多选框
-    checkChange(data) {
-        this.roleEditRole();
-    },
-    // 点击数据权限
-    handDataPermission(data) {
-        this.roleEditRole();
     },
     // 修改角色权限
     roleEditRole() {
@@ -212,7 +196,7 @@ export default {
                if (res.data.code === 200) {
                    console.log(JSON.stringify(res.data.data, null, 4))
                    self.$message({
-                       message: '成功',
+                       message: '修改角色权限成功',
                        type: 'success'
                    })
                } else {
@@ -276,44 +260,6 @@ export default {
         .catch(function(err){
             console.log(err);
         });
-    },
-    // 设置选中权限
-    setSelBtn(arr) {
-        let self = this;
-        let data = self.allClueList
-        for (const key2 in data) {
-            if (data.hasOwnProperty(key2)) {
-                for (let i = 0; i < data[key2].length; i++) {
-                    if (data[key2][i].checked) {
-                        let obj = data[key2][i];
-                        delete obj.checked;
-                        self.$set(data[key2], i, obj);
-                    }
-                }
-            }
-        }
-        if (arr.length > 0) {
-            for (const key in data) {
-                if (data.hasOwnProperty(key)) {
-                    for (let i = 0; i < data[key].length; i++) {
-                        for (let j = 0; j < arr.length; j++) {
-                            if (arr[j] == data[key][i].id) {
-                                let obj = data[key][i];
-                                obj.checked = true;
-                                self.$set(data[key], i, obj);
-                            }
-                            
-                        }
-                    }
-                }
-            }
-            
-        } else {
-
-        }
-        console.log(self.allClueList);
-        
-       
     },
     // 所有权限
     opatRole() {
@@ -390,9 +336,7 @@ export default {
   },
   created() {
     this.applyCompany();
-    
     this.opatRole();
-    // this.getAllRole();
   }
 };
 </script>
@@ -451,7 +395,7 @@ export default {
   margin-top: 10px;
 }
 #radioBtn {
-    max-height: 500px;
+    max-height: 600px;
     overflow: scroll;
 }
 </style>
