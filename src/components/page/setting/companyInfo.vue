@@ -31,10 +31,13 @@
                                 <el-input v-model="detailsCompanyList.company_nickname"></el-input>
                             </el-form-item>
                             <el-form-item label="地区">
-                                <el-cascader v-model="detailsCompanyList.cityArr" expand-trigger="hover" :options="cityList" @change="handleChange">
+                                <el-cascader 
+                                    v-model="detailsCompanyList.cityArr" 
+                                    expand-trigger="hover" 
+                                    :options="cityList" 
+                                    @change="handleChange">
                                 </el-cascader>
                             </el-form-item>
-
 
                             <el-form-item label="网址">
                                 <el-input v-model="detailsCompanyList.company_website"></el-input>
@@ -176,7 +179,6 @@
                 let companyId = this.children_id;
                 this.companyId = data[data.length - 1];
                 // 获取子公司所有部门
-
                     //this.getChildrenDepartment();
                      this.getCompanyDetails();
 
