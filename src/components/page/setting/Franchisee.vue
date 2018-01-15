@@ -3,10 +3,10 @@
         <el-tabs type="border-card">
             <el-tab-pane label="申请加盟">
                 <h3>可选加盟</h3>
-                <template>
+                <template >
                         <el-row>
                             <el-col :span="8" :offset="16">
-                                <el-input v-if="searchType=='公司名称'" placeholder="请输入内容" v-model="searchIptValue" class="input-with-select">
+                                <el-input v-if="searchType=='1'" placeholder="请输入内容" v-model="searchIptValue" class="input-with-select">
                                     <el-select v-model="searchType" slot="prepend" placeholder="请选择">
                                         <el-option
                                             v-for="item in searchSel"
@@ -17,7 +17,6 @@
                                     </el-select>
                                     <el-button slot="append" icon="el-icon-search" @click="searchBtn"></el-button>
                                 </el-input>
-
                                  <el-autocomplete
                                     v-else
                                     class="inline-input"
@@ -76,8 +75,8 @@
                             min-width="130"
                         >
                             <!-- :filters="industryArr"
-                            :filter-method="filterTag" -->
-                            <!-- <template slot-scope="scope">
+                            :filter-method="filterTag"
+                            <template slot-scope="scope">
                                 <el-tag
                                     type="primary"
                                     close-transition>{{scope.row.industry}}
@@ -247,8 +246,15 @@
             >
                 <el-form label-position="top" label-width="80px" :model="formData">
                     <el-form-item label="加盟公司">
-                        <el-cascader expand-trigger="hover" :options="formData.companyList">
-                        </el-cascader>
+                            <el-cascader 
+                                expand-trigger="hover" 
+                                :options="companyList"
+                                filterable
+                                change-on-select
+                                :show-all-levels="false"
+                                v-model="formData.selCompany"
+                                >
+                            </el-cascader>
                     </el-form-item>
                     <el-form-item label="联系人">
                         <el-input placeholder="请输入全称" v-model="formData.contact"></el-input>
@@ -263,20 +269,24 @@
                 </el-form>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="addInvitation = false">取 消</el-button>
-                    <el-button type="primary" @click="addInvitation = false">确 定</el-button>
+                    <el-button type="primary" @click="applicationToJoin">确 定</el-button>
                 </span>
             </el-dialog>
         </div>
         <!-- 取消申请 -->
         <div class="subCompany invitation">
             <el-dialog
-                :title="cancelTitle"
+                :title="'取消'+cancelTitle"
                 :visible.sync="cancelApplication"
             >
                 <p>是否确认取消{{ cancelTitle }}</p>
+                <template v-if="cancelTitle == '加盟'">
+                    <!-- <p>输入取消理由</p> -->
+                    <el-input placeholder="输入取消理由" v-model="cancleText"></el-input>
+                </template>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="cancelApplication = false">取 消</el-button>
-                    <el-button type="primary" @click="cancelApplication = false">确 定</el-button>
+                    <el-button type="primary" @click="cancelAdd">确 定</el-button>
                 </span>
             </el-dialog>
         </div>
@@ -286,36 +296,25 @@
 export default {
   data() {
     return {
-        // 输入框内容
-        searchIptValue: '',
-        // 搜索范围
-        searchType: '行业',
+        // 取消理由
+        cancleText: '',
+       // 选择列
+       selRowData: '',
+      // 输入框内容
+      searchIptValue: "",
+      // 搜索范围
+      searchType: "1",
       addInvitation: false,
       cancelApplication: false,
       cancelTitle: "",
+      companyList: [],
       formData: {
         contact: "",
         phone: "",
         industry: "",
         description: "",
-        companyList: [
-          {
-            value: "no1",
-            label: "第一学",
-            children: [
-              {
-                value: "no2",
-                label: "第二学",
-                children: [
-                  {
-                    value: "no3",
-                    label: "第三学"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+         // 选着加盟公司
+        selCompany: [],
       },
       // 加盟邀请
       invitationData: [], // 加盟邀请
@@ -324,64 +323,183 @@ export default {
       // 申请状态
       applicationStatusData: [], // 申请状态
       // 现已加盟
-      alreadyJoinedData: [
-        {
-          higherCompany: "环球壹学教育科技有限公司",
-          applicant: "王小虎",
-          phone: "188888888",
-          joinCompany: "第一学",
-          applicationTime: "2019-11-09",
-          joinTime: "2019-11-09"
-        }
-      ],
+      alreadyJoinedData: [],
       // 行业
       industryArr: [
-        { value: "教育",},
-        { value: "科技",},
-        { value: "IT",},
-        { value: "对外贸易"},
-        { value: "金融", }
+        { value: "教育" },
+        { value: "科技" },
+        { value: "IT" },
+        { value: "对外贸易" },
+        { value: "金融" }
       ],
       searchSel: [
-          {
-              label: '行业',
-              value: '行业'
-          },
-          {
-              label: '公司名称',
-              value: '公司名称'
-          },
-          
+        
+        {
+          label: "公司名称",
+          value: "1"
+        },{
+          label: "行业",
+          value: "2"
+        }
+
       ],
-        restaurants: [],
+      restaurants: []
     };
   },
-   mounted() {
-      
-    },
+  mounted() {},
   methods: {
-      querySearch(queryString, cb) {
-        var restaurants = this.restaurants;
-        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
-        // 调用 callback 返回建议列表的数据
-        cb(results);
-      },
-      createFilter(queryString) {
-        return (restaurant) => {
-          return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-        };
-      },
-      loadAll() {
-          console.log(JSON.stringify(this.industryArr));
-        return this.industryArr
+      // 自动补全---------
+    querySearch(queryString, cb) {
+      var restaurants = this.restaurants;
+      var results = queryString
+        ? restaurants.filter(this.createFilter(queryString))
+        : restaurants;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
     },
+    createFilter(queryString) {
+      return restaurant => {
+        return (
+          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        );
+      };
+    },
+    loadAll() {
+      return this.industryArr;
+    },
+   // 自动补全--------
+   // 申请加盟
+   applicationToJoin() {
+       this.addInvitation = false;
+        let self = this;
+        this.$axios({
+            method: 'POST',
+            withCredentials: false,
+            url: '/api/joiningTrader/applyFranchisee',
+            data: {
+                token: localStorage.getItem('crm_token'),
+                trader_id: self.selRowData.trader_id,
+                company_id: self.formData.selCompany[self.formData.selCompany.length - 1],
+                contacts: self.formData.contact,
+                contacts_phone: self.formData.phone,
+                content: self.formData.description
+            }
+        })
+        .then(function(res){
+            if (res.data.code === 200) {
+                console.log(JSON.stringify(res.data.data, null, 4))
+                self.$message({
+                    message: '申请成功',
+                    type: 'success'
+                });
+                self.joiningTraderApplyFranchiseeStatu();
+            } else {
+                self.$message.error(res.data.msg);
+            }
+        })
+        .catch(function(err){
+            console.log(err);
+        });
+   },
+   // 取消加盟
+   cancelAdd() {
+       this.cancelApplication = false;
+       let paramObj,url;
+       let self = this;
+       if (this.cancelTitle == "申请") {
+           // 取消申请 trader_id
+           url = '/api/joiningTrader/cancelFranchiseeInvitation'
+           paramObj = {
+               token: localStorage.getItem("crm_token"),
+               trader_id: self.selRowData.trader_id
+           }
+       } else {
+           // 取消加盟 cancleText apply_id content
+           console.log(self.selRowData);
+           
+           url = '/api/joiningTrader/cancelFranchisee'
+           paramObj = {
+               token: localStorage.getItem("crm_token"),
+               apply_id: self.selRowData.apply_id,
+               content: self.cancleText
+           }
+       }
+           console.log('取消参数:'+JSON.stringify(paramObj));
+           
+           this.$axios({
+              method: 'POST',
+              withCredentials: false,
+              url: url,
+              data: paramObj
+           })
+           .then(function(res){
+              if (res.data.code === 200) {
+                  self.$message({
+                      message: '取消成功',
+                      type: 'success'
+                  });
+                   if (self.cancelTitle == "申请") {
+                        // 取消申请 trader_id
+                         self.joiningTraderApplyFranchiseeStatu();
+                    } else {
+                        // 取消加盟 cancleText apply_id content
+                         self.joiningTraderapplyFranchiseeXianYi();
+                    }
+              } else {
+                  self.$message.error(res.data.msg);
+              }
+           })
+           .catch(function(err){
+               console.log(err);
+           });
+
+   },
     // 选择行业
     handleSelect(data) {
+        console.log('---------------选择行业---------');
         console.log(data);
+        console.log('---------------选择行业---------');
     },
     // 搜索按钮
     searchBtn() {
-
+        console.log(this.searchIptValue);
+        console.log(this.searchType);
+            let self = this;
+            let paramObj = {
+                   token: localStorage.getItem('crm_token'),
+               };
+               if (self.searchType == 1) {
+                   // 名称
+                   paramObj = {
+                    token: localStorage.getItem('crm_token'),
+                    name: self.searchIptValue
+                };
+               } else {
+                   // 行业
+                   paramObj = {
+                    token: localStorage.getItem('crm_token'),
+                    industry: self.searchIptValue
+                };
+               }
+               console.log(JSON.stringify(paramObj));
+               
+            this.$axios({
+               method: 'POST',
+               withCredentials: false,
+               url: '/api/joiningTrader/applyFranchiseeList',
+               data: paramObj
+            })
+            .then(function(res){
+               if (res.data.code === 200) {
+                   self.invitationData = res.data.data.list;
+                   console.log(JSON.stringify(res.data.data, null, 4))
+               } else {
+                   self.$message.error(res.data.msg);
+               }
+            })
+            .catch(function(err){
+                console.log(err);
+            });
     },
     // 赛选行业
     filterTag(value, row) {
@@ -389,8 +507,11 @@ export default {
     },
     // 申请加盟
     joinCompany(row, value) {
-      this.addInvitation = true;
+        this.selRowData = value;
+        this.addInvitation = true;
+        console.log(value);
     },
+    
     cancelApplicationFn(row, value, flag) {
       if (flag === "application") {
         // 申请
@@ -399,7 +520,9 @@ export default {
         // 加盟
         this.cancelTitle = "加盟";
       }
+      
       this.cancelApplication = true;
+      this.selRowData = value;
     },
     // 加盟商加盟状态
     joiningTraderApplyFranchiseeStatu() {
@@ -523,8 +646,7 @@ export default {
     // 申请加盟--可选加盟
     joiningTraderapplyFranchiseeList() {
       var self = this;
-      self
-        .$axios({
+      self.$axios({
           method: "POST",
           withCredentials: false,
           url: "/api/joiningTrader/applyFranchiseeList",
@@ -564,11 +686,10 @@ export default {
                 value: element
               });
             }
-            
+
             self.industryArr = industryArr;
             console.log(self.industryArr);
             self.restaurants = self.loadAll();
-            
           } else {
             self.$message.error(res.data.msg);
           }
@@ -576,12 +697,45 @@ export default {
         .catch(function(err) {
           console.log(err);
         });
-    }
+    },
+      // 所有子公司
+    applyCompany() {
+        let self = this;
+        this.$axios({
+            method: 'POST',
+            withCredentials: false,
+            url: '/api/company/CompanyMyList',
+            data: {
+                token: localStorage.getItem('crm_token'),
+            }
+        })
+            .then(function (res) {
+                var arr = [];
+                self.getMenuName(res.data.data.list);
+                self.companyList = res.data.data.list
+                // console.log(JSON.stringify(res.data.data.list));
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    },
+        // 处理树形数据, 删除空的children
+    getMenuName(menus){
+        for (var value of menus) {
+            if (value.children) {
+                this.getMenuName(value.children)
+            }
+            if (value.children.length == 0) {
+                delete value.children
+            }
+        }
+    },
   },
   created() {
+      this.applyCompany();
     // 行业列表
     this.getIndustryList();
-    
+
     this.joiningTraderApplyFranchiseeStatu();
     this.joiningTraderapplyFranchiseeList();
     this.joiningTraderapplyFranchiseeXianYi();
@@ -593,6 +747,9 @@ export default {
   width: 100%;
 }
 .el-select {
-    width: 100px;
+  width: 120px;
+}
+.el-row {
+    margin-bottom: 10px;
 }
 </style>
