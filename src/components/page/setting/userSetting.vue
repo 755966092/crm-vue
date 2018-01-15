@@ -690,7 +690,7 @@
                 self.$axios({
                     method: 'POST',
                     withCredentials: false,
-                    url: '/api/department/makeAdminDepartmentList',
+                    url: '/api/department/makeAdminCDepartmentList',
                     data: {
                         token: localStorage.getItem('crm_token'),
                         department_id: self.departmentId,

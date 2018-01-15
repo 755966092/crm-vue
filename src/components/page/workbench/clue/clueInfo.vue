@@ -432,6 +432,14 @@
                                    <p class="infoLabel">{{clueInfoData.details.user_name}}</p>
                                 </el-col>
                             </el-row>
+                             <el-row>
+                                <el-col :span="3">
+                                    <p>前所属机构：</p>
+                                </el-col>
+                                <el-col :span="21">
+                                   <p class="infoLabel">{{clueInfoData.details.before_company_name}}</p>
+                                </el-col>
+                            </el-row>
                             <el-row>
                                 <el-col :span="3">
                                     <p>前负责人：</p>
