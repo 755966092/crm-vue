@@ -355,7 +355,7 @@
                 <p>是否取消该加盟邀请</p>
                 <span slot="footer" class="dialog-footer">
 								<el-button @click="joinInvitation = false">取 消</el-button>
-								<el-button type="primary" @click="joinInvitation = false">确 定</el-button>
+								<el-button type="primary" @click="cancelFn(1)">确 定</el-button>
 						</span>
             </el-dialog>
         </div>
@@ -555,15 +555,34 @@ export default {
         }
       ],
       // 已拒绝
-      cancelledJvData: []
+      cancelledJvData: [],
+      // 行数据
+      selRowData:'',
     };
   },
 
   methods: {
+      // 取消
+      cancelFn(flag) {
+          this.joinInvitation = false;
+          let self = this,
+              url,paramObj;
+          if (flag == 1) {
+              // 取消加盟邀请
+              url = '/api/joiningTrader/cancelFranchiseeInvitation',
+              paramObj = {
+                  token: localStorage.getItem('crm_token'),
+                  trader_id: 1
+              }
+          }
+          console.log('取消参数:'+JSON.stringify(self.selRowData ));
+          
+      },
     handleEdit(row, column) {
       console.log("row:" + row);
       console.log(column);
       this.joinInvitation = true;
+      this.selRowData = column;
     },
     showModel() {
       this.addInvitation = true;
