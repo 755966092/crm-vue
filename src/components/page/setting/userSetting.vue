@@ -337,7 +337,7 @@
             >
                 选择员工
                 <div style="width:100%">
-                    <el-select v-model="headId" placeholder="请选择">
+                    <el-select v-model="selUserId" placeholder="请选择">
                         <el-option
                             v-for="item in departmentStaffOption"
                             :key="item.value"
@@ -401,9 +401,9 @@
             >
                 选择员工交接{{selectPeopleFlag}}
                 <div>
-                    <el-select v-model="value" placeholder="请选择">
+                    <el-select v-model="selUserId" placeholder="请选择">
                         <el-option
-                            v-for="item in options"
+                            v-for="item in departmentStaffOption"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
@@ -412,7 +412,7 @@
                 </div>
                 <span slot="footer" class="dialog-footer">
 								<el-button @click="selectPeople = false">取 消</el-button>
-								<el-button type="primary" @click="selectPeople = false">确 定</el-button>
+								<el-button type="primary" @click="addSubCompany('selectPeople')">确 定</el-button>
 						</span>
             </el-dialog>
         </div>
@@ -441,9 +441,9 @@
             >
                 选择员工交接{{deleteEmployeeFlag}}
                 <div>
-                    <el-select v-model="value" placeholder="请选择">
+                    <el-select v-model="selUserId" placeholder="请选择">
                         <el-option
-                            v-for="item in options"
+                            v-for="item in departmentStaffOption"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
@@ -452,7 +452,7 @@
                 </div>
                 <span slot="footer" class="dialog-footer">
 								<el-button @click="deleteEmployee = false">取 消</el-button>
-								<el-button type="primary" @click="deleteEmployee = false">确 定</el-button>
+								<el-button type="primary" @click="addSubCompany('deleteEmployee')">确 定</el-button>
 						</span>
             </el-dialog>
         </div>
@@ -545,7 +545,7 @@
                 departmentId: 1,
                 departmentNewName: '',
                 // 主管id
-                headId: '',
+                selUserId: '',
                 // 子公司id
                 subsidiaryId:'',
                 // 公司所有与昂
@@ -618,6 +618,7 @@
             // 操作数据
             addSubCompany(flag) {
                 let self = this,url,paramObj,str;
+                // 新建子公司
                 if (flag == 'company') {
                     str = '创建子公司成功'
                     self.subCompany = false;
@@ -629,6 +630,7 @@
                         mother_id: self.motnerCompanyId
                     }
                 } else if (flag == 'department') { 
+                    // 新建子部门
                     self.subDepartment = false;
                     str = '创建子部门成功'
                     url = '/api/department/applyDepartment',
@@ -639,6 +641,7 @@
                         parent_id: self.departmentId
                     }
                 } else if (flag == 'newName') {
+                    // 重命名部门
                      self.rename = false;
                      str = '重命名成功'
                     let name = self.departmentNewName || self.departmentName;
@@ -649,6 +652,7 @@
                         name: name
                     }
                 } else if (flag == 'del') {
+                    // 删除部门
                     self.delDepartment = false;
                     str = '删除成功'
                     url = '/api/department/deleteDepartment',
@@ -657,6 +661,7 @@
                         department_id: self.departmentId,
                     }
                 } else if (flag == 'newEmployee'){
+                    // 添加新员工
                     self.newEmployee = false;
                     str = '添加成功'
                     url = '/api/department/applyUserNewDepartment',
@@ -669,6 +674,7 @@
                         password: self.addEmployeeData.psd,
                     }
                 } else if (flag == 'currentEmployee' ) {
+                    // 添加员工(从公司员工选择)
                     self.currentEmployee = false;
                     str = '添加成功'
                     url = '/api/department/applyUserDepartment',
@@ -678,15 +684,17 @@
                         user_id: self.currentUserId
                     }
                 } else if (flag == 'setSupervisor') {
+                    // 设置部门主管
                     self.setSupervisor = false;
                     str = '设置成功'
                     url = '/api/department/makeAdminDepartment',
                     paramObj = {
                         token: localStorage.getItem('crm_token'),
                         department_id: self.departmentId,
-                        admin_id: self.headId
+                        admin_id: self.selUserId
                     }
                 } else if (flag == 'selectRole') {
+                    // 修改员工角色
                     self.selectRole = false;
                     str = '修改成功'
                     url = '/api/User/userRoleEdit';
@@ -694,6 +702,29 @@
                         token: localStorage.getItem('crm_token'),
                         user_id: self.selRoleData.user_id,
                         role_id: self.roleId
+                    }
+                } else if (flag == 'selectPeople') {
+                    // 交接业务
+                    self.selectPeople = false;
+                    str = '交接成功'
+                    url = '/api/User/userJoinWork';
+                    paramObj = {
+                        token: localStorage.getItem('crm_token'),
+                        user_id: self.selRoleData.user_id,
+                        to_user_id: self.departmentId,
+                        type: self.selectPeopleFlag == '本部门业务' ? 2 : 1,
+                        department_id: self.departmentId
+                    }
+                } else if (flag == 'deleteEmployee') {
+                    self.deleteEmployee = false;
+                    str = '删除成功'
+                    url = '/api/User/userDelete';
+                    paramObj = {
+                        token: localStorage.getItem('crm_token'),
+                        user_id: self.selRoleData.user_id,
+                        to_user_id: self.departmentId,
+                        type: self.deleteEmployeeFlag == '本部门员工' ? 2 : 1,
+                        department_id: self.departmentId
                     }
                 }
                 else {
@@ -734,7 +765,7 @@
                             } else {
                                 self.getChildrenDepartment();
                             }
-                        } else if (flag == 'currentEmployee' || flag == 'newEmployee' || flag == 'selectRole') {
+                        } else if (flag == 'currentEmployee' || flag == 'newEmployee' || flag == 'selectRole'|| flag == 'deleteEmployee') {
                             self.departmentMakeAdminDepartmentList();
                         }  
                         else {
@@ -944,7 +975,6 @@
                             
                             if (res.data.data.list.length > 0) {
                                 let arr = [];
-                                self.departmentStaffOption.length = 0;
                                 for (let i = 0; i < res.data.data.list.length; i++) {
                                     let obj = res.data.data.list[i];
                                     arr.push({
