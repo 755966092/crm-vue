@@ -328,8 +328,9 @@
                             label="审批人"
                             min-width="100"
                         ></el-table-column>
+                            <!-- prop="no_approver_content" -->
                         <el-table-column
-                            prop="no_approver_content"
+                            prop="content"
                             label="拒绝原因"
                             min-width="180"
                             show-overflow-tooltip
@@ -350,7 +351,7 @@
             <el-dialog
                 title="取消加盟邀请"
                 :visible.sync="joinInvitation"
-                width="20%"
+                width="40%"
             >
                 <p>是否取消该加盟邀请</p>
                 <span slot="footer" class="dialog-footer">
@@ -419,7 +420,7 @@
                 <p>是否确定取消该加盟商</p>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="cancelFranchisee2 = false">取 消</el-button>
-                    <el-button type="primary" @click="cancelFranchisee2 = false">确 定</el-button>
+                    <el-button type="primary" @click="cancelFn(2)">确 定</el-button>
                 </span>
             </el-dialog>
         </div>
@@ -448,7 +449,7 @@
                 <p>是否确定{{ diglogSubtitle }}该加盟商的请求</p>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="refusedJoin2 = false">取 消</el-button>
-                    <el-button type="primary" @click="refusedJoin2 = false">确 定</el-button>
+                    <el-button type="primary" @click="agreeAdd">确 定</el-button>
                 </span>
             </el-dialog>
         </div>
@@ -473,111 +474,128 @@ export default {
       refusedJoin: false,
       refusedJoin2: false,
       denialReason: "", // 拒绝加入原因
-       companyList: [
-          {
-            value: "no1",
-            label: "第一学",
-            
-          }
-        ],
+      companyList: [],
       formData: {
-       
         contact: "",
         phone: "",
         industry: "",
         description: ""
       },
       // 加盟邀请
-      invitationData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ],
+      invitationData: [],
       // 加盟商
-      franchiseeData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-          franchisee: "清华北大",
-          contact: "联系人",
-          phone: "18618618686",
-          byDate: "2017-09-09",
-          applicationDate: "2017-09-09",
-          remarks: "备注"
-        }
-      ],
+      franchiseeData: [],
       // 加盟待审批
-      pendingData: [
-        {
-          date: "2016-05-02",
-          address: "上海市普陀区金沙江路 1518 弄",
-          franchisee: "清华北大",
-          companyName: "环球壹学",
-          contact: "联系人",
-          phone: "18618618686",
-          applicationState: "审批中",
-          applicationDate: "2017-09-09",
-          remarks: "说明"
-        }
-      ],
+      pendingData: [],
       // 已取消
-      cancelledData: [
-        {
-          date: "2016-05-02",
-          address: "上海市普陀区金沙江路 1518 弄",
-          franchisee: "清华北大",
-          companyName: "环球壹学",
-          applicationDate: "2017-09-09",
-          approvedName: "杨慧",
-          cancelName: "杨慧",
-          contact: "联系人",
-          phone: "18618618686",
-          addTime: "2017-09-09",
-          cancelTime: "2017-09-09"
-        }
-      ],
+      cancelledData: [],
       // 已拒绝
       cancelledJvData: [],
       // 行数据
-      selRowData:'',
+      selRowData: ""
     };
   },
 
   methods: {
-      // 取消
-      cancelFn(flag) {
-          this.joinInvitation = false;
-          let self = this,
-              url,paramObj;
-          if (flag == 1) {
-              // 取消加盟邀请
-              url = '/api/joiningTrader/cancelFranchiseeInvitation',
-              paramObj = {
-                  token: localStorage.getItem('crm_token'),
-                  trader_id: 1
-              }
+    // 同意or拒绝加盟
+    agreeAdd() {
+      let self = this,
+        paramObj,
+        url;
+      self.refusedJoin2 = false;
+      if (this.diglogSubtitle == "同意") {
+        // 同意加盟
+        // /joiningTrader/FranchiseeInvitation    2
+        //   console.log('同意加盟参数:' + JSON.stringify(self.selRowData));
+        paramObj = {
+          token: localStorage.getItem("crm_token"),
+          apply_id: self.selRowData.apply_id,
+          statu: 2
+        };
+      } else {
+        // 拒绝加盟
+        //   console.log('拒绝加盟参数:' + JSON.stringify(self.selRowData));
+        //   console.log('拒绝加盟原因:' + self.denialReason);
+        paramObj = {
+          token: localStorage.getItem("crm_token"),
+          apply_id: self.selRowData.apply_id,
+          statu: 3,
+          content: self.denialReason
+        };
+      }
+      console.log("拒绝加盟参数:" + JSON.stringify(paramObj, null, 4));
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/joiningTrader/FranchiseeInvitation",
+        data: paramObj
+      })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            console.log(JSON.stringify(res.data.data, null, 4));
+            self.$message({
+              message: "审批成功",
+              type: "success"
+            });
+            self.joiningTraderFranchiseeListEve();
+          } else {
+            self.$message.error(res.data.msg);
           }
-          console.log('取消参数:'+JSON.stringify(self.selRowData ));
-          
-      },
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 取消
+    cancelFn(flag) {
+      let self = this,
+        url,
+        paramObj;
+      if (flag == 1) {
+        self.joinInvitation = false;
+        // 取消加盟邀请
+        url = "/api/joiningTrader/cancelFranchiseeInvitation",
+          paramObj = {
+            token: localStorage.getItem("crm_token"),
+            trader_id: self.selRowData.trader_id
+          };
+      } else if (flag == 2) {
+        self.cancelFranchisee2 = false;
+        // 取消ji加盟商
+        url = "/api/joiningTrader/cancelFranchisee",
+          paramObj = {
+            token: localStorage.getItem("crm_token"),
+            apply_id: self.selRowData.apply_id,
+            content: self.cancelFranchiseeReason
+          };
+      }
+      console.log("取消参数:" + JSON.stringify(self.selRowData));
+          this.$axios({
+             method: 'POST',
+             withCredentials: false,
+             url: url,
+             data: paramObj
+          })
+          .then(function(res){
+             if (res.data.code === 200) {
+                 console.log(JSON.stringify(res.data.data, null, 4))
+                 self.$message({
+                     message: '取消成功',
+                     type: 'success'
+                 });
+                 if (flag == 1) {
+                     self.joiningTraderFranchiseeMyList();
+                 } else {
+                     self.joiningTraderFranchiseeList();
+                 }
+             } else {
+                 self.$message.error(res.data.msg);
+             }
+          })
+          .catch(function(err){
+              console.log(err);
+          });
+    },
     handleEdit(row, column) {
       console.log("row:" + row);
       console.log(column);
@@ -587,8 +605,9 @@ export default {
     showModel() {
       this.addInvitation = true;
     },
-    cancelFranchiseeFn() {
+    cancelFranchiseeFn(index,value) {
       this.cancelFranchisee = true;
+      this.selRowData = value
     },
     cancelFranchiseeFn2() {
       this.cancelFranchisee = false;
@@ -606,6 +625,7 @@ export default {
         this.diglogSubtitle = "拒绝";
         this.refusedJoin = true;
       }
+      this.selRowData = column;
     },
     refusedJoinFn2() {
       this.refusedJoin = false;
@@ -855,77 +875,77 @@ export default {
           });
       }
     },
-      // 所有子公司
+    // 所有子公司
     applyCompany() {
-        let self = this;
-        this.$axios({
-            method: 'POST',
-            withCredentials: false,
-            url: '/api/company/CompanyMyList',
-            data: {
-                token: localStorage.getItem('crm_token'),
-            }
-        })
-            .then(function (res) {
-                var arr = [];
-                self.getMenuName(res.data.data.list);
-                self.companyList = res.data.data.list
-                // console.log(JSON.stringify(res.data.data.list));
-            })
-            .catch(function (err) {
-                console.log(err);
-            });
-    },
-        // 处理树形数据, 删除空的children
-    getMenuName(menus){
-        for (var value of menus) {
-            if (value.children) {
-                this.getMenuName(value.children)
-            }
-            if (value.children.length == 0) {
-                delete value.children
-            }
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/company/CompanyMyList",
+        data: {
+          token: localStorage.getItem("crm_token")
         }
+      })
+        .then(function(res) {
+          var arr = [];
+          self.getMenuName(res.data.data.list);
+          self.companyList = res.data.data.list;
+          // console.log(JSON.stringify(res.data.data.list));
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 处理树形数据, 删除空的children
+    getMenuName(menus) {
+      for (var value of menus) {
+        if (value.children) {
+          this.getMenuName(value.children);
+        }
+        if (value.children.length == 0) {
+          delete value.children;
+        }
+      }
     },
     // 发布加盟邀请
     addInvitationFn() {
-        let self = this;
-        self.addInvitation = false;
-        let paramObj = {
-                token: localStorage.getItem('crm_token'),
-                company_id: self.addCompany[self.addCompany.length - 1],
-                contacts: self.formData.contact,
-                contacts_phone: self.formData.phone,
-                industry: self.formData.industry,
-                content: self.formData.description,
-            }
-        console.log('添加加盟邀请参数:'+JSON.stringify(paramObj,null,4));
-        // 加盟邀请
-        this.$axios({
-            method: 'POST',
-            withCredentials: false,
-            url: '/api/joiningTrader/releaseFranchisee',
-            data: paramObj
+      let self = this;
+      self.addInvitation = false;
+      let paramObj = {
+        token: localStorage.getItem("crm_token"),
+        company_id: self.addCompany[self.addCompany.length - 1],
+        contacts: self.formData.contact,
+        contacts_phone: self.formData.phone,
+        industry: self.formData.industry,
+        content: self.formData.description
+      };
+      console.log("添加加盟邀请参数:" + JSON.stringify(paramObj, null, 4));
+      // 加盟邀请
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/joiningTrader/releaseFranchisee",
+        data: paramObj
+      })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            self.$message({
+              message: "添加加盟邀请成功",
+              type: "success"
+            });
+            self.joiningTraderFranchiseeMyList();
+          } else {
+            self.$message.error(res.data.msg);
+          }
         })
-        .then(function(res){
-            if (res.data.code === 200) {
-                self.$message({
-                    message: '添加加盟邀请成功',
-                    type: 'success'
-                });
-                self.joiningTraderFranchiseeMyList();
-            } else {
-                self.$message.error(res.data.msg);
-            }
-        })
-        .catch(function(err){
-            console.log(err);
+        .catch(function(err) {
+          console.log(err);
         });
-    },
+    }
   },
   created() {
-      this.applyCompany();
-      //请求加盟邀请列表
+    this.applyCompany();
+    //请求加盟邀请列表
     this.joiningTraderFranchiseeMyList();
     //请求加盟商列表
     this.joiningTraderFranchiseeList();
