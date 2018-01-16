@@ -22,7 +22,10 @@
                             <i :class="item.icon"></i>
                             <span slot="title">{{ item.title }}</span>
                         </template>
-                        <el-menu-item v-for="(subItem,i) in item.subs" :key="i" :index="subItem.index">
+                        <el-menu-item 
+                            v-for="(subItem,i) in item.subs" 
+                            :key="i" 
+                            :index="subItem.index">
                             {{ subItem.title }}
                         </el-menu-item>
                     </el-submenu>

@@ -25,7 +25,6 @@ export default new Router({
                             path: ':id', // 线索详情
                             component: resolve => require(['../components/page/workbench/workbench/workbenchSalesBriefing.vue'], resolve),    // 拖拽列表组件
                         },
-
                     ]
                 },
                 {
@@ -75,32 +74,6 @@ export default new Router({
                     path: '/logpage',
                     component: resolve => require(['../components/page/workbench/LogPage.vue'], resolve)    // 拖拽列表组件
                 },
-                // {
-                //     path: '/report',
-                //     component: resolve => require(['../components/page/workbench/reportCenter.vue'], resolve),    // 拖拽列表组件
-                //     children: [
-                //         {
-                //             path: 'followUp',
-                //             component: resolve => require(['../components/page/workbench/reportCenter/Report_FollowUp.vue'], resolve)    // 拖拽列表组件
-                //         },
-                //         {
-                //             path: 'addBusiness',
-                //             component: resolve => require(['../components/page/workbench/reportCenter/Report_AddBusiness.vue'], resolve)    // 拖拽列表组件
-                //         },
-                //         {
-                //             path: 'contractSummary',
-                //             component: resolve => require(['../components/page/workbench/reportCenter/Report_ContractSummary.vue'], resolve)    // 拖拽列表组件
-                //         },
-                //         {
-                //             path: 'customerType',
-                //             component: resolve => require(['../components/page/workbench/reportCenter/Report_CustomerType.vue'], resolve)    // 拖拽列表组件
-                //         },
-                //         {
-                //             path: 'salesRankings',
-                //             component: resolve => require(['../components/page/workbench/reportCenter/Report_SalesRankings.vue'], resolve)    // 拖拽列表组件
-                //         },
-                //     ]
-                // },
                 {
                     path: '/Report_FollowUp',
                     component: resolve => require(['../components/page/workbench/reportCenter/Report_FollowUp.vue'], resolve)    // 拖拽列表组件
@@ -137,21 +110,34 @@ export default new Router({
             children:[
                 {
                     path: '/',
-                    component: resolve => require(['../components/page/setting/userSetting.vue'], resolve)
-                },{
+                    // component: resolve => require(['../components/page/setting/userSetting/userSettingIndex.vue'], resolve),
+                    component: resolve => require(['../components/page/setting/userSetting.vue'], resolve),
+                    children: [
+                        {
+                            path: '/', 
+                            component: resolve => require(['../components/page/setting/userSetting/userSettingIndex.vue'], resolve),    // 拖拽列表组件
+                        },
+                        {
+                            path: 'info', 
+                            component: resolve => require(['../components/page/setting/userSetting/userSettingInfo.vue'], resolve),    // 拖拽列表组件
+                        },
+                    ]
+                }, 
+                {
                     path: '/permissionSettings',
                     component: resolve => require(['../components/page/setting/permissionSettings.vue'], resolve)
-                },{
+                }, {
                     path: '/companyInfo',
                     component: resolve => require(['../components/page/setting/companyInfo.vue'], resolve)
-                },{
+                }, {
                     path: '/joinCompany',
                     component: resolve => require(['../components/page/setting/joinCompany.vue'], resolve)
-                },{
+                }, {
                     path: '/Franchisee',
                     component: resolve => require(['../components/page/setting/Franchisee.vue'], resolve)
                 },
             ]
+            
         }
     ]
 })

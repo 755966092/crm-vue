@@ -9,6 +9,7 @@
         <el-menu 
             :default-active="onRoutes" 
             :collapse="isCollapse" 
+            @select="selectEvent"
             class="el-menu-vertical-demo" 
             theme="dark" 
             unique-opened 
@@ -45,30 +46,32 @@
             return {
                 isCollapse: false,
                 items: [
+                   
+                    
                     {
                         icon: 'el-icon-setting',
-                        index: 'setting',
+                        index: '/setting',
                         title: '部门和用户设置'
                     },
                     {
                         icon: 'el-icon-menu',
-                        index: 'permissionSettings',
+                        index: '/permissionSettings',
                         title: '角色和权限设置',
 
                     },
-                    {
+                   {
                         icon: 'el-icon-date',
-                        index: 'companyInfo',
+                        index: '/companyInfo',
                         title: '公司信息',
                     },
                     {
                         icon: 'el-icon-star-on',
-                        index: 'joinCompany',
+                        index: '/joinCompany',
                         title: '加盟公司管理'
                     },
                     {
                         icon: 'el-icon-upload2',
-                        index: 'Franchisee',
+                        index: '/Franchisee',
                         title: '加盟商管理'
                     }
                 ]
@@ -76,11 +79,25 @@
         },
         computed: {
             onRoutes() {
-                return this.$route.path.replace('/', '');
+                console.log('slidevar:')
+                console.log(this.$route);
+                // let path = this.$route.path.replace('/', '');
+                let path = this.$route.path.split('/');
+                // console.log(path);
+                
+                // return this.$route.path.replace('/', '');
+                
+                // console.log('slidevar:' + JSON.stringify(this.$route))
+                // return this.$route.path.replace('/', '');
+                // return this.$route.path
+                return '/'+path[1]
             },
             
         },
         methods: {
+             selectEvent(data, index) {
+                // this.$route.path = data
+            },
             toggleCls(flag) {
                 if (flag == 1) {
                     this.isCollapse = false;
