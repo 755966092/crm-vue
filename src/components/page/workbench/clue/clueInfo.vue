@@ -269,7 +269,7 @@
                                     </el-col>
                                     <el-col :span="21">
                                         <el-input
-                                            v-model="item.ascontacts_post"
+                                            v-model="item.contacts_post"
                                             :disabled="item.contactIptDis"
                                         ></el-input>
                                     </el-col>

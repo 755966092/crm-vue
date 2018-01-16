@@ -329,7 +329,7 @@
                             min-width="100"
                         ></el-table-column>
                         <el-table-column
-                            prop="no_approver_content"
+                            prop="content"
                             label="拒绝原因"
                             min-width="180"
                             show-overflow-tooltip
