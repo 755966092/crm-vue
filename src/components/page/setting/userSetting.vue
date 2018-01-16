@@ -21,7 +21,7 @@
                     </el-cascader>
                 </div>
                 <div class="companyName">
-                    <el-button type="text">调整加盟商</el-button>
+                    <el-button type="text">查看加盟商</el-button>
                 </div>
                 <template>
                     <div>
@@ -60,6 +60,7 @@
                         >
                             <el-table-column
                                 type="index"
+                                align="center"
                             >
                             </el-table-column>
                             <el-table-column
@@ -70,7 +71,9 @@
                             >
                                 <template slot-scope="scope">
                                     <span class="colorBlue"
-                                          @click="showModelTable(scope.$index, scope.row,'dialogVisible')">{{ scope.row.user_name }}</span>
+                                          @click="showModelTable(scope.$index, scope.row,'dialogVisible')">{{ scope.row.user_name }}
+                                    </span>
+                                    <!-- <span> 0</span> -->
                                 </template>
                             </el-table-column>
                             <el-table-column
@@ -130,19 +133,19 @@
 
                     <div>
                         <span class="iptName">姓名:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
+                        <el-input v-model="selRoleData.user_name" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">职务:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
+                        <el-input v-model="selRoleData.user_position" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">角色:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
+                        <el-input v-model="selRoleData.role_name" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">电话:</span>
-                        <el-input v-model="input" placeholder="请输入内容"></el-input>
+                        <el-input v-model="selRoleData.user_mobile" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">手机:</span>
@@ -154,6 +157,10 @@
                     </div>
                     <div>
                         <span class="iptName">QQ:</span>
+                        <el-input v-model="input" placeholder="请输入内容"></el-input>
+                    </div>
+                    <div>
+                        <span class="iptName">邮箱:</span>
                         <el-input v-model="input" placeholder="请输入内容"></el-input>
                     </div>
                     <span slot="footer" class="dialog-footer">
@@ -231,14 +238,16 @@
             >
                 所属的上级公司
                 <div>
-                    <el-select v-model="value" placeholder="请选择">
-                        <el-option
-                            v-for="item in options"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                        </el-option>
-                    </el-select>
+                        <el-cascader
+                            expand-trigger="hover"
+                            :options="parentCompanyList"
+                            @change="handleChange"
+                            change-on-select
+                            filterable
+                            :show-all-levels="false"
+                            v-model="selCompanyList"
+                        >
+                        </el-cascader>
                 </div>
                 选择加盟商
                 <div>
@@ -328,7 +337,7 @@
 						</span>
             </el-dialog>
         </div>
-        <!-- 设置主管 接口完毕 -->
+        <!-- 设置主管 -->
         <div class="setSupervisor">
             <el-dialog
                 title="设置主管"
@@ -554,6 +563,33 @@
             };
         },
         methods: {
+            // 获取公司所有加盟商
+            getCompanyAdd() {
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/joiningTrader/FranchiseeMyList',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        
+                    }
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        console.log(JSON.stringify(res.data.data, null, 4))
+                        self.$message({
+                            message: '成功',
+                            type: 'success'
+                        })
+                    } else {
+                        self.$message.error(res.data.msg);
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
+            },
             // 获取公司所有员工
             getCompanyAllUser() {
                 let self = this;
@@ -786,8 +822,6 @@
             showModelTable(row, data, param) {
                 console.log('表格按钮:');
                 console.log(data);
-                
-                
                 this[param] = true;
                 this.selRoleData = data;
             },
@@ -1046,5 +1080,8 @@
     .el-tree {
         max-height: 402px;
         overflow: scroll;
+    }
+    .colorBlue {
+        cursor: pointer;
     }
 </style>
