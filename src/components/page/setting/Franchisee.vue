@@ -406,12 +406,15 @@ export default {
        this.cancelApplication = false;
        let paramObj,url;
        let self = this;
+       console.log('取消数据::'+JSON.stringify(self.selRowData,null,4));
+       
        if (this.cancelTitle == "申请") {
+           console.log('取消申请');
            // 取消申请 trader_id
-           url = '/api/joiningTrader/cancelFranchiseeInvitation'
+           url = '/api/joiningTrader/cancelFranchiseeUser'
            paramObj = {
                token: localStorage.getItem("crm_token"),
-               trader_id: self.selRowData.trader_id
+               apply_id: self.selRowData.apply_id
            }
        } else {
            // 取消加盟 cancleText apply_id content

@@ -569,7 +569,6 @@ export default {
             content: self.cancelFranchiseeReason
           };
       }
-      console.log("取消参数:" + JSON.stringify(self.selRowData));
           this.$axios({
              method: 'POST',
              withCredentials: false,
@@ -578,7 +577,6 @@ export default {
           })
           .then(function(res){
              if (res.data.code === 200) {
-                 console.log(JSON.stringify(res.data.data, null, 4))
                  self.$message({
                      message: '取消成功',
                      type: 'success'
@@ -597,8 +595,6 @@ export default {
           });
     },
     handleEdit(row, column) {
-      console.log("row:" + row);
-      console.log(column);
       this.joinInvitation = true;
       this.selRowData = column;
     },
