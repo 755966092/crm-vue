@@ -31,10 +31,13 @@
                                 <el-input v-model="detailsCompanyList.company_nickname"></el-input>
                             </el-form-item>
                             <el-form-item label="地区">
-                                <el-cascader v-model="detailsCompanyList.cityArr" expand-trigger="hover" :options="cityList" @change="handleChange">
+                                <el-cascader 
+                                    v-model="detailsCompanyList.cityArr" 
+                                    expand-trigger="hover" 
+                                    :options="cityList" 
+                                   >
                                 </el-cascader>
                             </el-form-item>
-
 
                             <el-form-item label="网址">
                                 <el-input v-model="detailsCompanyList.company_website"></el-input>
@@ -148,7 +151,51 @@
                         console.log(err);
                     });
             },
+            // 上传图片
+            
+            // 修改信息
             onSubmit(){
+                let self = this
+                 let obj = {
+                    token: localStorage.getItem('crm_token'),
+                    company_id: self.companyId,
+                    name: self.detailsCompanyList.company_name,
+                    nickname: self.detailsCompanyList.company_nickname,
+                    province_id: self.detailsCompanyList.cityArr[0],
+                    city_id: self.detailsCompanyList.cityArr[1],
+                    area_id: self.detailsCompanyList.cityArr[2],
+                    address:self.detailsCompanyList.company_address,
+                    website:self.detailsCompanyList.company_website,
+                    contacts: self.detailsCompanyList.company_contacts,
+                    mobile: self.detailsCompanyList.company_mobile,
+                    telephone: self.detailsCompanyList.company_telephone,
+                    email: self.detailsCompanyList.company_email,
+                    remarks: self.detailsCompanyList.company_remarks,
+                    logo: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1516014348276&di=52e370c3cbb18ab0bc10e65ccc287b02&imgtype=0&src=http%3A%2F%2Fwww.jituwang.com%2Fuploads%2Fallimg%2F160117%2F257983-16011F9243151.jpg'
+                    // logo: self.detailsCompanyList.company_logo
+                }
+                console.log('修改公司传递参数'+JSON.stringify(obj,null,4));
+                
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/company/editCompany',
+                    data: obj
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        self.$message({
+                            message: '修改公司信息成功',
+                            type: 'success'
+                        })
+                        self.getCompanyDetails();
+                    } else {
+                        self.$message.error(res.data.msg);
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
             },
             // 省市县数据
             requestCity() {
@@ -176,7 +223,6 @@
                 let companyId = this.children_id;
                 this.companyId = data[data.length - 1];
                 // 获取子公司所有部门
-
                     //this.getChildrenDepartment();
                      this.getCompanyDetails();
 
