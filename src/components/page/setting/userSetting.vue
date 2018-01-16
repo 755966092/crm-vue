@@ -206,13 +206,13 @@
             <el-dialog
                 title="新建子公司"
                 :visible.sync="subCompany"
-                width="20%"
+                width="50%"
             >
                 公司名称
-                <el-input style="width:100%" v-model="subCompany" placeholder="请输入公司名称"></el-input>
+                <el-input style="width:100%" v-model="subCompanyName" placeholder="请输入公司名称"></el-input>
                 <span slot="footer" class="dialog-footer">
 								<el-button @click="subCompany = false">取 消</el-button>
-								<el-button type="primary" @click="subCompany = false">确 定</el-button>
+								<el-button type="primary" @click="addSubCompany">确 定</el-button>
 						</span>
             </el-dialog>
         </div>
@@ -462,8 +462,11 @@
         },
         data() {
             return {
+                // 新建子公司名称
+                subCompanyName: '',
                 // g公司列表
                 selCompanyList: [parseInt(localStorage.getItem('motherCompanyId'))],
+                motnerCompanyId: parseInt(localStorage.getItem('motherCompanyId')),
                 dialogVisible: false,
                 rename: false,
                 subDepartment: false,
@@ -521,6 +524,36 @@
             };
         },
         methods: {
+            // 添加子公司
+            addSubCompany() {
+                this.subCompany = false;
+                    let self = this;
+                    this.$axios({
+                       method: 'POST',
+                       withCredentials: false,
+                       url: '/api/company/applyCompany',
+                       data: {
+                           token: localStorage.getItem('crm_token'),
+                           name: self.subCompanyName,
+                           parent_id: self.selCompanyList[self.selCompanyList.length-1],
+                           mother_id: self.motnerCompanyId
+                       }
+                    })
+                    .then(function(res){
+                       if (res.data.code === 200) {
+                           self.$message({
+                               message: '创建成功',
+                               type: 'success'
+                           });
+                           self.applyCompany();
+                       } else {
+                           self.$message.error(res.data.msg);
+                       }
+                    })
+                    .catch(function(err){
+                        console.log(err);
+                    });
+            },
             showModel(param) {
                 this[param] = true;
             },
@@ -578,14 +611,15 @@
                     }
                 })
                     .then(function (res) {
-
-                        self.treeData = res.data.data.list;
-                        // 初始化页面, 显示第一个部门的员工
-                        self.departmentName = res.data.data.list[0].label;
-                        self.departmentNewName = res.data.data.list[0].label;
-                        self.departmentId = res.data.data.list[0].id;
-                        // 初始化页面显示,第一个部门的员工
-                        self.departmentMakeAdminDepartmentList();
+                        if (res.data.data.list.length > 0) {
+                             self.treeData = res.data.data.list;
+                            // 初始化页面, 显示第一个部门的员工
+                            self.departmentName = res.data.data.list[0].label;
+                            self.departmentNewName = res.data.data.list[0].label;
+                            self.departmentId = res.data.data.list[0].id;
+                            // 初始化页面显示,第一个部门的员工
+                            self.departmentMakeAdminDepartmentList();
+                        }
                     })
                     .catch(function (err) {
                         console.log(err);
@@ -607,12 +641,16 @@
                     .then(function(res){
                        if (res.data.code === 200) {
                         //    console.log(JSON.stringify(res.data.data, null, 4))
+                         if (res.data.data.list.length > 0) {
                             self.getMenuName(res.data.data.list);
                             self.treeData = res.data.data.list;
                             self.departmentName = res.data.data.list[0].label;
                             self.departmentNewName = res.data.data.list[0].label;
                             self.departmentId = res.data.data.list[0].id;
-                             self.departmentMakeAdminDepartmentList();
+                            self.departmentMakeAdminDepartmentList();
+                         } else {
+                             self.treeData = res.data.data.list;
+                         }
                        } else {
                            self.$message.error(res.data.msg);
                        }

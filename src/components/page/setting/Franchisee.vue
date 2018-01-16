@@ -280,10 +280,6 @@
                 :visible.sync="cancelApplication"
             >
                 <p>是否确认取消{{ cancelTitle }}</p>
-                <template v-if="cancelTitle == '加盟'">
-                    <!-- <p>输入取消理由</p> -->
-                    <el-input placeholder="输入取消理由" v-model="cancleText"></el-input>
-                </template>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="cancelApplication = false">取 消</el-button>
                     <el-button type="primary" @click="cancelAdd">确 定</el-button>
@@ -406,10 +402,7 @@ export default {
        this.cancelApplication = false;
        let paramObj,url;
        let self = this;
-       console.log('取消数据::'+JSON.stringify(self.selRowData,null,4));
-       
        if (this.cancelTitle == "申请") {
-           console.log('取消申请');
            // 取消申请 trader_id
            url = '/api/joiningTrader/cancelFranchiseeUser'
            paramObj = {
@@ -419,12 +412,10 @@ export default {
        } else {
            // 取消加盟 cancleText apply_id content
            console.log(self.selRowData);
-           
-           url = '/api/joiningTrader/cancelFranchisee'
+           url = '/api/joiningTrader/cancelFranchiseeXian'
            paramObj = {
                token: localStorage.getItem("crm_token"),
                apply_id: self.selRowData.apply_id,
-               content: self.cancleText
            }
        }
            console.log('取消参数:'+JSON.stringify(paramObj));
