@@ -94,7 +94,6 @@
          mounted() {
             const that = this;
             window.onresize = function temp() {
-                console.log('methos::'+document.body.clientWidth)
                 if (document.body.clientWidth< 850) {
                     that.$emit('increment','1')
                     that.isCollapse = true

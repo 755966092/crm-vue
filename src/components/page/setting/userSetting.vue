@@ -59,12 +59,14 @@
                             border
                         >
                             <el-table-column
-                                type="selection"
+                                type="index"
                             >
                             </el-table-column>
                             <el-table-column
                                 sortable
                                 label="姓名"
+                                width="130"
+                                show-overflow-tooltip
                             >
                                 <template slot-scope="scope">
                                     <span class="colorBlue"
@@ -72,19 +74,23 @@
                                 </template>
                             </el-table-column>
                             <el-table-column
-                                prop="user_id"
+                                prop="role_name"
                                 label="角色"
                                 sortable
+                                width="130"
+                                show-overflow-tooltip
                             >
                             </el-table-column>
                             <el-table-column
-                                prop="user_name"
+                                prop="user_mobile"
                                 label="手机号"
+                                width="130"
                                 show-overflow-tooltip>
                             </el-table-column>
                             <el-table-column
-                                prop="position"
+                                prop="user_position"
                                 label="职务"
+                                width="130"
                                 show-overflow-tooltip>
                             </el-table-column>
                             <el-table-column
@@ -168,7 +174,6 @@
                 <el-input style="width:100%" v-model="departmentNewName" placeholder="请输入内容"></el-input>
                 <span slot="footer" class="dialog-footer">
 								<el-button @click="rename = false">取 消</el-button>
-                                 <!-- @click="remnameDepartment" -->
 								<el-button type="primary" @click="addSubCompany('newName')">确 定</el-button>
 						</span>
             </el-dialog>
@@ -275,18 +280,19 @@
                 width="50%"
             >
                 <div>
-                    <el-select v-model="value" placeholder="请选择">
+                    <el-select v-model="currentUserId" placeholder="请选择">
                         <el-option
-                            v-for="item in options"
+                            v-for="item in companyAllUser"
                             :key="item.value"
                             :label="item.label"
-                            :value="item.value">
+                            :value="item.value"
+                            >
                         </el-option>
                     </el-select>
                 </div>
                 <span slot="footer" class="dialog-footer">
 								<el-button @click="currentEmployee = false">取 消</el-button>
-								<el-button type="primary" @click="currentEmployee = false">确 定</el-button>
+								<el-button type="primary" @click="addSubCompany('currentEmployee')">确 定</el-button>
 						</span>
             </el-dialog>
         </div>
@@ -342,7 +348,7 @@
                 </div>
                 <span slot="footer" class="dialog-footer">
 								<el-button @click="setSupervisor = false">取 消</el-button>
-								<el-button type="primary" @click="setHead">确 定</el-button>
+								<el-button type="primary" @click="addSubCompany('setSupervisor')">确 定</el-button>
 						</span>
             </el-dialog>
         </div>
@@ -463,6 +469,8 @@
         },
         data() {
             return {
+                // 添加员工 -> 从公司现有员工选择 -> 当前选择员工
+                currentUserId: '',
                 // 角色列表
                 roleList: [],
                 // 添加新员工
@@ -532,10 +540,44 @@
                 // 主管id
                 headId: '',
                 // 子公司id
-                subsidiaryId:''
+                subsidiaryId:'',
+                // 公司所有与昂
+                companyAllUser: [],
+              
             };
         },
         methods: {
+            // 获取公司所有员工
+            getCompanyAllUser() {
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/company/companyUsers',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        company_id: self.selCompanyList[self.selCompanyList.length-1]
+                    }
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        let arr = []
+                        for (let i = 0; i < res.data.data.list.length; i++) {
+                            let element = res.data.data.list[i];
+                            arr.push({
+                                label:element.name,
+                                value:element.id
+                            })
+                        }
+                        self.companyAllUser = arr;
+                    } else {
+                        self.$message.error(res.data.msg);
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
+            },
             // 获取公司角色列表
             getRoleList() {
                 let self = this;
@@ -555,7 +597,7 @@
                         for (let i = 0; i < res.data.data.list.length; i++) {
                             let element = res.data.data.list[i];
                             element.label = element.name,
-                            element.value = element.id
+                            element.value = element.id;
                         }
                         self.roleList = res.data.data.list;
                     } else {
@@ -619,6 +661,24 @@
                         role_id: self.addEmployeeData.role,
                         password: self.addEmployeeData.psd,
                     }
+                } else if (flag == 'currentEmployee' ) {
+                    self.currentEmployee = false;
+                    str = '添加成功'
+                    url = '/api/department/applyUserDepartment',
+                    paramObj = {
+                        token: localStorage.getItem('crm_token'),
+                        department_id: self.departmentId,
+                        user_id: self.currentUserId
+                    }
+                } else if (flag == 'setSupervisor') {
+                    self.setSupervisor = false;
+                    str = '设置成功'
+                    url = '/api/department/makeAdminDepartment',
+                    paramObj = {
+                        token: localStorage.getItem('crm_token'),
+                        department_id: self.departmentId,
+                        admin_id: self.headId
+                    }
                 }
                 else {
 
@@ -658,7 +718,10 @@
                             } else {
                                 self.getChildrenDepartment();
                             }
-                        } else {
+                        } else if (flag == 'currentEmployee' || flag == 'newEmployee') {
+                            self.departmentMakeAdminDepartmentList();
+                        } 
+                        else {
 
                         }
                     } else {
@@ -671,9 +734,7 @@
             },
             showModel(param) {
                 this[param] = true;
-                if (param == 'addEmployee') {
-                    this.getRoleList();
-                }
+                
             },
             showModelTable(row, data, param) {
                 console.log(data);
@@ -684,6 +745,7 @@
                 // 现有员工选择
                 this.addEmployee = false;
                 this.currentEmployee = true;
+                this.getCompanyAllUser();
             },
             addNewEmployee() {
                 // 现有员工选择
@@ -840,29 +902,6 @@
                 this.departmentId = data.id;
                 this.departmentMakeAdminDepartmentList();
             },
-            // 重命名
-            remnameDepartment() {
-                var self = this;
-                let name = self.departmentNewName || self.departmentName;
-                self.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/department/editDepartment',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        department_id: self.departmentId,
-                        name: name
-                    }
-                })
-                    .then(function (res) {
-                        self.childrenDepartment();
-                        self.rename = false;
-
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
             // 当前部门下的员工
             departmentMakeAdminDepartmentList() {
                 var self = this;
@@ -880,15 +919,19 @@
                     })
                         .then(function (res) {
                             self.departmentStaff = res.data.data.list;
+                            console.log(res.data.data.list);
+                            
                             if (res.data.data.list.length > 0) {
+                                let arr = [];
                                 self.departmentStaffOption.length = 0;
                                 for (let i = 0; i < res.data.data.list.length; i++) {
                                     let obj = res.data.data.list[i];
-                                    self.departmentStaffOption.push({
+                                    arr.push({
                                         label: obj.user_name,
                                         value: obj.user_id
                                     })
                                 }
+                                self.departmentStaffOption = arr;
                             }
                         })
                         .catch(function (err) {
@@ -900,40 +943,13 @@
             setHead() {
 
             },
-            // 删除部门
-            delDepartmentFn() {
-                var self = this;
-                self.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/department/UserDepartmentList',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        department_id: self.departmentId,
-                    }
-                })
-                    .then(function (res) {
-                        console.log('设置成功');
-                        if (res.data.code === 200) {
-                            self.$message({
-                                message: '删除成功',
-                                type: 'success'
-                            });
-                            self.delDepartment = false;
-                            self.childrenDepartment();
-                        } else {
-                            self.$message.error(res.data.msg);
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            }
+            
         },
         //
         created() {
             this.childrenDepartment();
             this.applyCompany();
+            this.getRoleList();
 
         }
     };

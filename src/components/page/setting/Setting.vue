@@ -25,7 +25,6 @@
         },
         methods: {
             addCls(data) {
-                console.log('监听到事件'+data)
                 if (data == 1) {
                     this.is850 = true;
                 } else {
