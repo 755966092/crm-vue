@@ -361,16 +361,19 @@
             >
                 选择角色
                 <div>
-                    <el-select v-model="value" placeholder="请选择">
+                    <el-select v-model="roleId" placeholder="请选择">
                         <el-option
-                            v-for="item in options"
+                            v-for="item in roleList"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
                         </el-option>
                     </el-select>
                 </div>
-
+                <span slot="footer" class="dialog-footer">
+                        <el-button @click="selectRole = false">取 消</el-button>
+                        <el-button type="primary" @click="addSubCompany('selectRole')">确 定</el-button>
+                </span>
             </el-dialog>
         </div>
         <!-- 交接 -->
@@ -469,6 +472,10 @@
         },
         data() {
             return {
+                // 表格炒作的数据
+                selRoleData: '',
+                // 更改劫色
+                roleId: '',
                 // 添加员工 -> 从公司现有员工选择 -> 当前选择员工
                 currentUserId: '',
                 // 角色列表
@@ -608,7 +615,7 @@
                     console.log(err);
                 });
             },
-            // 添加子公司
+            // 操作数据
             addSubCompany(flag) {
                 let self = this,url,paramObj,str;
                 if (flag == 'company') {
@@ -679,6 +686,15 @@
                         department_id: self.departmentId,
                         admin_id: self.headId
                     }
+                } else if (flag == 'selectRole') {
+                    self.selectRole = false;
+                    str = '修改成功'
+                    url = '/api/User/userRoleEdit';
+                    paramObj = {
+                        token: localStorage.getItem('crm_token'),
+                        user_id: self.selRoleData.user_id,
+                        role_id: self.roleId
+                    }
                 }
                 else {
 
@@ -718,9 +734,9 @@
                             } else {
                                 self.getChildrenDepartment();
                             }
-                        } else if (flag == 'currentEmployee' || flag == 'newEmployee') {
+                        } else if (flag == 'currentEmployee' || flag == 'newEmployee' || flag == 'selectRole') {
                             self.departmentMakeAdminDepartmentList();
-                        } 
+                        }  
                         else {
 
                         }
@@ -737,9 +753,12 @@
                 
             },
             showModelTable(row, data, param) {
+                console.log('表格按钮:');
                 console.log(data);
-                this[param] = true;
                 
+                
+                this[param] = true;
+                this.selRoleData = data;
             },
             addCurrentEmployee() {
                 // 现有员工选择
@@ -776,8 +795,10 @@
             },
             // 点击级联选择器
             handleChange(data) {
+                this.departmentStaff = [];
                 this.subsidiaryId = data[data.length-1];
                 this.getChildrenDepartment();
+                this.getRoleList();
                 this.departmentName = '';
                 this.departmentNewName = '';
                 this.departmentId = 0;
