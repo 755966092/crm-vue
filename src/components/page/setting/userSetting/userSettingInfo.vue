@@ -50,17 +50,17 @@
                 <div class="title clearfix">
                     <span class="fl departmentText">{{ departmentName }}</span>
                     <div class="fr ">
-                        <el-button type="text" @click="showModel('rename')">重命名</el-button>
-                        <el-button type="text" @click="showModel('subDepartment')">添加子部门</el-button>
-                        <el-button type="text">上移</el-button>
-                        <el-button type="text">下移</el-button>
-                        <el-button type="text" @click="showModel('delDepartment')">删除</el-button>
+                        <el-button :disabled="departmentName==''" type="text" @click="showModel('rename')">重命名</el-button>
+                        <el-button :disabled="departmentName==''" type="text" @click="showModel('subDepartment')">添加子部门</el-button>
+                        <el-button :disabled="departmentName==''" type="text">上移</el-button>
+                        <el-button :disabled="departmentName==''" type="text">下移</el-button>
+                        <el-button :disabled="departmentName==''" type="text" @click="showModel('delDepartment')">删除</el-button>
                     </div>
                 </div>
                 <div>
                     <span>上级公司负责人</span>
-                    <el-button type="text" @click="showModel('setSupervisor','business')">添加业务负责人</el-button>
-                    <el-button type="text" @click="showModel('setSupervisor'),'server'">添加服务负责人</el-button>
+                    <el-button :disabled="franchiseeId==''" type="text" @click="showModel('setSupervisor','business')">添加业务负责人</el-button>
+                    <el-button :disabled="franchiseeId==''" type="text" @click="showModel('setSupervisor','server')">添加服务负责人</el-button>
                 </div>
                  <template>
                     <div>
@@ -88,6 +88,17 @@
                                     <span v-if="scope.row.statu == 1" style="color:#f00;font-size:12px">主管</span>
                                 </template>
                             </el-table-column>
+                            <el-table-column
+                                label="负责人类型"
+                                sortable
+                                width="130"
+                                show-overflow-tooltip
+                            >
+                             <template slot-scope="scope">
+                                    <span class="colorBlue">{{ scope.row.type == 1? '业务负责人':'服务负责人' }}
+                                    </span>
+                                </template>
+                              </el-table-column>
                             <el-table-column
                                 prop="role_name"
                                 label="角色"
@@ -443,7 +454,7 @@
                 <div style="width:100%">
                     <el-select v-model="selUserId" placeholder="请选择">
                         <el-option
-                            v-for="item in departmentStaffOption"
+                            v-for="item in companyAllUser"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
@@ -452,7 +463,7 @@
                 </div>
                 <span slot="footer" class="dialog-footer">
 								<el-button @click="setSupervisor = false">取 消</el-button>
-								<el-button type="primary" @click="addSubCompany('setSupervisor')">确 定</el-button>
+								<el-button type="primary" @click="addSubCompany('setSrve')">确 定</el-button>
 						</span>
             </el-dialog>
         </div>
@@ -647,7 +658,7 @@
                 selUserId: '',
                 // 子公司id
                 subsidiaryId:'',
-                // 公司所有与昂
+                // 公司所有所有
                 companyAllUser: [],
                 // 所有加盟商
                 franchiseeList: [],
@@ -671,7 +682,7 @@
                     })
                     .then(function(res){
                        if (res.data.code === 200) {
-                            console.log(JSON.stringify(res.data.data, null, 4))
+                            console.log('负责人:'+JSON.stringify(res.data.data, null, 4))
                             self.principalData = res.data.data.list
                        } else {
                            self.$message.error(res.data.msg);
@@ -751,6 +762,8 @@
             // 获取公司所有员工
             getCompanyAllUser() {
                 let self = this;
+                console.log(self.selCompanyList[self.selCompanyList.length-1]);
+                
                 this.$axios({
                     method: 'POST',
                     withCredentials: false,
@@ -876,15 +889,16 @@
                         department_id: self.departmentId,
                         user_id: self.currentUserId
                     }
-                } else if (flag == 'setSupervisor') {
-                    // 设置部门主管
+                } else if (flag == 'setSrve') {
+                    // 设置负责人
                     self.setSupervisor = false;
                     str = '设置成功'
-                    url = '/api/department/makeAdminDepartment',
+                    url = '/api/UserJoinApply/addJoinUser',
                     paramObj = {
                         token: localStorage.getItem('crm_token'),
-                        department_id: self.departmentId,
-                        admin_id: self.selUserId
+                        apply_id: self.franchiseeId,
+                        user_id: self.selUserId,
+                        type: self.addPeople == 'business'?1:2
                     }
                 } else if (flag == 'selectRole') {
                     // 修改员工角色
@@ -977,7 +991,9 @@
                             }
                         } else if (flag == 'setSupervisor' || flag == 'currentEmployee' || flag == 'newEmployee' || flag == 'selectRole'|| flag == 'deleteEmployee' || flag=="dialogVisible") {
                             self.departmentMakeAdminDepartmentList();
-                        }  
+                        } else if(flag == 'setSrve') {
+                            self.getPrincipalData();
+                        }
                         else {
 
                         }
@@ -995,7 +1011,8 @@
                     this.getFranchisee();
                 }
                 if (flag) {
-                    this.addPeople = flag
+                    this.addPeople = flag;
+                    this.getCompanyAllUser();
                 }
             },
             showModelTable(row, data, param) {
@@ -1008,7 +1025,7 @@
                 // 现有员工选择
                 this.addEmployee = false;
                 this.currentEmployee = true;
-                this.getCompanyAllUser();
+                
             },
             addNewEmployee() {
                 // 现有员工选择

@@ -38,17 +38,17 @@
                 <div class="title clearfix">
                     <span class="fl departmentText">{{ departmentName }}</span>
                     <div class="fr ">
-                        <el-button type="text" @click="showModel('rename')">重命名</el-button>
-                        <el-button type="text" @click="showModel('subDepartment')">添加子部门</el-button>
-                        <el-button type="text">上移</el-button>
-                        <el-button type="text">下移</el-button>
-                        <el-button type="text" @click="showModel('delDepartment')">删除</el-button>
+                        <el-button :disabled="departmentName==''" type="text" @click="showModel('rename')">重命名</el-button>
+                        <el-button :disabled="departmentName==''" type="text" @click="showModel('subDepartment')">添加子部门</el-button>
+                        <el-button :disabled="departmentName==''" type="text" @click="move(1)">上移</el-button>
+                        <el-button :disabled="departmentName==''" type="text" @click="move(2)">下移</el-button>
+                        <el-button :disabled="departmentName==''" type="text" @click="showModel('delDepartment')">删除</el-button>
                     </div>
                 </div>
                 <div>
                     <span>部门成员(不包括子部门成员)</span>
-                    <el-button type="text" @click="showModel('addEmployee')">添加成员</el-button>
-                    <el-button type="text" @click="showModel('setSupervisor')">设置主管</el-button>
+                    <el-button :disabled="departmentName==''" type="text" @click="showModel('addEmployee')">添加成员</el-button>
+                    <el-button :disabled="departmentName==''" type="text" @click="showModel('setSupervisor')">设置主管</el-button>
                 </div>
                 <template>
                     <div>
@@ -474,6 +474,9 @@
 						</span>
             </el-dialog>
         </div>
+
+
+
     </div>
 </template>
 
@@ -532,27 +535,7 @@
                 selectPeopleFlag: '本部门',
                 deleteEmployeeFlag: "",
                 input: "aaa",
-                options: [{
-                    value: "选项1",
-                    label: "黄金糕"
-                    },
-                    {
-                        value: "选项2",
-                        label: "双皮奶"
-                    },
-                    {
-                        value: "选项3",
-                        label: "蚵仔煎"
-                    },
-                    {
-                        value: "选项4",
-                        label: "龙须面"
-                    },
-                    {
-                        value: "选项5",
-                        label: "北京烤鸭"
-                    }
-                ],
+                options: [],
                 // 部门员工
                 departmentStaff: [],
                 departmentStaffOption: [],
@@ -562,13 +545,15 @@
                 // 部门名称
                 departmentName: '',
                 // 当前部门ID
-                departmentId: 1,
+                departmentId:'',
+                moveDepartmentId:'',
+                moveDepartmentId: '',
                 departmentNewName: '',
                 // 主管id
                 selUserId: '',
                 // 子公司id
                 subsidiaryId:'',
-                // 公司所有与昂
+                // 公司所有员工
                 companyAllUser: [],
                 // 所有加盟商
                 franchiseeList: [],
@@ -577,6 +562,41 @@
             };
         },
         methods: {
+            // 部门移动
+            move(num) {
+                
+                    let self = this;
+                    // console.log(JSON.stringify({
+                    //        token: localStorage.getItem('crm_token'),
+                    //        departmen_id: self.moveDepartmentId,
+                    //        type: num
+                    //    }));
+                    
+                    this.$axios({
+                       method: 'POST',
+                       withCredentials: false,
+                       url: '/api/department/editDepartmentLimit',
+                       data: {
+                           token: localStorage.getItem('crm_token'),
+                           departmen_id: self.departmentId,
+                           type: num
+                       }
+                    })
+                    .then(function(res){
+                       if (res.data.code === 200) {
+                           self.$message({
+                               message: '成功',
+                               type: 'success'
+                           })
+                           self.getChildrenDepartment();
+                       } else {
+                           self.$message.error(res.data.msg);
+                       }
+                    })
+                    .catch(function(err){
+                        console.log(err);
+                    });
+            },
             // 获取所有加盟商
             getFranchisee() {
                 let self = this;
@@ -591,7 +611,6 @@
                 })
                 .then(function(res){
                     if (res.data.code === 200) {
-                        console.log(JSON.stringify(res.data.data, null, 4))
                         for (let i = 0; i < res.data.data.list.length; i++) {
                             let element = res.data.data.list[i];
                             element.label = element.apply_company_name
@@ -625,7 +644,7 @@
                 })
                 .then(function(res){
                     if (res.data.code === 200) {
-                        console.log(JSON.stringify(res.data.data, null, 4))
+                        // console.log(JSON.stringify(res.data.data, null, 4))
                         self.$message({
                             message: '成功',
                             type: 'success'
@@ -683,7 +702,6 @@
                 })
                 .then(function(res){
                     if (res.data.code === 200) {
-                        console.log(JSON.stringify(res.data.data.list, null, 4))
                     //    roleList
                         for (let i = 0; i < res.data.data.list.length; i++) {
                             let element = res.data.data.list[i];
@@ -970,7 +988,6 @@
             },
             // 子公司所有部门
             getChildrenDepartment() {
-                // /department/getChildrenDepartmentTo
                     let self = this;
                     this.$axios({
                        method: 'POST',
@@ -978,12 +995,12 @@
                        url: '/api/department/getChildrenDepartmentTo',
                        data: {
                            token: localStorage.getItem('crm_token'),
-                           mother_id: this.subsidiaryId
+                           mother_id: self.subsidiaryId || self.selCompanyList[self.selCompanyList.length-1]
                        }
                     })
                     .then(function(res){
                        if (res.data.code === 200) {
-                        //    console.log(JSON.stringify(res.data.data, null, 4))
+                           console.log(JSON.stringify(res.data.data))
                          if (res.data.data.list.length > 0) {
                             self.getMenuName(res.data.data.list);
                             self.treeData = res.data.data.list;
@@ -1053,6 +1070,8 @@
                 this.departmentNewName = data.name
                 this.departmentName = data.name;
                 this.departmentId = data.id;
+                this.moveDepartmentId = data.id;
+
                 this.departmentMakeAdminDepartmentList();
             },
             // 当前部门下的员工
