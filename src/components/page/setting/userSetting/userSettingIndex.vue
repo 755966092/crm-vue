@@ -73,7 +73,7 @@
                                     <span class="colorBlue"
                                           @click="showModelTable(scope.$index, scope.row,'dialogVisible')">{{ scope.row.user_name }}
                                     </span>
-                                    <!-- <span> 0</span> -->
+                                    <span v-if="scope.row.statu == 1" style="color:#f00;font-size:12px">主管</span>
                                 </template>
                             </el-table-column>
                             <el-table-column
@@ -241,37 +241,37 @@
         <!-- 调整加盟商 -->
         <div class="editFranchisee">
             <el-dialog
-                title="新建子公司"
+                title="调整加盟商"
                 :visible.sync="editFranchisee"
                 width="50%"
-            >
-                所属的上级公司
-                <div>
-                        <el-cascader
-                            expand-trigger="hover"
-                            :options="parentCompanyList"
-                            @change="handleChange"
-                            change-on-select
-                            filterable
-                            :show-all-levels="false"
-                            v-model="selCompanyList"
-                        >
-                        </el-cascader>
-                </div>
+            >   
                 选择加盟商
                 <div>
-                    <el-select v-model="value" placeholder="请选择">
+                    <el-select v-model="franchiseeId" placeholder="请选择">
                         <el-option
-                            v-for="item in options"
+                            v-for="item in franchiseeList"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
                         </el-option>
                     </el-select>
                 </div>
+                所属的上级公司
+                <div>
+                        <el-cascader
+                            expand-trigger="hover"
+                            :options="parentCompanyList"
+                            change-on-select
+                            filterable
+                            :show-all-levels="false"
+                            v-model="selFranchiseeCompanyId"
+                        >
+                        </el-cascader>
+                </div>
+               
                 <span slot="footer" class="dialog-footer">
 								<el-button @click="editFranchisee = false">取 消</el-button>
-								<el-button type="primary" @click="editFranchisee = false">确 定</el-button>
+								<el-button type="primary" @click="addSubCompany('editFranchisee')">确 定</el-button>
 						</span>
             </el-dialog>
         </div>
@@ -490,6 +490,8 @@
         // },
         data() {
             return {
+                // 调整加盟商上级公司
+                selFranchiseeCompanyId: [],
                 // 表格炒作的数据
                 selRoleData: '',
                 // 更改劫色
@@ -568,10 +570,43 @@
                 subsidiaryId:'',
                 // 公司所有与昂
                 companyAllUser: [],
+                // 所有加盟商
+                franchiseeList: [],
+                franchiseeId: '',
               
             };
         },
         methods: {
+            // 获取所有加盟商
+            getFranchisee() {
+                let self = this;
+                this.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/joiningTrader/FranchiseeMyList',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        children_id: self.selCompanyList[self.selCompanyList.length - 1]
+                    }
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        console.log(JSON.stringify(res.data.data, null, 4))
+                        for (let i = 0; i < res.data.data.list.length; i++) {
+                            let element = res.data.data.list[i];
+                            element.label = element.apply_company_name
+                            element.value = element.apply_id
+                            
+                        }
+                        self.franchiseeList = res.data.data.list
+                    } else {
+                        self.$message.error(res.data.msg);
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
+            },
             // 打开加盟商详情页
             openNewPage() {
                 this.$router.push({path: '/setting/info'})
@@ -780,15 +815,18 @@
                     self.dialogVisible = false;
                     str = '保存成功'
                     url = '/api/User/userDetailEdit';
-                    // paramObj = {
-                    //     token: localStorage.getItem('crm_token'),
-                    //     user_id: self.selRoleData.user_id,
-                    //     to_user_id: self.departmentId,
-                    //     type: self.deleteEmployeeFlag == '本部门员工' ? 2 : 1,
-                    //     department_id: self.departmentId
-                    // }
                     paramObj = self.selRoleData;
                     paramObj.token = localStorage.getItem('crm_token')
+                } else if (flag == 'editFranchisee') {
+                    // 调整加盟商
+                    self.editFranchisee = false;
+                    str = '调整成功'
+                    url = '/api/joiningTrader/editSheepFrach';
+                    paramObj = {
+                        token: localStorage.getItem('crm_token'),
+                        apply_id: self.franchiseeId,
+                        company_id: self.selFranchiseeCompanyId[self.selFranchiseeCompanyId.length - 1],
+                    }
                 }
                 else {
 
@@ -828,7 +866,7 @@
                             } else {
                                 self.getChildrenDepartment();
                             }
-                        } else if (flag == 'currentEmployee' || flag == 'newEmployee' || flag == 'selectRole'|| flag == 'deleteEmployee' || flag=="dialogVisible") {
+                        } else if (flag == 'setSupervisor' || flag == 'currentEmployee' || flag == 'newEmployee' || flag == 'selectRole'|| flag == 'deleteEmployee' || flag=="dialogVisible") {
                             self.departmentMakeAdminDepartmentList();
                         }  
                         else {
@@ -844,7 +882,9 @@
             },
             showModel(param) {
                 this[param] = true;
-                
+                if (param == 'editFranchisee') {
+                    this.getFranchisee();
+                }
             },
             showModelTable(row, data, param) {
                 console.log('表格按钮:');

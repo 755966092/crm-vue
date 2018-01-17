@@ -164,6 +164,7 @@
                         <el-table-column min-width="130" label="操作">
                             <template slot-scope="scope">
                                 <el-button
+                                    :disabled="scope.row.statu != '待审批'"
                                     size="mini"
                                     type="success"
                                     @click="cancelApplicationFn(scope.$index, scope.row, 'application')">取消申请
@@ -547,6 +548,8 @@ export default {
                 }
               }
               self.applicationStatusData = res.data.data.list;
+              
+              
             } else {
               self.$message.error(res.data.msg);
             }
@@ -581,6 +584,7 @@ export default {
                 }
               }
               self.applicationStatusData = res.data.data.list;
+              console.log('表格数据::'+JSON.stringify(self.applicationStatusData));
             } else {
               self.$message.error(res.data.msg);
             }
