@@ -652,7 +652,8 @@
                 // 所有加盟商
                 franchiseeList: [],
                 franchiseeId: '',
-              
+                // 添加负责人标记
+                addPeople: ''
             };
         },
         methods: {
@@ -988,10 +989,13 @@
                     console.log(err);
                 });
             },
-            showModel(param) {
+            showModel(param, flag) {
                 this[param] = true;
                 if (param == 'editFranchisee') {
                     this.getFranchisee();
+                }
+                if (flag) {
+                    this.addPeople = flag
                 }
             },
             showModelTable(row, data, param) {
