@@ -40,21 +40,38 @@
                         :options="parentCompanyList"
                         @change="handleChange"
                         :disabled="rangeFlag"
-                        :show-all-levels=false
+                        :show-all-levels='false'
                         filterable
                         change-on-select
                         clearable
+                        v-model="children_id"
                     >
                     </el-cascader>
                 </div>
             </el-col>
-            <el-col :span="6">
+             <el-col :span="4" v-if="selectRangeItem==3" >
+                <div class="select rightWrap">
+                    <el-select
+                        v-model="franchisee_id"
+                        placeholder="请选择"
+                        @change="getFranchiseeEmp"
+                    >
+                        <el-option
+                            v-for="item in franchiseeList"
+                            :key="item.apply_company_id"
+                            :label="item.apply_company_name"
+                            :value="item.apply_company_id">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col>
+            <el-col :span="selectRangeItem==3?4:6">
                 <!-- 选择部门 -->
                 <div class="select rightWrap">
                     <el-cascader
                         expand-trigger="hover"
                         :options="currentCompanyDepartment"
-                        :show-all-levels=false
+                        :show-all-levels='false'
                         @change="selectDepartment"
                         filterable
                         change-on-select
@@ -63,8 +80,8 @@
                     </el-cascader>
                 </div>
             </el-col>
-            <!-- 当前部门与昂 -->
-            <el-col :span="6">
+            <!-- 当前部门员工 -->
+            <el-col :span="selectRangeItem==3?4:6">
                 <div class="select rightWrap">
                     <el-select
                         v-model="employees_id"
@@ -384,7 +401,7 @@
                             <template slot-scope="scope">
                                 <el-button
                                     size="mini"
-                                    @click="showModelTable(scope.$index, scope.row, 'handover')">交接
+                                    @click="showModelTable(scope.$index, scope.row, 'handover')">转移
                                 </el-button>
                                 <el-button
                                     size="mini"
@@ -502,7 +519,7 @@
                             <template slot-scope="scope">
                                 <el-button
                                     size="mini"
-                                    @click="showModelTable(scope.$index, scope.row, 'handover')">交接
+                                    @click="showModelTable(scope.$index, scope.row, 'handover')">转移
                                 </el-button>
                                 <el-button
                                     size="mini"
@@ -622,7 +639,7 @@
                             <template slot-scope="scope">
                                 <el-button
                                     size="mini"
-                                    @click="showModelTable(scope.$index, scope.row, 'handover')">交接
+                                    @click="showModelTable(scope.$index, scope.row, 'handover')">转移
                                 </el-button>
                                 <el-button
                                     size="mini"
@@ -771,7 +788,7 @@
                             <template slot-scope="scope">
                                 <el-button
                                     size="mini"
-                                    @click="showModelTable(scope.$index, scope.row, 'handover')">交接
+                                    @click="showModelTable(scope.$index, scope.row, 'handover')">转移
                                 </el-button>
                                 <el-button
                                     size="mini"
@@ -1063,1536 +1080,1818 @@
                 </el-dialog>
             </div>
         </template>
+        <!-- 转移线索 -->
+          <el-dialog
+                    title="转移线索"
+                    :visible.sync="moveStatu"
+                >
+                <div>
+                    <p>选择公司</p>
+                    <el-cascader
+                        expand-trigger="hover"
+                        :options="parentCompanyList"
+                        :show-all-levels='false'
+                        filterable
+                        change-on-select
+                        clearable
+                        v-model="moveClueCompanyId"
+                        @change="selMoveCompany('depa')"
+                    >
+                    </el-cascader>
+                </div>
+                <div>
+                    <p>选择部门</p>
+                     <el-cascader
+                        expand-trigger="hover"
+                        :options="moveDepartmentList"
+                        filterable
+                        change-on-select
+                        clearable
+                        v-model="moveClueDepartmentId"
+                        @change="selMoveCompany('emp')"
+                    >
+                    </el-cascader>
+                </div>
+                <div>
+                    选择员工
+                    <el-select
+                        v-model="moveClueEmployeesId"
+                        slot="prepend"
+                        placeholder="请选择"
+                    >
+                        <el-option
+                            v-for="item in moveDepartmentStaff"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                        </el-option>
+                    </el-select>
+                </div>
+                 <span slot="footer" class="dialog-footer">
+                        <el-button @click="moveStatu = false">取 消</el-button>
+                        <el-button type="primary" @click="selMoveCompany('moveStatu')">确 定</el-button>
+                </span>
+          </el-dialog>
     </div>
 </template>
 
 <script>
-    export default {
-        name: "clue",
-        data() {
-            return {
-                addClueData: {
-                    clueType: '1',
-                    sourceTypeValue: '全部',
-                    schoolName: '',
-                    academicSystem: '全部',
-                    schoolLevel: '全部',
-                    selectCityData: [],
-                    address: '',
-                    contactName: '',
-                    contactPosition: '',
-                    contactPhone: '',
-                    contactTel: '',
-                    contactWeixin: '',
-                    contactQq: '',
-                    contactEmail: '',
-                    // 机构类型
-                    organizationType: '',
-                    // 定位
-                    positioning: '',
-                    teacherName: '',
-                    // 教授科目
-                    professorSubjects: '',
-                    // 教授年级
-                    grade: '',
-                    // 学制
-                    academicSystem: '',
-                    // 学校等级
-                    schoolLevel: '',
-                    // 文理科
-                    artsAndSciences: '',
-                    sex: '',
-                    // 学生姓名
-                    studentName: '',
-                    schoolTable: false,
-                    mechanismTable: true,
-                    teacherTable: true,
-                    studentTable: true,
-                    // 选中行
-                    multipleSelection: []
-                },
+export default {
+  name: "clue",
+  data() {
+    return {
+      // 加盟公司id
+      franchisee_id: "",
+      franchiseeList: [],
+      // 表格按钮点击的行数据
+      selTableData: "",
+      // 准仪线索
+      moveDepartmentList: [],
+      moveClueCompanyId: [],
+      moveClueDepartmentId: [],
+      moveClueEmployeesId: "",
+      moveDepartmentStaff: [],
+      // 转移状态看
+      moveStatu: false,
+      addClueData: {
+        clueType: "1",
+        sourceTypeValue: "全部",
+        schoolName: "",
+        academicSystem: "全部",
+        schoolLevel: "全部",
+        selectCityData: [],
+        address: "",
+        contactName: "",
+        contactPosition: "",
+        contactPhone: "",
+        contactTel: "",
+        contactWeixin: "",
+        contactQq: "",
+        contactEmail: "",
+        // 机构类型
+        organizationType: "",
+        // 定位
+        positioning: "",
+        teacherName: "",
+        // 教授科目
+        professorSubjects: "",
+        // 教授年级
+        grade: "",
+        // 学制
+        academicSystem: "",
+        // 学校等级
+        schoolLevel: "",
+        // 文理科
+        artsAndSciences: "",
+        sex: "",
+        // 学生姓名
+        studentName: "",
+        schoolTable: false,
+        mechanismTable: true,
+        teacherTable: true,
+        studentTable: true,
+        // 选中行
+        multipleSelection: []
+      },
 
-                dialogShow: {
-                    schoolShow: false,
-                    organizationShow: true,
-                    teacherShow: true,
-                    studentShow: true,
-                },
-                value: '第一学',
-                input: '圈,',
-                // 新增线索对话框
-                dialogVisible: false,
-                selectedItems: [],
-                // 线索类型
-                clueType: 1,
-                // 范围选中内容
-                selectRangeItem: 1,
-                // 范围
-                parentCompanyList: [],
-                // 母公司id
-                mother_id: '',
-                // 当前子公司id
-                children_id: '',
-                // 当前部门id
-                department_id: '',
-                // 当前员工id
-                employees_id: '',
-                // 当前员工姓名
-                employees_id: '',
-                // 范围数据
-                rangeData: [
-                    {
-                        label: '母公司',
-                        value: 1
-                    }, {
-                        label: '子公司',
-                        value: 2
-                    }, {
-                        label: '加盟商',
-                        value: 3
-                    }
-                ],
-                // 当前公司部门
-                currentCompanyDepartment: [],
-                // 当前公司下的部门
-                parentCompanyDepartment: [],
-                // 当前部门员工列表
-                currentDepartmentStaff: [],
-                filterTime: {
-                      // 最后跟进时间
-                    lastFollowUpTime: '',
-                    // 更新时间
-                    updateTime: '',
-                    // 新建时间
-                    createTime: '',
-                },
-                // 城市选择器数据
-                cityList: [],
-                // 选中城市数据
-                selectCityData: [],
-                // 各项数据
-                typeList: {
-                    // 学校等级
-                    'schoolLevel': {
-                        'key': '全部',
-                        'title': '学校等级',
-                        'value': '',
-                        'show': false,
-                        'content': [{
-                            value: '',
-                            label: '全部'
-                        }, {
-                            value: '1',
-                            label: '市重点'
-                        }, {
-                            value: '2',
-                            label: '区重点'
-                        }]
-                    },
-                    // 学制
-                    'academicSystem': {
-                        'key': '全部',
-                        'title': '学制',
-                        'value': '',
-                        'show': false,
-                        'content': [{
-                            value: '',
-                            label: '全部'
-                        }, {
-                            value: '1',
-                            label: '初中'
-                        }, {
-                            value: '2',
-                            label: '高中'
-                        }, {
-                            value: '3',
-                            label: '初中+高中'
-                        }]
-                    },// 学制
-                    'professor_grade': {
-                        'key': '全部',
-                        'title': '教授年级',
-                        'value': '',
-                        'show': false,
-                        'content': [{
-                            value: '',
-                            label: '全部'
-                        }, {
-                            value: '1',
-                            label: '初中'
-                        }, {
-                            value: '2',
-                            label: '高中'
-                        }, {
-                            value: '3',
-                            label: '初中+高中'
-                        }]
-                    },
-                    // 跟进状态
-                    'followUpStatus': {
-                        'key': '全部',
-                        'title': '跟进状态',
-                        'value': '',
-                        'show': true,
-                        'content': [{
-                            value: '',
-                            label: '全部'
-                        }, {
-                            value: '1',
-                            label: '未处理'
-                        }, {
-                            value: '2',
-                            label: '联系方式有效'
-                        }, {
-                            value: '3',
-                            label: '联系方式无效'
-                        }]
-                    },
-                    // 来源
-                    'source': {
-                        'key': '全部',
-                        'title': '来源',
-                        'show': true,
-                        'value': '',
-                        'content': [{
-                            value: '',
-                            label: '全部'
-                        }, {
-                            value: '高招',
-                            label: '高招'
-                        }, {
-                            value: '我在',
-                            label: '我在'
-                        }, {
-                            value: '搜索引擎',
-                            label: '搜索引擎'
-                        }, {
-                            value: '微信',
-                            label: '微信'
-                        }, {
-                            value: '客户介绍',
-                            label: '客户介绍'
-                        }]
-                    },
-                    // 机构类型
-                    'organizationType': {
-                        'key': '全部',
-                        'title': '机构类型',
-                        'show': false,
-                        'value': '',
-                        'content': [{
-                            value: '',
-                            label: '全部'
-                        }, {
-                            value: '大型',
-                            label: '大型'
-                        }, {
-                            value: '中型',
-                            label: '中型'
-                        }, {
-                            value: '小型',
-                            label: '小型'
-                        }]
-                    },
-                    // 定位
-                    'positioning': {
-                        'key': '全部',
-                        'title': '定位',
-                        'value': '',
-                        'show': false,
-                        'content': [{
-                            value: '',
-                            label: '全部'
-                        }, {
-                            value: '1',
-                            label: 'K12'
-                        }, {
-                            value: '2',
-                            label: '英语'
-                        }, {
-                            value: '3',
-                            label: '出国'
-                        }]
-                    },
-                    // 教授科目
-                    'professorSubjects': {
-                        'key': '全部',
-                        'title': '教授科目',
-                        'show': false,
-                        'value': '',
-                        'content': [{
-                            value: '',
-                            label: '全部'
-                        }, {
-                            value: '1',
-                            label: '语文'
-                        }, {
-                            value: '2',
-                            label: '数学'
-                        }, {
-                            value: '3',
-                            label: '外语'
-                        }, {
-                            value: '4',
-                            label: '物理'
-                        }, {
-                            value: '5',
-                            label: '化学'
-                        }]
-                    },
-                    // 文理科
-                    'artsAndSciences': {
-                        'key': '全部',
-                        'title': '文理科',
-                        'show': false,
-                        'value': '',
-                        'content': [{
-                            value: '',
-                            label: '全部'
-                        }, {
-                            value: '1',
-                            label: '文科'
-                        }, {
-                            value: '2',
-                            label: '理科'
-                        }]
-                    },
-                    // 年级
-                    'grade': {
-                        'key': '全部',
-                        'title': '年级',
-                        'show': false,
-                        'value': '',
-                        'content': [{
-                            value: '',
-                            label: '全部'
-                        }, {
-                            value: '1',
-                            label: '初一'
-                        }, {
-                            value: '2',
-                            label: '初二'
-                        }, {
-                            value: '3',
-                            label: '初三'
-                        }, {
-                            value: '4',
-                            label: '高一'
-                        }, {
-                            value: '5',
-                            label: '高二'
-                        }, {
-                            value: '6',
-                            label: '高三'
-                        }]
-                    },
-                    // 性别
-                    'sex': {
-                        'key': '全部',
-                        'title': '性别',
-                        'show': false,
-                        'value': '',
-                        'content': [{
-                            value: '',
-                            label: '全部'
-                        }, {
-                            value: '1',
-                            label: '男'
-                        }, {
-                            value: '2',
-                            label: '女'
-                        }]
-                    },
-                    // 来源类型
-                    'sourceType': {
-                        'key': '全部',
-                        'title': '来源类型',
-                        'show': false,
-                        'value': '',
-                        'content': [{
-                            value: '',
-                            label: '全部'
-                        }, {
-                            value: '1',
-                            label: '线索'
-                        }, {
-                             value: '2',
-                             label: '客户'
-                         }, {
-                              value: '3',
-                              label: '手录'
-                          }]
-                    }
-                },
-                // 时间选择器
-                pickerOptions2: {
-                    shortcuts: [{
-                        text: '最近一周',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近一个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近三个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }]
-                },
-
-                // 表格数据
-                tableData: [],
-                // 表格搜索下拉框
-                options: [
-                    {
-                        label: '名称',
-                        value: 1
-                    }, {
-                        label: '联系人姓名',
-                        value: 2
-                    }, {
-                        label: '联系人电话',
-                        value: 3
-                    }
-                ],
-                // 表格搜索下拉框选择
-                searchType: 2,
-                // 搜索框内容
-                searchIptValue: '',
-                // 学校线索
-                schoolClue: {},
-                // 来源类型
-                sourceTypeValue: '全部',
-                sourceTypeOptions: [
-                    {
-                        label: '全部',
-                        value: '1'
-                    }, {
-                        label: '高招',
-                        value: '2'
-                    }, {
-                        label: '我在',
-                        value: '3'
-                    }, {
-                        label: '搜索引擎',
-                        value: '4'
-                    }, {
-                        label: '微信',
-                        value: '5'
-                    }, {
-                        label: '客户介绍',
-                        value: '6'
-                    }
-                ],
-                // 线索类型
-                clueTypeOptions: [
-                    {
-                        label: '学校',
-                        value: '1'
-                    }, {
-                        label: '机构',
-                        value: '2'
-                    }, {
-                        label: '教师',
-                        value: '3'
-                    }, {
-                        label: '学生',
-                        value: '4'
-                    }
-                ],
-                // 学校等级解析数组
-                schoolLevelArr: ['市重点', '区重点'],
-                // 学制解析数组, 教授年级解析数组
-                academicSystemArr: ['初中', '高中', '初中+高中'],
-                // 定位解析数组
-                positionArr: ['K12', '英语', '出国'],
-                // 教授科目解析数组
-                professorSubjectsArr: ['语文', '英语', '数学', '物理', '化学'],
-                // 年级解析数组
-                studentGradeArr: ['初一', '初二', '初三', '高一', '高二', '高三'],
-                // 搜索关键字
-                searchName:'',
-                searchPhone:'',
-                searchCname:''
-            }
+      dialogShow: {
+        schoolShow: false,
+        organizationShow: true,
+        teacherShow: true,
+        studentShow: true
+      },
+      value: "第一学",
+      input: "圈,",
+      // 新增线索对话框
+      dialogVisible: false,
+      selectedItems: [],
+      // 线索类型
+      clueType: 1,
+      // 范围选中内容
+      selectRangeItem: 1,
+      // 范围
+      parentCompanyList: [],
+      // 母公司id
+      mother_id: "",
+      // 当前子公司id
+      children_id: [],
+      // 当前部门id
+      department_id: "",
+      // 当前员工id
+      employees_id: "",
+      // 当前员工姓名
+      employees_id: "",
+      // 范围数据
+      rangeData: [
+        {
+          label: "母公司",
+          value: 1
         },
-        methods: {
-            // 搜索
-            searchBtn() {
-                console.log(this.searchType);
-                console.log(this.searchIptValue);
-                if (this.searchType == 1) {
-                    this.searchName = this.searchIptValue,
-                    this.searchPhone = '',
-                    this.searchCname = '';
-                } else if (this.searchType == 2) {
-                    this.searchName = '',
-                    this.searchPhone = '',
-                    this.searchCname = this.searchIptValue;
-                } else {
-                    this.searchName = '',
-                    this.searchPhone = this.searchIptValue,
-                    this.searchCname = '';
-
-                }
-                this.filterClue();
-            },
-          // 删除线索
-                delLogItem() {
-                     let arr = [];
-                     for (let i = 0; i < this.multipleSelection.length; i++) {
-                            this.tableData = this.tableData.filter((value) => {
-                                return value.clue_id != this.multipleSelection[i].clue_id
-                            })
-                            arr.push(this.multipleSelection[i].clue_id)
-                        }
-
-                           this.$axios({
-                                       method: 'POST',
-                                       withCredentials: false,
-                                       url: '/api/clue/deleteStudentClues',
-                                       data: {
-                                           token: localStorage.getItem('crm_token'),
-                                           clueIds: JSON.stringify(arr),
-                                       }
-                                   })
-                                       .then(function (res) {
-                                           if (res.data.code == 200) {
-                                            self.$message({
-                                              message: '批量删除线索成功',
-                                              type: 'success'
-                                           })
-                                              self.filterClue();
-                                           } else {
-                                               alert(res.data.msg)
-                                           }
-                                       })
-                                       .catch(function (err) {
-                                           console.log(err);
-                                       });
-
-                },
-                  //复选框状态改变
-                changeFun(val) {
-                    this.multipleSelection = val;
-                },
-            addClueTypeChange(data) {
-                this.addClueData.clueType = data;
-                if (data == 1) {
-                    // 学校
-                    this.addClueData.schoolTable = false
-                    this.addClueData.mechanismTable = true
-                    this.addClueData.teacherTable = true
-                    this.addClueData.studentTable = true
-                } else if (data == 2) {
-                    // 机构
-                    this.addClueData.schoolTable = true
-                    this.addClueData.mechanismTable = false
-                    this.addClueData.teacherTable = true
-                    this.addClueData.studentTable = true
-                } else if (data == 3) {
-                    // 教师
-                    this.addClueData.schoolTable = true
-                    this.addClueData.mechanismTable = true
-                    this.addClueData.teacherTable = false
-                    this.addClueData.studentTable = true
-                } else {
-                    // 学生
-                    this.addClueData.schoolTable = true
-                    this.addClueData.mechanismTable = true
-                    this.addClueData.teacherTable = true
-                    this.addClueData.studentTable = false
-                }
-            },
-            // 线索详情
-            openClueInfo(index, data) {
-                // 跳转到线索详情的页面
-                this.$router.push({path: '/clue/clueInfo',query:{data:data,clueType:this.clueType}})
-            },
-            // 更新时间
-            timeUpdata(data) {
-                this.filterClue();
-            },
-            // 所有子公司
-            applyCompany() {
-                let self = this;
-                this.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/company/CompanyMyList',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                    }
-                })
-                    .then(function (res) {
-                        if (res.data.code == 200) {
-                            // 当前用户只会有一个母公司
-                            // console.log('报错数据:'+JSON.stringify(res.data.data.list));
-                            // console.log('数据格式:'+ typeof res.data.data.list);
-                            self.getMenuName(res.data.data.list)
-                            self.parentCompanyList = res.data.data.list;
-                            self.mother_id = localStorage.getItem('motherCompanyId');
-                        } else {
-                            alert(res.data.msg)
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-            // 当前母公司下的所有部门
-            getDepartment() {
-                let self = this;
-                this.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/department/getChildrenDepartment',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        mother_id: localStorage.getItem('motherCompanyId'),
-                    }
-                })
-                    .then(function (res) {
-                        if (res.data.code === 200) {
-                            // 当前母公司下的部门 parentCompanyDepartment
-                            // console.log(JSON.stringify(res.data.data,null,4))
-                            // console.log(self.mother_id)
-                            self.getMenuName(res.data.data.list)
-                            self.currentCompanyDepartment = res.data.data.list
-                        } else {
-                            alert(res.data.msg)
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-            // 当前子公司下的所有部门
-            getChildrenDepartment() {
-                let self = this;
-                this.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/department/getChildrenDepartmentTo',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        mother_id: self.children_id
-                    }
-                })
-                    .then(function (res) {
-                        if (res.data.code === 200) {
-                            // 当前子公司下的部门 parentCompanyDepartment
-                            self.getMenuName(res.data.data.list)
-                            self.currentCompanyDepartment = res.data.data.list
-                        } else {
-                            alert(res.data.msg)
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-            // 子公司变化
-            handleChange(data) {
-                let children = this.children_id;
-                this.children_id = data[data.length - 1];
-                // 获取子公司所有部门
-                if (children !== this.children_id) {
-                    this.getChildrenDepartment();
-                    this.filterClue();
-                }
-            },
-            // 子公司/ 母公司/ 加盟商修改
-            bigRangeChange(data) {
-                this.selectRangeItem = data;
-                // if (data === 2) {
-                //     // 获取子公司
-                //     this.applyCompany();
-                // }
-                this.filterClue();
-            },
-            // 选择部门
-            selectDepartment(data) {
-                // department_id
-                console.log(data);
-                let department = this.department_id;
-                this.department_id = data[data.length - 1];
-                // 获取部门所有员工
-                if (department !== this.department_id) {
-                    this.getDepartmentEmployees();
-                    this.filterClue()
-                }
-
-            },
-            // 获取部门所有员工
-            getDepartmentEmployees() {
-                console.log('获取部门所有员工')
-                let self = this;
-                self.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/department/makeAdminDepartmentList',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        department_id: self.department_id
-                    }
-                })
-                    .then(function (res) {
-                        if (res.data.code == 200) {
-                            console.log('获取部门所有员工:' + self.department_id)
-
-                            for (var i = 0; i < res.data.data.list.length; i++) {
-                                var obj = res.data.data.list[i];
-                                obj.label = obj.user_name
-                                obj.value = obj.user_id
-                            }
-                            console.log('获取部门所有员工数据:' + JSON.stringify(res.data, null, 4))
-                            self.currentDepartmentStaff = res.data.data.list
-                        } else {
-                            alert(res.data.msg)
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-            // selectEmployees 选择员工
-            selectEmployees(data) {
-                console.log(this.employees_id)
-                console.log(data);
-                // this.employees_id =
-                this.filterClue();
-            },
-            // 线索类型--筛查条件
-            clueTypeChange(data) {
-                console.log(data)
-                if (data === '学校' || data == 1) {
-                    // 显示 学校等级, 学制
-                    this.typeList.schoolLevel.show = true;
-                    this.typeList.academicSystem.show = true;
-
-                    this.typeList.artsAndSciences.show = false;
-                    this.typeList.grade.show = false;
-                    this.typeList.organizationType.show = false;
-                    this.typeList.sex.show = false;
-                    this.typeList.sourceType.show = false;
-                    this.typeList.positioning.show = false;
-                    this.typeList.professorSubjects.show = false;
-
-                } else if (data === '机构' || data == 2) {
-                    // 显示 机构类型, 定位
-
-                    this.typeList.positioning.show = true;
-                    this.typeList.organizationType.show = true;
-
-                    this.typeList.schoolLevel.show = false;
-                    this.typeList.academicSystem.show = false;
-                    this.typeList.artsAndSciences.show = false;
-                    this.typeList.grade.show = false;
-                    this.typeList.sex.show = false;
-                    this.typeList.sourceType.show = false;
-                    this.typeList.professor_grade.show = false;
-
-                    this.typeList.professorSubjects.show = false;
-                } else if (data === '教师' || data == 3) {
-                    // 学校等级, 教授科目, 教授年级(学制)
-                    this.typeList.professorSubjects.show = true;
-                    this.typeList.schoolLevel.show = true;
-                    this.typeList.professor_grade.show = true;
-
-                    this.typeList.academicSystem.show = false;
-                    this.typeList.positioning.show = false;
-                    this.typeList.organizationType.show = false;
-                    this.typeList.artsAndSciences.show = false;
-                    this.typeList.grade.show = false;
-                    this.typeList.sex.show = false;
-                    this.typeList.sourceType.show = false;
-
-
-                } else if (data === '学生' || data == 4) {
-                    // 学校等级, 文理科, 年级, 学生性别, 来源类型
-
-                    this.typeList.schoolLevel.show = true;
-                    this.typeList.artsAndSciences.show = true;
-                    this.typeList.grade.show = true;
-                    this.typeList.sex.show = true;
-                    this.typeList.sourceType.show = true;
-                    this.typeList.academicSystem.show = false;
-
-                    this.typeList.positioning.show = false;
-                    this.typeList.organizationType.show = false;
-                    this.typeList.professorSubjects.show = false;
-                    this.typeList.professor_grade.show = false;
-
-
-                } else {
-
-                }
-                this.filterClue();
-            },
-            filterClue() {
-                console.log('筛选表格数据')
-                // 筛选表格数据
-                // console.log(this.clueType)
-                let self = this;
-                for (const key in self.filterTime) {
-                    if (self.filterTime.hasOwnProperty(key)) {
-                        let element = self.filterTime[key];
-                        if (element == null) {
-                            self.filterTime[key] = "";
-                        }
-                    }
-                }
-                let token = localStorage.getItem('crm_token');
-                let obj = {
-                    // token: localStorage.getItem('crm_token'),
-                    // page_num: "",
-                    // type: "",
-                    // followup_start: self.lastFollowUpTime[0],
-                    // followup_end: self.lastFollowUpTime[1],
-                    // update_start: self.updateTime[0],
-                    // update_end: self.updateTime[1],
-                    // create_start: self.createTime[0],
-                    // create_end: self.createTime[1],
-                    // children_id: "",
-                    // department_id: "",
-                    // user_id: "",
-                    // province_id: self.selectCityData[0],
-                    // city_id: self.selectCityData[1],
-                    // area_id: self.selectCityData[2],
-                    // cue_source: self.typeList.source,
-                    // followup_statu: self.typeList.followUpStatus,
-                    // cue_type: "1",
-                    // name: "",
-                    // grade: self.typeList.grade,
-                    // los: self.typeList.academicSystem,
-                    // type: self.typeList.organizationType,
-                    // area_id: "",
-                    // location: self.typeList.positioning,
-                    // professor_grade: self.typeList.organizationType,
-                    // professor_subjects: self.typeList.professorSubjects,
-                    // the_science: self.typeList.artsAndSciences,
-                    // student_grade: self.typeList.grade,
-                    // sex: self.typeList.sex,
-                };
-                if (self.clueType == 1) {
-                    // 学校   学校等级, 学制, 跟进状态, 来源
-                    obj = {
-                        token: token,
-                        page_num: "",
-                        typebig: self.selectRangeItem,
-                        followup_start: self.filterTime.lastFollowUpTime[0],
-                        followup_end: self.filterTime.lastFollowUpTime[1],
-                        update_start: self.filterTime.updateTime[0],
-                        update_end: self.filterTime.updateTime[1],
-                        create_start: self.filterTime.createTime[0],
-                        create_end: self.filterTime.createTime[1],
-                        children_id: self.children_id,
-                        department_id: self.department_id,
-                        user_id: self.employees_id,
-                        province_id: self.selectCityData[0],
-                        city_id: self.selectCityData[1],
-                        area_id: self.selectCityData[2],
-                        cue_type: self.clueType,
-                        name: "",
-
-                        name: self.searchName,
-                        cname: self.searchCname,
-                        phone: self.searchPhone,
-
-                        cue_source: self.typeList.source.value,
-                        followup_statu: self.typeList.followUpStatus.value,
-                        grade: self.typeList.schoolLevel.value,
-                        los: self.typeList.academicSystem.value,
-                    }
-                } else if (self.clueType == 2) {
-                    // 机构   机构类型, 定位, 跟进状态, 来源
-                    obj = {
-                        token: token,
-                        page_num: "",
-                        typebig: self.selectRangeItem,
-                        followup_start: self.filterTime.lastFollowUpTime[0],
-                        followup_end: self.filterTime.lastFollowUpTime[1],
-                        update_start: self.filterTime.updateTime[0],
-                        update_end: self.filterTime.updateTime[1],
-                        create_start: self.filterTime.createTime[0],
-                        create_end: self.filterTime.createTime[1],
-                        children_id: self.children_id,
-                        department_id: self.department_id,
-                        user_id: self.employees_id,
-                        province_id: self.selectCityData[0],
-                        city_id: self.selectCityData[1],
-                        area_id: self.selectCityData[2],
-                        cue_type: self.clueType,
-                        name: "",
-
-                        name: self.searchName,
-                        cname: self.searchCname,
-                        phone: self.searchPhone,
-
-                        cue_source: self.typeList.source.value,
-                        followup_statu: self.typeList.followUpStatus.value,
-                        type: self.typeList.organizationType.value,
-                        location: self.typeList.positioning.value,
-
-                    }
-                } else if (self.clueType == 3) {
-                    // 教师   学校等级, 教授年级, 教授科目, 跟进状态, 来源
-                    obj = {
-                        token: token,
-                        page_num: "",
-                        typebig: self.selectRangeItem,
-                        followup_start: self.filterTime.lastFollowUpTime[0],
-                        followup_end: self.filterTime.lastFollowUpTime[1],
-                        update_start: self.filterTime.updateTime[0],
-                        update_end: self.filterTime.updateTime[1],
-                        create_start: self.filterTime.createTime[0],
-                        create_end: self.filterTime.createTime[1],
-                        children_id: self.children_id,
-                        department_id: self.department_id,
-                        user_id: self.employees_id,
-                        province_id: self.selectCityData[0],
-                        city_id: self.selectCityData[1],
-                        area_id: self.selectCityData[2],
-                        cue_type: self.clueType,
-                        name: "",
-
-                        name: self.searchName,
-                        cname: self.searchCname,
-                        phone: self.searchPhone,
-
-                        cue_source: self.typeList.source.value,
-                        followup_statu: self.typeList.followUpStatus.value,
-                        grade: self.typeList.schoolLevel.value,
-                        professor_grade: self.typeList.professor_grade.value,
-                        professor_subjects: self.typeList.professorSubjects.value,
-
-
-                    }
-                } else if (self.clueType == 4) {
-                    // 学生   学校等级, 文理科, 年级, 性别, 来源类型, 跟进状态 来源
-                    obj = {
-                        token: token,
-                        page_num: "",
-                        typebig: self.selectRangeItem,
-                        followup_start: self.filterTime.lastFollowUpTime[0],
-                        followup_end: self.filterTime.lastFollowUpTime[1],
-                        update_start: self.filterTime.updateTime[0],
-                        update_end: self.filterTime.updateTime[1],
-                        create_start: self.filterTime.createTime[0],
-                        create_end: self.filterTime.createTime[1],
-                        children_id: self.children_id,
-                        department_id: self.department_id,
-                        user_id: self.employees_id,
-                        province_id: self.selectCityData[0],
-                        city_id: self.selectCityData[1],
-                        area_id: self.selectCityData[2],
-                        cue_type: self.clueType,
-                        name: "",
-
-                        name: self.searchName,
-                        cname: self.searchCname,
-                        phone: self.searchPhone,
-
-                        cue_source: self.typeList.source.value,
-                        followup_statu: self.typeList.followUpStatus.value,
-                        grade: self.typeList.schoolLevel.value,
-                        the_science: self.typeList.artsAndSciences.value,
-                        student_grade: self.typeList.grade.value,
-                        sex: self.typeList.sex.value,
-                        from_type: self.typeList.sourceType.value
-                    }
-                } else {
-
-                }
-                console.log('请求参数:'+JSON.stringify(obj,null,4))
-                self.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/clue/getClueList',
-                    data: obj
-                })
-                    .then(function (res) {
-                        if (res.data.code === 200) {
-                            // console.log('返回参数:');
-                            console.log('返回参数:'+JSON.stringify(res.data,null,4));
-                            for (var i = 0; i < res.data.data.list.length; i++) {
-                                var obj = res.data.data.list[i];
-                                obj.school_grade = self.schoolLevelArr[obj.school_grade - 1]
-                                obj.school_los = self.academicSystemArr[obj.school_los - 1]
-
-                                obj.location = self.positionArr[obj.location - 1]
-
-                                obj.professor_grade = self.academicSystemArr[obj.professor_grade - 1]
-                                obj.professor_subjects = self.professorSubjectsArr[obj.professor_subjects - 1]
-                                obj.student_grade = self.studentGradeArr[obj.student_grade - 1]
-                                obj.student_sex = obj.student_sex === 1 ? "男" : "女";
-                                //   1未处理   2联系方式有效   3联系方式无效  4已完结
-                                 if (obj.followup_statu === 1)
-                                  {
-                                         obj.followup_statu =  "未处理"
-                                   }else if(obj.followup_statu === 2) {
-                                      obj.followup_statu =  "联系方式有效"
-                                    }else if(obj.followup_statu === 3) {
-                                       obj.followup_statu =  "联系方式无效"
-                                    }else if(obj.followup_statu === 4) {
-                                         obj.followup_statu =  "已完结"
-                                    }
-                                 if (obj.of_level === 1)
-                                  {
-                                         obj.from_type =  "手录"
-                                   }else{
-                                        if (obj.sourceType === 1) {
-                                          obj.from_type =  "线索"
-                                        }else if(obj.sourceType === 2) {
-                                          obj.from_type =  "客户"
-                                        }
-                                   }
-                                obj.the_science = obj.the_science === 1 ? "文科" : "理科";
-                                for (let key in obj) {
-                                    if (obj[key] == null) {
-                                        obj[key] = '-'
-                                    }
-                                }
-                            }
-                            self.tableData = res.data.data.list
-                        } else {
-                            alert(res.data.msg)
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-            //导出
-             exportData() {
-                console.log('筛选表格数据')
-                // 筛选表格数据
-                // console.log(this.clueType)
-                let self = this;
-                for (const key in self.filterTime) {
-                    if (self.filterTime.hasOwnProperty(key)) {
-                        let element = self.filterTime[key];
-                        if (element == null) {
-                            self.filterTime[key] = "";
-                        }
-                    }
-                }
-                let token = localStorage.getItem('crm_token');
-                let obj = {
-
-                };
-                if (self.clueType == 1) {
-                    // 学校   学校等级, 学制, 跟进状态, 来源
-                    obj = {
-                        token: token,
-                        statutype: 1,
-                        page_num: "",
-                        typebig: self.selectRangeItem,
-                        followup_start: self.filterTime.lastFollowUpTime[0],
-                        followup_end: self.filterTime.lastFollowUpTime[1],
-                        update_start: self.filterTime.updateTime[0],
-                        update_end: self.filterTime.updateTime[1],
-                        create_start: self.filterTime.createTime[0],
-                        create_end: self.filterTime.createTime[1],
-                        children_id: self.children_id,
-                        department_id: self.department_id,
-                        user_id: self.employees_id,
-                        province_id: self.selectCityData[0],
-                        city_id: self.selectCityData[1],
-                        area_id: self.selectCityData[2],
-                        cue_type: self.clueType,
-                        name: "",
-
-                        cue_source: self.typeList.source.value,
-                        followup_statu: self.typeList.followUpStatus.value,
-                        grade: self.typeList.schoolLevel.value,
-                        los: self.typeList.academicSystem.value,
-                    }
-                } else if (self.clueType == 2) {
-                    // 机构   机构类型, 定位, 跟进状态, 来源
-                    obj = {
-                        token: token,
-                        page_num: "",
-                        statutype: 1,
-                        typebig: self.selectRangeItem,
-                        followup_start: self.filterTime.lastFollowUpTime[0],
-                        followup_end: self.filterTime.lastFollowUpTime[1],
-                        update_start: self.filterTime.updateTime[0],
-                        update_end: self.filterTime.updateTime[1],
-                        create_start: self.filterTime.createTime[0],
-                        create_end: self.filterTime.createTime[1],
-                        children_id: self.children_id,
-                        department_id: self.department_id,
-                        user_id: self.employees_id,
-                        province_id: self.selectCityData[0],
-                        city_id: self.selectCityData[1],
-                        area_id: self.selectCityData[2],
-                        cue_type: self.clueType,
-                        name: "",
-
-                        cue_source: self.typeList.source.value,
-                        followup_statu: self.typeList.followUpStatus.value,
-                        type: self.typeList.organizationType.value,
-                        location: self.typeList.positioning.value,
-
-                    }
-                } else if (self.clueType == 3) {
-                    // 教师   学校等级, 教授年级, 教授科目, 跟进状态, 来源
-                    obj = {
-                        token: token,
-                        statutype: 1,
-                        page_num: "",
-                        typebig: self.selectRangeItem,
-                        followup_start: self.filterTime.lastFollowUpTime[0],
-                        followup_end: self.filterTime.lastFollowUpTime[1],
-                        update_start: self.filterTime.updateTime[0],
-                        update_end: self.filterTime.updateTime[1],
-                        create_start: self.filterTime.createTime[0],
-                        create_end: self.filterTime.createTime[1],
-                        children_id: self.children_id,
-                        department_id: self.department_id,
-                        user_id: self.employees_id,
-                        province_id: self.selectCityData[0],
-                        city_id: self.selectCityData[1],
-                        area_id: self.selectCityData[2],
-                        cue_type: self.clueType,
-                        name: "",
-
-                        cue_source: self.typeList.source.value,
-                        followup_statu: self.typeList.followUpStatus.value,
-                        grade: self.typeList.schoolLevel.value,
-                        professor_grade: self.typeList.professor_grade.value,
-                        professor_subjects: self.typeList.professorSubjects.value,
-
-
-                    }
-                } else if (self.clueType == 4) {
-                    // 学生   学校等级, 文理科, 年级, 性别, 来源类型, 跟进状态 来源
-                    obj = {
-                        token: token,
-                        statutype: 1,
-                        page_num: "",
-                        typebig: self.selectRangeItem,
-                        followup_start: self.filterTime.lastFollowUpTime[0],
-                        followup_end: self.filterTime.lastFollowUpTime[1],
-                        update_start: self.filterTime.updateTime[0],
-                        update_end: self.filterTime.updateTime[1],
-                        create_start: self.filterTime.createTime[0],
-                        create_end: self.filterTime.createTime[1],
-                        children_id: self.children_id,
-                        department_id: self.department_id,
-                        user_id: self.employees_id,
-                        province_id: self.selectCityData[0],
-                        city_id: self.selectCityData[1],
-                        area_id: self.selectCityData[2],
-                        cue_type: self.clueType,
-                        name: "",
-
-                        cue_source: self.typeList.source.value,
-                        followup_statu: self.typeList.followUpStatus.value,
-                        grade: self.typeList.schoolLevel.value,
-                        the_science: self.typeList.artsAndSciences.value,
-                        student_grade: self.typeList.grade.value,
-                        sex: self.typeList.sex.value,
-                        from_type: self.typeList.sourceType.value
-                    }
-                } else {
-
-                }
-                console.log('请求参数:'+JSON.stringify(obj,null,4))
-                self.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/clue/getClueList',
-                    data: obj
-                })
-                    .then(function (res) {
-                   // console.log('返回参数:');
-                  console.log(JSON.stringify(res.data,null,4))
-                  window.open("http://crm.tonyliangli.cn"+res.data.url);
-
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-            // 类型转变
-            radioChange(data) {
-                for (var i = 0; i < this.typeList[data].content.length; i++) {
-                    var obj = this.typeList[data].content[i];
-                    if (obj.label == this.typeList[data].key) {
-                        this.typeList[data].value = obj.value
-                        break;
-                    }
-                }
-                console.log('更改选项:'+this.typeList[data].key + ":" + this.typeList[data].value);
-                this.filterClue();
-            },
-            // 省市县数据
-            requestCity() {
-                let self = this;
-                this.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/area/evepce',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                    }
-                })
-                    .then(function (res) {
-                        // objrr = [];
-                        self.cityList = res.data.data.list;
-                        localStorage.setItem('cityData', JSON.stringify(res.data.data.list))
-                        // console.log(JSON.stringify(res.data.data.list));
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-            // 点击级联选择器选择城市
-            selectCity(data) {
-                console.log(data)
-                if (this.dialogVisible) {
-                    // 如果dialogVisible === true 说明, 对话框显示, 是新增线索,
-                    // 否者就是筛选线索
-                    this.addClueData.selectCityData = data
-                } else {
-                    this.selectCityData = data;
-                    this.filterClue();
-                }
-            },
-            //
-             // 单选删除线索
-             showModelTable(index,data,flag) {
-                if(flag == 'deleteBtn'){
-                  let paramObj = {};
-                  //  console.log(data);
-                    let self = this;
-                       paramObj = {
-                         token: localStorage.getItem('crm_token'),
-                         clue_id: data.clue_id,
-                         }
-                        console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
-                         self.$axios({
-                             method: 'POST',
-                             withCredentials: false,
-                             url: '/api/clue/deleteClue',
-                             data: paramObj
-                         })
-                             .then(function (res) {
-                                 if (res.data.code == 200) {
-                                 self.$message({
-                                      message: '删除线索成功',
-                                      type: 'success'
-                                  })
-                                  self.filterClue();
-                                 } else {
-                                     alert(res.data.msg)
-                                 }
-                             })
-                             .catch(function (err) {
-                                 console.log(err);
-                             });
-                }else if(flag == 'handover'){
-
-                }
-
-             },
-            // 处理树形数据, 删除空的children
-            getMenuName(menus){
-                for (var value of menus) {
-                    if (value.children) {
-                        this.getMenuName(value.children)
-                    }
-                    if (value.children.length == 0) {
-                        delete value.children
-                    }
-                }
-
-            },
-            // 新增线索按钮
-            addClue() {
-                this.dialogVisible = true;
-                console.log(JSON.stringify(this.addClueData,null,4))
-            },
-            // 提交线索
-            submitClue() {
-                this.dialogVisible = false
-                console.log('新增线索')
-                let paramObj = {};
-                let self = this;
-                // 判断当前线索类型
-                if (this.addClueData.clueType == "1") {
-                    paramObj = {
-                        token: localStorage.getItem('crm_token'),
-                        cue_source: self.addClueData.sourceTypeValue,
-                        cue_type: self.addClueData.clueType,
-                        name: self.addClueData.schoolName,
-                        los: self.addClueData.academicSystem,
-                        grade: self.addClueData.schoolLevel,
-                        province_id: self.addClueData.selectCityData[0],
-                        city_id: self.addClueData.selectCityData[1],
-                        area_id: self.addClueData.selectCityData[2],
-                        address: self.addClueData.address,
-                        contacts_name: self.addClueData.contactName,
-                        contacts_post: self.addClueData.contactPosition,
-                        contacts_mobile: self.addClueData.contactPhone,
-                        contacts_telephone: self.addClueData.contactTel,
-                        contacts_wechat: self.addClueData.contactWeixin,
-                        contacts_qq: self.addClueData.contactQq,
-                        contacts_email: self.addClueData.contactEmail,
-                    }
-                } else if (this.addClueData.clueType == "2"){
-                    paramObj = {
-                         token: localStorage.getItem('crm_token'),
-                        cue_source: self.addClueData.sourceTypeValue,
-                        cue_type: self.addClueData.clueType,
-                        name: self.addClueData.schoolName,
-                        type: self.addClueData.organizationType,
-                        location: self.addClueData.positioning,
-
-                        province_id: self.addClueData.selectCityData[0],
-                        city_id: self.addClueData.selectCityData[1],
-                        area_id: self.addClueData.selectCityData[2],
-                        address: self.addClueData.address,
-                        contacts_name: self.addClueData.contactName,
-                        contacts_post: self.addClueData.contactPosition,
-                        contacts_mobile: self.addClueData.contactPhone,
-                        contacts_telephone: self.addClueData.contactTel,
-                        contacts_wechat: self.addClueData.contactWeixin,
-                        contacts_qq: self.addClueData.contactQq,
-                        contacts_email: self.addClueData.contactEmail,
-                    }
-                } else if (this.addClueData.clueType == "3"){
-                    paramObj = {
-                       token: localStorage.getItem('crm_token'),
-                        cue_source: self.addClueData.sourceTypeValue,
-                        cue_type: self.addClueData.clueType,
-                        name: self.addClueData.schoolName,
-
-
-                        los: self.addClueData.academicSystem,
-                        grade: self.addClueData.schoolLevel,
-                        // professor_grade
-
-                        contacts_professor_grade: self.addClueData.grade,
-                        contacts_professor_subjects: self.addClueData.professorSubjects,
-
-                        province_id: self.addClueData.selectCityData[0],
-                        city_id: self.addClueData.selectCityData[1],
-                        area_id: self.addClueData.selectCityData[2],
-                        address: self.addClueData.address,
-                        contacts_name: self.addClueData.teacherName,
-                        contacts_post: self.addClueData.contactPosition,
-                        contacts_mobile: self.addClueData.contactPhone,
-                        contacts_telephone: self.addClueData.contactTel,
-                        contacts_wechat: self.addClueData.contactWeixin,
-                        contacts_qq: self.addClueData.contactQq,
-                        contacts_email: self.addClueData.contactEmail,
-                    }
-                } else {
-                    paramObj = {
-                       token: localStorage.getItem('crm_token'),
-                        cue_source: self.addClueData.sourceTypeValue,
-                        cue_type: self.addClueData.clueType,
-                        name: self.addClueData.studentName,
-                        the_science: self.addClueData.artsAndSciences,
-                        sex: self.addClueData.sex,
-                        school_name: self.addClueData.schoolName,
-
-                        // los: self.addClueData.academicSystem,
-                        grade: self.addClueData.schoolLevel,
-                        student_grade: self.addClueData.grade,
-
-                        province_id: self.addClueData.selectCityData[0],
-                        city_id: self.addClueData.selectCityData[1],
-                        area_id: self.addClueData.selectCityData[2],
-                        address: self.addClueData.address,
-                        contacts_name: self.addClueData.contactName,
-                        contacts_post: self.addClueData.contactPosition,
-                        contacts_mobile: self.addClueData.contactPhone,
-                        contacts_telephone: self.addClueData.contactTel,
-                        contacts_wechat: self.addClueData.contactWeixin,
-                        contacts_qq: self.addClueData.contactQq,
-                        contacts_email: self.addClueData.contactEmail,
-                    }
-                }
-                console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
-                let objFlag = 1;
-                for (const key in paramObj) {
-                    if (!paramObj[key]) {
-                        objFlag = 0;
-                    }
-                }
-                console.log(objFlag)
-                if (objFlag) {
-                    self.$axios({
-                        method: 'POST',
-                        withCredentials: false,
-                        url: '/api/clue/applyClue',
-                        data: paramObj
-                    })
-                    .then(function (res) {
-                        if (res.data.code == 200) {
-                            self.$message({
-                                message: '添加线索成功',
-                                type: 'success'
-                            })
-                            self.filterClue();
-                        } else {
-                           
-                            self.$message.error(res.data.msg);
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-                } else {
-                    self.$message.error('请完善参数');
-                }
-            }
+        {
+          label: "子公司",
+          value: 2
         },
-        
-        created() {
-            this.applyCompany();
-            this.filterClue();
-
-            this.typeList.schoolLevel.show = true;
-            this.typeList.academicSystem.show = true;
-            if (localStorage.getItem('cityData')) {
-                console.log('有缓存')
-                this.cityList = JSON.parse(localStorage.getItem('cityData'))
-            } else {
-                console.log('无缓存')
-                this.requestCity();
-            }
-        },
-        computed: {
-            // 是否禁用子公司选择框
-            rangeFlag() {
-                if (this.selectRangeItem == 1) {
-                    // 如果选择母公司, 禁用选公司列表, 请求母公司部门
-                    this.getDepartment();
-                    return true
-                } else {
-                    return false
-                }
-            },
-            // 显示哪一个表格
-            schoolTable() {
-                if (this.clueType == 1) {
-                    this.addClueData.clueType = "1"
-                    this.addClueData.schoolTable = false
-                    // 学校表格显示
-                    return false
-                } else {
-                    this.addClueData.schoolTable = true
-                    return true
-                }
-            },
-            mechanismTable() {
-                if (this.clueType == 2) {
-                    // 学校表格显示
-                    this.addClueData.clueType = "2"
-                    this.addClueData.mechanismTable = false
-                    return false
-                } else {
-                    this.addClueData.mechanismTable = true
-                    return true
-                }
-            }, teacherTable() {
-                if (this.clueType == 3) {
-                    // 学校表格显示
-                    this.addClueData.clueType = "3"
-                    this.addClueData.teacherTable = false
-                    return false
-                } else {
-                    this.addClueData.teacherTable = true
-                    return true
-                }
-            }, studentTable() {
-                if (this.clueType == 4) {
-                    // 学校表格显示
-                    this.addClueData.clueType = "4"
-                    this.addClueData.studentTable = false
-                    return false
-                } else {
-                    this.addClueData.studentTable = true
-                    return true
-                }
-            },
+        {
+          label: "加盟商",
+          value: 3
         }
+      ],
+      // 当前公司部门
+      currentCompanyDepartment: [],
+      // 当前公司下的部门
+      parentCompanyDepartment: [],
+      // 当前部门员工列表
+      currentDepartmentStaff: [],
+      filterTime: {
+        // 最后跟进时间
+        lastFollowUpTime: "",
+        // 更新时间
+        updateTime: "",
+        // 新建时间
+        createTime: ""
+      },
+      // 城市选择器数据
+      cityList: [],
+      // 选中城市数据
+      selectCityData: [],
+      // 各项数据
+      typeList: {
+        // 学校等级
+        schoolLevel: {
+          key: "全部",
+          title: "学校等级",
+          value: "",
+          show: false,
+          content: [
+            {
+              value: "",
+              label: "全部"
+            },
+            {
+              value: "1",
+              label: "市重点"
+            },
+            {
+              value: "2",
+              label: "区重点"
+            }
+          ]
+        },
+        // 学制
+        academicSystem: {
+          key: "全部",
+          title: "学制",
+          value: "",
+          show: false,
+          content: [
+            {
+              value: "",
+              label: "全部"
+            },
+            {
+              value: "1",
+              label: "初中"
+            },
+            {
+              value: "2",
+              label: "高中"
+            },
+            {
+              value: "3",
+              label: "初中+高中"
+            }
+          ]
+        }, // 学制
+        professor_grade: {
+          key: "全部",
+          title: "教授年级",
+          value: "",
+          show: false,
+          content: [
+            {
+              value: "",
+              label: "全部"
+            },
+            {
+              value: "1",
+              label: "初中"
+            },
+            {
+              value: "2",
+              label: "高中"
+            },
+            {
+              value: "3",
+              label: "初中+高中"
+            }
+          ]
+        },
+        // 跟进状态
+        followUpStatus: {
+          key: "全部",
+          title: "跟进状态",
+          value: "",
+          show: true,
+          content: [
+            {
+              value: "",
+              label: "全部"
+            },
+            {
+              value: "1",
+              label: "未处理"
+            },
+            {
+              value: "2",
+              label: "联系方式有效"
+            },
+            {
+              value: "3",
+              label: "联系方式无效"
+            }
+          ]
+        },
+        // 来源
+        source: {
+          key: "全部",
+          title: "来源",
+          show: true,
+          value: "",
+          content: [
+            {
+              value: "",
+              label: "全部"
+            },
+            {
+              value: "高招",
+              label: "高招"
+            },
+            {
+              value: "我在",
+              label: "我在"
+            },
+            {
+              value: "搜索引擎",
+              label: "搜索引擎"
+            },
+            {
+              value: "微信",
+              label: "微信"
+            },
+            {
+              value: "客户介绍",
+              label: "客户介绍"
+            }
+          ]
+        },
+        // 机构类型
+        organizationType: {
+          key: "全部",
+          title: "机构类型",
+          show: false,
+          value: "",
+          content: [
+            {
+              value: "",
+              label: "全部"
+            },
+            {
+              value: "大型",
+              label: "大型"
+            },
+            {
+              value: "中型",
+              label: "中型"
+            },
+            {
+              value: "小型",
+              label: "小型"
+            }
+          ]
+        },
+        // 定位
+        positioning: {
+          key: "全部",
+          title: "定位",
+          value: "",
+          show: false,
+          content: [
+            {
+              value: "",
+              label: "全部"
+            },
+            {
+              value: "1",
+              label: "K12"
+            },
+            {
+              value: "2",
+              label: "英语"
+            },
+            {
+              value: "3",
+              label: "出国"
+            }
+          ]
+        },
+        // 教授科目
+        professorSubjects: {
+          key: "全部",
+          title: "教授科目",
+          show: false,
+          value: "",
+          content: [
+            {
+              value: "",
+              label: "全部"
+            },
+            {
+              value: "1",
+              label: "语文"
+            },
+            {
+              value: "2",
+              label: "数学"
+            },
+            {
+              value: "3",
+              label: "外语"
+            },
+            {
+              value: "4",
+              label: "物理"
+            },
+            {
+              value: "5",
+              label: "化学"
+            }
+          ]
+        },
+        // 文理科
+        artsAndSciences: {
+          key: "全部",
+          title: "文理科",
+          show: false,
+          value: "",
+          content: [
+            {
+              value: "",
+              label: "全部"
+            },
+            {
+              value: "1",
+              label: "文科"
+            },
+            {
+              value: "2",
+              label: "理科"
+            }
+          ]
+        },
+        // 年级
+        grade: {
+          key: "全部",
+          title: "年级",
+          show: false,
+          value: "",
+          content: [
+            {
+              value: "",
+              label: "全部"
+            },
+            {
+              value: "1",
+              label: "初一"
+            },
+            {
+              value: "2",
+              label: "初二"
+            },
+            {
+              value: "3",
+              label: "初三"
+            },
+            {
+              value: "4",
+              label: "高一"
+            },
+            {
+              value: "5",
+              label: "高二"
+            },
+            {
+              value: "6",
+              label: "高三"
+            }
+          ]
+        },
+        // 性别
+        sex: {
+          key: "全部",
+          title: "性别",
+          show: false,
+          value: "",
+          content: [
+            {
+              value: "",
+              label: "全部"
+            },
+            {
+              value: "1",
+              label: "男"
+            },
+            {
+              value: "2",
+              label: "女"
+            }
+          ]
+        },
+        // 来源类型
+        sourceType: {
+          key: "全部",
+          title: "来源类型",
+          show: false,
+          value: "",
+          content: [
+            {
+              value: "",
+              label: "全部"
+            },
+            {
+              value: "1",
+              label: "线索"
+            },
+            {
+              value: "2",
+              label: "客户"
+            },
+            {
+              value: "3",
+              label: "手录"
+            }
+          ]
+        }
+      },
+      // 时间选择器
+      pickerOptions2: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
+      },
+
+      // 表格数据
+      tableData: [],
+      // 表格搜索下拉框
+      options: [
+        {
+          label: "名称",
+          value: 1
+        },
+        {
+          label: "联系人姓名",
+          value: 2
+        },
+        {
+          label: "联系人电话",
+          value: 3
+        }
+      ],
+      // 表格搜索下拉框选择
+      searchType: 2,
+      // 搜索框内容
+      searchIptValue: "",
+      // 学校线索
+      schoolClue: {},
+      // 来源类型
+      sourceTypeValue: "全部",
+      sourceTypeOptions: [
+        {
+          label: "全部",
+          value: "1"
+        },
+        {
+          label: "高招",
+          value: "2"
+        },
+        {
+          label: "我在",
+          value: "3"
+        },
+        {
+          label: "搜索引擎",
+          value: "4"
+        },
+        {
+          label: "微信",
+          value: "5"
+        },
+        {
+          label: "客户介绍",
+          value: "6"
+        }
+      ],
+      // 线索类型
+      clueTypeOptions: [
+        {
+          label: "学校",
+          value: "1"
+        },
+        {
+          label: "机构",
+          value: "2"
+        },
+        {
+          label: "教师",
+          value: "3"
+        },
+        {
+          label: "学生",
+          value: "4"
+        }
+      ],
+      // 学校等级解析数组
+      schoolLevelArr: ["市重点", "区重点"],
+      // 学制解析数组, 教授年级解析数组
+      academicSystemArr: ["初中", "高中", "初中+高中"],
+      // 定位解析数组
+      positionArr: ["K12", "英语", "出国"],
+      // 教授科目解析数组
+      professorSubjectsArr: ["语文", "英语", "数学", "物理", "化学"],
+      // 年级解析数组
+      studentGradeArr: ["初一", "初二", "初三", "高一", "高二", "高三"],
+      // 搜索关键字
+      searchName: "",
+      searchPhone: "",
+      searchCname: ""
+    };
+  },
+  methods: {
+    // 获取加盟商员工
+    getFranchiseeEmp() {
+      let self = this;
+      self
+        .$axios({
+          method: "POST",
+          withCredentials: false,
+          url: "/api/department/getChildrenDepartmentTo",
+          data: {
+            token: localStorage.getItem("crm_token"),
+            mother_id: self.franchisee_id
+          }
+        })
+        .then(function(res) {
+          if (res.data.code == 200) {
+            self.getMenuName(res.data.data.list);
+            console.log(
+              "获取部门所有部门数据:" + JSON.stringify(res.data, null, 4)
+            );
+            self.currentCompanyDepartment = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+
+    // 转移线索选择公司
+    selMoveCompany(flag) {
+      let url, paramObj, str;
+      let self = this;
+      if (flag == "depa") {
+        // 选择公司
+        url = "/api/department/getChildrenDepartmentTo";
+        paramObj = {
+          token: localStorage.getItem("crm_token"),
+          mother_id: self.moveClueCompanyId[self.moveClueCompanyId.length - 1]
+        };
+      } else if (flag == "moveStatu") {
+        self.moveStatu = false;
+        // 提交转移
+        str = "转移线索成功";
+        (url = "/api/clue/transferClue"),
+          (paramObj = {
+            token: localStorage.getItem("crm_token"),
+            clue_id: self.selTableData.clue_id,
+            company_id:
+              self.moveClueCompanyId[self.moveClueCompanyId.length - 1],
+            department_id:
+              self.moveClueDepartmentId[self.moveClueDepartmentId.length - 1],
+            user_new: self.moveClueEmployeesId
+          });
+      } else if (flag == "emp") {
+        // 选择部门
+        url = "/api/department/makeAdminDepartmentList";
+        paramObj = {
+          token: localStorage.getItem("crm_token"),
+          department_id:
+            self.moveClueDepartmentId[self.moveClueDepartmentId.length - 1]
+        };
+      } else {
+      }
+      console.log("提交参数:" + JSON.stringify(paramObj, null, 4));
+      // console.log('提交参数:'+JSON.stringify(selTableData,null,4));
+
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: url,
+        data: paramObj
+      })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            console.log(JSON.stringify(res.data.data));
+
+            // 当前子公司下的部门 parentCompanyDepartment
+            if (flag == "depa") {
+              self.getMenuName(res.data.data.list);
+              self.moveDepartmentList = res.data.data.list;
+            } else if (flag == "emp") {
+              self.moveDepartmentStaff = res.data.data.list;
+            } else if (flag == "moveStatu") {
+              self.$message({
+                message: str,
+                type: "success"
+              });
+              self.filterClue();
+            } else {
+            }
+          } else {
+            self.$message.error(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 搜索
+    searchBtn() {
+      console.log(this.searchType);
+      console.log(this.searchIptValue);
+      if (this.searchType == 1) {
+        (this.searchName = this.searchIptValue),
+          (this.searchPhone = ""),
+          (this.searchCname = "");
+      } else if (this.searchType == 2) {
+        (this.searchName = ""),
+          (this.searchPhone = ""),
+          (this.searchCname = this.searchIptValue);
+      } else {
+        (this.searchName = ""),
+          (this.searchPhone = this.searchIptValue),
+          (this.searchCname = "");
+      }
+      this.filterClue();
+    },
+    // 删除线索
+    delLogItem() {
+      let arr = [];
+      for (let i = 0; i < this.multipleSelection.length; i++) {
+        this.tableData = this.tableData.filter(value => {
+          return value.clue_id != this.multipleSelection[i].clue_id;
+        });
+        arr.push(this.multipleSelection[i].clue_id);
+      }
+
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/clue/deleteStudentClues",
+        data: {
+          token: localStorage.getItem("crm_token"),
+          clueIds: JSON.stringify(arr)
+        }
+      })
+        .then(function(res) {
+          if (res.data.code == 200) {
+            self.$message({
+              message: "批量删除线索成功",
+              type: "success"
+            });
+            self.filterClue();
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    //复选框状态改变
+    changeFun(val) {
+      this.multipleSelection = val;
+    },
+    addClueTypeChange(data) {
+      this.addClueData.clueType = data;
+      if (data == 1) {
+        // 学校
+        this.addClueData.schoolTable = false;
+        this.addClueData.mechanismTable = true;
+        this.addClueData.teacherTable = true;
+        this.addClueData.studentTable = true;
+      } else if (data == 2) {
+        // 机构
+        this.addClueData.schoolTable = true;
+        this.addClueData.mechanismTable = false;
+        this.addClueData.teacherTable = true;
+        this.addClueData.studentTable = true;
+      } else if (data == 3) {
+        // 教师
+        this.addClueData.schoolTable = true;
+        this.addClueData.mechanismTable = true;
+        this.addClueData.teacherTable = false;
+        this.addClueData.studentTable = true;
+      } else {
+        // 学生
+        this.addClueData.schoolTable = true;
+        this.addClueData.mechanismTable = true;
+        this.addClueData.teacherTable = true;
+        this.addClueData.studentTable = false;
+      }
+    },
+    // 线索详情
+    openClueInfo(index, data) {
+      // 跳转到线索详情的页面
+      this.$router.push({
+        path: "/clue/clueInfo",
+        query: { data: data, clueType: this.clueType }
+      });
+    },
+    // 更新时间
+    timeUpdata(data) {
+      this.filterClue();
+    },
+    // 所有子公司
+    applyCompany() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/company/CompanyMyList",
+        data: {
+          token: localStorage.getItem("crm_token")
+        }
+      })
+        .then(function(res) {
+          if (res.data.code == 200) {
+            // 当前用户只会有一个母公司
+            // console.log('报错数据:'+JSON.stringify(res.data.data.list));
+            // console.log('数据格式:'+ typeof res.data.data.list);
+            self.getMenuName(res.data.data.list);
+            self.parentCompanyList = res.data.data.list;
+            self.mother_id = localStorage.getItem("motherCompanyId");
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 当前母公司下的所有部门
+    getDepartment() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/department/getChildrenDepartment",
+        data: {
+          token: localStorage.getItem("crm_token"),
+          mother_id: localStorage.getItem("motherCompanyId")
+        }
+      })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            // 当前母公司下的部门 parentCompanyDepartment
+            // console.log(JSON.stringify(res.data.data,null,4))
+            // console.log(self.mother_id)
+            self.getMenuName(res.data.data.list);
+            self.currentCompanyDepartment = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 当前子公司下的所有部门
+    getChildrenDepartment() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/department/getChildrenDepartmentTo",
+        data: {
+          token: localStorage.getItem("crm_token"),
+          mother_id: self.children_id[self.children_id.length - 1]
+        }
+      })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            // 当前子公司下的部门 parentCompanyDepartment
+            console.log(JSON.stringify(res.data.data.list));
+
+            self.getMenuName(res.data.data.list);
+            self.currentCompanyDepartment = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 子公司变化
+    handleChange(data) {
+      if (this.selectRangeItem == 3) {
+        // 获取加盟商
+        this.getFranchiseeList();
+      } else {
+        // 获取子公司所有部门
+
+        this.getChildrenDepartment();
+        this.filterClue();
+      }
+    },
+    // 获取加盟商列表
+    getFranchiseeList() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/joiningTrader/FranchiseeMyListId",
+        data: {
+          token: localStorage.getItem("crm_token"),
+          company_id: self.children_id[self.children_id.length - 1]
+        }
+      })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            console.log(JSON.stringify(res.data.data, null, 4));
+            self.$message({
+              message: "成功",
+              type: "success"
+            });
+            self.franchiseeList = res.data.data.list;
+          } else {
+            self.$message.error(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 子公司/ 母公司/ 加盟商修改
+    bigRangeChange(data) {
+      this.selectRangeItem = data;
+      // if (data === 2) {
+      //     // 获取子公司
+      //     this.applyCompany();
+      // }
+      this.filterClue();
+    },
+    // 选择部门
+    selectDepartment(data) {
+      // department_id
+      console.log(data);
+      let department = this.department_id;
+      this.department_id = data[data.length - 1];
+      // 获取部门所有员工
+      if (department !== this.department_id) {
+        this.getDepartmentEmployees();
+        this.filterClue();
+      }
+    },
+    // 获取部门所有员工
+    getDepartmentEmployees() {
+      console.log("获取部门所有员工");
+      let self = this;
+      self
+        .$axios({
+          method: "POST",
+          withCredentials: false,
+          url: "/api/department/makeAdminDepartmentList",
+          data: {
+            token: localStorage.getItem("crm_token"),
+            department_id: self.department_id
+          }
+        })
+        .then(function(res) {
+          if (res.data.code == 200) {
+            console.log("获取部门所有员工:" + self.department_id);
+
+            for (var i = 0; i < res.data.data.list.length; i++) {
+              var obj = res.data.data.list[i];
+              obj.label = obj.user_name;
+              obj.value = obj.user_id;
+            }
+            console.log(
+              "获取部门所有员工数据:" + JSON.stringify(res.data, null, 4)
+            );
+            self.currentDepartmentStaff = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // selectEmployees 选择员工
+    selectEmployees(data) {
+      console.log(this.employees_id);
+      console.log(data);
+      // this.employees_id =
+      this.filterClue();
+    },
+    // 线索类型--筛查条件
+    clueTypeChange(data) {
+      console.log(data);
+      if (data === "学校" || data == 1) {
+        // 显示 学校等级, 学制
+        this.typeList.schoolLevel.show = true;
+        this.typeList.academicSystem.show = true;
+
+        this.typeList.artsAndSciences.show = false;
+        this.typeList.grade.show = false;
+        this.typeList.organizationType.show = false;
+        this.typeList.sex.show = false;
+        this.typeList.sourceType.show = false;
+        this.typeList.positioning.show = false;
+        this.typeList.professorSubjects.show = false;
+      } else if (data === "机构" || data == 2) {
+        // 显示 机构类型, 定位
+
+        this.typeList.positioning.show = true;
+        this.typeList.organizationType.show = true;
+
+        this.typeList.schoolLevel.show = false;
+        this.typeList.academicSystem.show = false;
+        this.typeList.artsAndSciences.show = false;
+        this.typeList.grade.show = false;
+        this.typeList.sex.show = false;
+        this.typeList.sourceType.show = false;
+        this.typeList.professor_grade.show = false;
+
+        this.typeList.professorSubjects.show = false;
+      } else if (data === "教师" || data == 3) {
+        // 学校等级, 教授科目, 教授年级(学制)
+        this.typeList.professorSubjects.show = true;
+        this.typeList.schoolLevel.show = true;
+        this.typeList.professor_grade.show = true;
+
+        this.typeList.academicSystem.show = false;
+        this.typeList.positioning.show = false;
+        this.typeList.organizationType.show = false;
+        this.typeList.artsAndSciences.show = false;
+        this.typeList.grade.show = false;
+        this.typeList.sex.show = false;
+        this.typeList.sourceType.show = false;
+      } else if (data === "学生" || data == 4) {
+        // 学校等级, 文理科, 年级, 学生性别, 来源类型
+
+        this.typeList.schoolLevel.show = true;
+        this.typeList.artsAndSciences.show = true;
+        this.typeList.grade.show = true;
+        this.typeList.sex.show = true;
+        this.typeList.sourceType.show = true;
+        this.typeList.academicSystem.show = false;
+
+        this.typeList.positioning.show = false;
+        this.typeList.organizationType.show = false;
+        this.typeList.professorSubjects.show = false;
+        this.typeList.professor_grade.show = false;
+      } else {
+      }
+      this.filterClue();
+    },
+    filterClue() {
+      console.log("筛选表格数据");
+      // 筛选表格数据
+      // console.log(this.clueType)
+      let self = this;
+      for (const key in self.filterTime) {
+        if (self.filterTime.hasOwnProperty(key)) {
+          let element = self.filterTime[key];
+          if (element == null) {
+            self.filterTime[key] = "";
+          }
+        }
+      }
+      let token = localStorage.getItem("crm_token");
+      let obj = {
+        // token: localStorage.getItem('crm_token'),
+        // page_num: "",
+        // type: "",
+        // followup_start: self.lastFollowUpTime[0],
+        // followup_end: self.lastFollowUpTime[1],
+        // update_start: self.updateTime[0],
+        // update_end: self.updateTime[1],
+        // create_start: self.createTime[0],
+        // create_end: self.createTime[1],
+        // children_id: "",
+        // department_id: "",
+        // user_id: "",
+        // province_id: self.selectCityData[0],
+        // city_id: self.selectCityData[1],
+        // area_id: self.selectCityData[2],
+        // cue_source: self.typeList.source,
+        // followup_statu: self.typeList.followUpStatus,
+        // cue_type: "1",
+        // name: "",
+        // grade: self.typeList.grade,
+        // los: self.typeList.academicSystem,
+        // type: self.typeList.organizationType,
+        // area_id: "",
+        // location: self.typeList.positioning,
+        // professor_grade: self.typeList.organizationType,
+        // professor_subjects: self.typeList.professorSubjects,
+        // the_science: self.typeList.artsAndSciences,
+        // student_grade: self.typeList.grade,
+        // sex: self.typeList.sex,
+      };
+      if (self.clueType == 1) {
+        // 学校   学校等级, 学制, 跟进状态, 来源
+        obj = {
+          token: token,
+          page_num: "",
+          typebig: self.selectRangeItem,
+          followup_start: self.filterTime.lastFollowUpTime[0],
+          followup_end: self.filterTime.lastFollowUpTime[1],
+          update_start: self.filterTime.updateTime[0],
+          update_end: self.filterTime.updateTime[1],
+          create_start: self.filterTime.createTime[0],
+          create_end: self.filterTime.createTime[1],
+
+          children_id:
+            self.selectRangeItem == 3
+              ? self.franchisee_id
+              : self.children_id[self.children_id.length - 1],
+
+          department_id: self.department_id,
+          user_id: self.employees_id,
+          province_id: self.selectCityData[0],
+          city_id: self.selectCityData[1],
+          area_id: self.selectCityData[2],
+          cue_type: self.clueType,
+          name: "",
+
+          name: self.searchName,
+          cname: self.searchCname,
+          phone: self.searchPhone,
+
+          cue_source: self.typeList.source.value,
+          followup_statu: self.typeList.followUpStatus.value,
+          grade: self.typeList.schoolLevel.value,
+          los: self.typeList.academicSystem.value
+        };
+      } else if (self.clueType == 2) {
+        // 机构   机构类型, 定位, 跟进状态, 来源
+        obj = {
+          token: token,
+          page_num: "",
+          typebig: self.selectRangeItem,
+          followup_start: self.filterTime.lastFollowUpTime[0],
+          followup_end: self.filterTime.lastFollowUpTime[1],
+          update_start: self.filterTime.updateTime[0],
+          update_end: self.filterTime.updateTime[1],
+          create_start: self.filterTime.createTime[0],
+          create_end: self.filterTime.createTime[1],
+          // children_id: self.children_id[self.children_id.length-1],
+          children_id:
+            self.selectRangeItem == 3
+              ? self.franchisee_id
+              : self.children_id[self.children_id.length - 1],
+          department_id: self.department_id,
+          user_id: self.employees_id,
+          province_id: self.selectCityData[0],
+          city_id: self.selectCityData[1],
+          area_id: self.selectCityData[2],
+          cue_type: self.clueType,
+          name: "",
+
+          name: self.searchName,
+          cname: self.searchCname,
+          phone: self.searchPhone,
+
+          cue_source: self.typeList.source.value,
+          followup_statu: self.typeList.followUpStatus.value,
+          type: self.typeList.organizationType.value,
+          location: self.typeList.positioning.value
+        };
+      } else if (self.clueType == 3) {
+        // 教师   学校等级, 教授年级, 教授科目, 跟进状态, 来源
+        obj = {
+          token: token,
+          page_num: "",
+          typebig: self.selectRangeItem,
+          followup_start: self.filterTime.lastFollowUpTime[0],
+          followup_end: self.filterTime.lastFollowUpTime[1],
+          update_start: self.filterTime.updateTime[0],
+          update_end: self.filterTime.updateTime[1],
+          create_start: self.filterTime.createTime[0],
+          create_end: self.filterTime.createTime[1],
+          children_id:
+            self.selectRangeItem == 3
+              ? self.franchisee_id
+              : self.children_id[self.children_id.length - 1],
+          department_id: self.department_id,
+          user_id: self.employees_id,
+          province_id: self.selectCityData[0],
+          city_id: self.selectCityData[1],
+          area_id: self.selectCityData[2],
+          cue_type: self.clueType,
+          name: "",
+
+          name: self.searchName,
+          cname: self.searchCname,
+          phone: self.searchPhone,
+
+          cue_source: self.typeList.source.value,
+          followup_statu: self.typeList.followUpStatus.value,
+          grade: self.typeList.schoolLevel.value,
+          professor_grade: self.typeList.professor_grade.value,
+          professor_subjects: self.typeList.professorSubjects.value
+        };
+      } else if (self.clueType == 4) {
+        // 学生   学校等级, 文理科, 年级, 性别, 来源类型, 跟进状态 来源
+        obj = {
+          token: token,
+          page_num: "",
+          typebig: self.selectRangeItem,
+          followup_start: self.filterTime.lastFollowUpTime[0],
+          followup_end: self.filterTime.lastFollowUpTime[1],
+          update_start: self.filterTime.updateTime[0],
+          update_end: self.filterTime.updateTime[1],
+          create_start: self.filterTime.createTime[0],
+          create_end: self.filterTime.createTime[1],
+          children_id:
+            self.selectRangeItem == 3
+              ? self.franchisee_id
+              : self.children_id[self.children_id.length - 1],
+          department_id: self.department_id,
+          user_id: self.employees_id,
+          province_id: self.selectCityData[0],
+          city_id: self.selectCityData[1],
+          area_id: self.selectCityData[2],
+          cue_type: self.clueType,
+          name: "",
+
+          name: self.searchName,
+          cname: self.searchCname,
+          phone: self.searchPhone,
+
+          cue_source: self.typeList.source.value,
+          followup_statu: self.typeList.followUpStatus.value,
+          grade: self.typeList.schoolLevel.value,
+          the_science: self.typeList.artsAndSciences.value,
+          student_grade: self.typeList.grade.value,
+          sex: self.typeList.sex.value,
+          from_type: self.typeList.sourceType.value
+        };
+      } else {
+      }
+      console.log("请求参数:" + JSON.stringify(obj, null, 4));
+      self
+        .$axios({
+          method: "POST",
+          withCredentials: false,
+          url: "/api/clue/getClueList",
+          data: obj
+        })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            // console.log('返回参数:');
+            console.log("返回参数:" + JSON.stringify(res.data, null, 4));
+            for (var i = 0; i < res.data.data.list.length; i++) {
+              var obj = res.data.data.list[i];
+              obj.school_grade = self.schoolLevelArr[obj.school_grade - 1];
+              obj.school_los = self.academicSystemArr[obj.school_los - 1];
+
+              obj.location = self.positionArr[obj.location - 1];
+
+              obj.professor_grade =
+                self.academicSystemArr[obj.professor_grade - 1];
+              obj.professor_subjects =
+                self.professorSubjectsArr[obj.professor_subjects - 1];
+              obj.student_grade = self.studentGradeArr[obj.student_grade - 1];
+              obj.student_sex = obj.student_sex === 1 ? "男" : "女";
+              //   1未处理   2联系方式有效   3联系方式无效  4已完结
+              if (obj.followup_statu === 1) {
+                obj.followup_statu = "未处理";
+              } else if (obj.followup_statu === 2) {
+                obj.followup_statu = "联系方式有效";
+              } else if (obj.followup_statu === 3) {
+                obj.followup_statu = "联系方式无效";
+              } else if (obj.followup_statu === 4) {
+                obj.followup_statu = "已完结";
+              }
+              if (obj.of_level === 1) {
+                obj.from_type = "手录";
+              } else {
+                if (obj.sourceType === 1) {
+                  obj.from_type = "线索";
+                } else if (obj.sourceType === 2) {
+                  obj.from_type = "客户";
+                }
+              }
+              obj.the_science = obj.the_science === 1 ? "文科" : "理科";
+              for (let key in obj) {
+                if (obj[key] == null) {
+                  obj[key] = "-";
+                }
+              }
+            }
+            self.tableData = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    //导出
+    exportData() {
+      console.log("筛选表格数据");
+      // 筛选表格数据
+      // console.log(this.clueType)
+      let self = this;
+      for (const key in self.filterTime) {
+        if (self.filterTime.hasOwnProperty(key)) {
+          let element = self.filterTime[key];
+          if (element == null) {
+            self.filterTime[key] = "";
+          }
+        }
+      }
+      let token = localStorage.getItem("crm_token");
+      let obj = {};
+      if (self.clueType == 1) {
+        // 学校   学校等级, 学制, 跟进状态, 来源
+        obj = {
+          token: token,
+          statutype: 1,
+          page_num: "",
+          typebig: self.selectRangeItem,
+          followup_start: self.filterTime.lastFollowUpTime[0],
+          followup_end: self.filterTime.lastFollowUpTime[1],
+          update_start: self.filterTime.updateTime[0],
+          update_end: self.filterTime.updateTime[1],
+          create_start: self.filterTime.createTime[0],
+          create_end: self.filterTime.createTime[1],
+          children_id: self.children_id[self.children_id.length - 1],
+          department_id: self.department_id,
+          user_id: self.employees_id,
+          province_id: self.selectCityData[0],
+          city_id: self.selectCityData[1],
+          area_id: self.selectCityData[2],
+          cue_type: self.clueType,
+          name: "",
+
+          cue_source: self.typeList.source.value,
+          followup_statu: self.typeList.followUpStatus.value,
+          grade: self.typeList.schoolLevel.value,
+          los: self.typeList.academicSystem.value
+        };
+      } else if (self.clueType == 2) {
+        // 机构   机构类型, 定位, 跟进状态, 来源
+        obj = {
+          token: token,
+          page_num: "",
+          statutype: 1,
+          typebig: self.selectRangeItem,
+          followup_start: self.filterTime.lastFollowUpTime[0],
+          followup_end: self.filterTime.lastFollowUpTime[1],
+          update_start: self.filterTime.updateTime[0],
+          update_end: self.filterTime.updateTime[1],
+          create_start: self.filterTime.createTime[0],
+          create_end: self.filterTime.createTime[1],
+          children_id: self.children_id[self.children_id.length - 1],
+          department_id: self.department_id,
+          user_id: self.employees_id,
+          province_id: self.selectCityData[0],
+          city_id: self.selectCityData[1],
+          area_id: self.selectCityData[2],
+          cue_type: self.clueType,
+          name: "",
+
+          cue_source: self.typeList.source.value,
+          followup_statu: self.typeList.followUpStatus.value,
+          type: self.typeList.organizationType.value,
+          location: self.typeList.positioning.value
+        };
+      } else if (self.clueType == 3) {
+        // 教师   学校等级, 教授年级, 教授科目, 跟进状态, 来源
+        obj = {
+          token: token,
+          statutype: 1,
+          page_num: "",
+          typebig: self.selectRangeItem,
+          followup_start: self.filterTime.lastFollowUpTime[0],
+          followup_end: self.filterTime.lastFollowUpTime[1],
+          update_start: self.filterTime.updateTime[0],
+          update_end: self.filterTime.updateTime[1],
+          create_start: self.filterTime.createTime[0],
+          create_end: self.filterTime.createTime[1],
+          children_id: self.children_id[self.children_id.length - 1],
+          department_id: self.department_id,
+          user_id: self.employees_id,
+          province_id: self.selectCityData[0],
+          city_id: self.selectCityData[1],
+          area_id: self.selectCityData[2],
+          cue_type: self.clueType,
+          name: "",
+
+          cue_source: self.typeList.source.value,
+          followup_statu: self.typeList.followUpStatus.value,
+          grade: self.typeList.schoolLevel.value,
+          professor_grade: self.typeList.professor_grade.value,
+          professor_subjects: self.typeList.professorSubjects.value
+        };
+      } else if (self.clueType == 4) {
+        // 学生   学校等级, 文理科, 年级, 性别, 来源类型, 跟进状态 来源
+        obj = {
+          token: token,
+          statutype: 1,
+          page_num: "",
+          typebig: self.selectRangeItem,
+          followup_start: self.filterTime.lastFollowUpTime[0],
+          followup_end: self.filterTime.lastFollowUpTime[1],
+          update_start: self.filterTime.updateTime[0],
+          update_end: self.filterTime.updateTime[1],
+          create_start: self.filterTime.createTime[0],
+          create_end: self.filterTime.createTime[1],
+          children_id: self.children_id[self.children_id.length - 1],
+          department_id: self.department_id,
+          user_id: self.employees_id,
+          province_id: self.selectCityData[0],
+          city_id: self.selectCityData[1],
+          area_id: self.selectCityData[2],
+          cue_type: self.clueType,
+          name: "",
+
+          cue_source: self.typeList.source.value,
+          followup_statu: self.typeList.followUpStatus.value,
+          grade: self.typeList.schoolLevel.value,
+          the_science: self.typeList.artsAndSciences.value,
+          student_grade: self.typeList.grade.value,
+          sex: self.typeList.sex.value,
+          from_type: self.typeList.sourceType.value
+        };
+      } else {
+      }
+      console.log("请求参数:" + JSON.stringify(obj, null, 4));
+      self
+        .$axios({
+          method: "POST",
+          withCredentials: false,
+          url: "/api/clue/getClueList",
+          data: obj
+        })
+        .then(function(res) {
+          // console.log('返回参数:');
+          console.log(JSON.stringify(res.data, null, 4));
+          window.open("http://crm.tonyliangli.cn" + res.data.url);
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 类型转变
+    radioChange(data) {
+      for (var i = 0; i < this.typeList[data].content.length; i++) {
+        var obj = this.typeList[data].content[i];
+        if (obj.label == this.typeList[data].key) {
+          this.typeList[data].value = obj.value;
+          break;
+        }
+      }
+      console.log(
+        "更改选项:" + this.typeList[data].key + ":" + this.typeList[data].value
+      );
+      this.filterClue();
+    },
+    // 省市县数据
+    requestCity() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/area/evepce",
+        data: {
+          token: localStorage.getItem("crm_token")
+        }
+      })
+        .then(function(res) {
+          // objrr = [];
+          self.cityList = res.data.data.list;
+          localStorage.setItem("cityData", JSON.stringify(res.data.data.list));
+          // console.log(JSON.stringify(res.data.data.list));
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 点击级联选择器选择城市
+    selectCity(data) {
+      console.log(data);
+      if (this.dialogVisible) {
+        // 如果dialogVisible === true 说明, 对话框显示, 是新增线索,
+        // 否者就是筛选线索
+        this.addClueData.selectCityData = data;
+      } else {
+        this.selectCityData = data;
+        this.filterClue();
+      }
+    },
+    //
+    // 单选删除线索
+    showModelTable(index, data, flag) {
+      this.selTableData = data;
+      if (flag == "deleteBtn") {
+        let paramObj = {};
+        //  console.log(data);
+        let self = this;
+        paramObj = {
+          token: localStorage.getItem("crm_token"),
+          clue_id: data.clue_id
+        };
+        console.log("提交线索参数:" + JSON.stringify(paramObj, null, 4));
+        self
+          .$axios({
+            method: "POST",
+            withCredentials: false,
+            url: "/api/clue/deleteClue",
+            data: paramObj
+          })
+          .then(function(res) {
+            if (res.data.code == 200) {
+              self.$message({
+                message: "删除线索成功",
+                type: "success"
+              });
+              self.filterClue();
+            } else {
+              alert(res.data.msg);
+            }
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+      } else if (flag == "handover") {
+        this.moveStatu = true;
+      }
+    },
+    // 处理树形数据, 删除空的children
+    getMenuName(menus) {
+      for (var value of menus) {
+        if (value.children) {
+          this.getMenuName(value.children);
+        }
+        if (value.children.length == 0) {
+          delete value.children;
+        }
+      }
+    },
+    // 新增线索按钮
+    addClue() {
+      this.dialogVisible = true;
+      console.log(JSON.stringify(this.addClueData, null, 4));
+    },
+    // 提交线索
+    submitClue() {
+      this.dialogVisible = false;
+      console.log("新增线索");
+      let paramObj = {};
+      let self = this;
+      // 判断当前线索类型
+      if (this.addClueData.clueType == "1") {
+        paramObj = {
+          token: localStorage.getItem("crm_token"),
+          cue_source: self.addClueData.sourceTypeValue,
+          cue_type: self.addClueData.clueType,
+          name: self.addClueData.schoolName,
+          los: self.addClueData.academicSystem,
+          grade: self.addClueData.schoolLevel,
+          province_id: self.addClueData.selectCityData[0],
+          city_id: self.addClueData.selectCityData[1],
+          area_id: self.addClueData.selectCityData[2],
+          address: self.addClueData.address,
+          contacts_name: self.addClueData.contactName,
+          contacts_post: self.addClueData.contactPosition,
+          contacts_mobile: self.addClueData.contactPhone,
+          contacts_telephone: self.addClueData.contactTel,
+          contacts_wechat: self.addClueData.contactWeixin,
+          contacts_qq: self.addClueData.contactQq,
+          contacts_email: self.addClueData.contactEmail
+        };
+      } else if (this.addClueData.clueType == "2") {
+        paramObj = {
+          token: localStorage.getItem("crm_token"),
+          cue_source: self.addClueData.sourceTypeValue,
+          cue_type: self.addClueData.clueType,
+          name: self.addClueData.schoolName,
+          type: self.addClueData.organizationType,
+          location: self.addClueData.positioning,
+
+          province_id: self.addClueData.selectCityData[0],
+          city_id: self.addClueData.selectCityData[1],
+          area_id: self.addClueData.selectCityData[2],
+          address: self.addClueData.address,
+          contacts_name: self.addClueData.contactName,
+          contacts_post: self.addClueData.contactPosition,
+          contacts_mobile: self.addClueData.contactPhone,
+          contacts_telephone: self.addClueData.contactTel,
+          contacts_wechat: self.addClueData.contactWeixin,
+          contacts_qq: self.addClueData.contactQq,
+          contacts_email: self.addClueData.contactEmail
+        };
+      } else if (this.addClueData.clueType == "3") {
+        paramObj = {
+          token: localStorage.getItem("crm_token"),
+          cue_source: self.addClueData.sourceTypeValue,
+          cue_type: self.addClueData.clueType,
+          name: self.addClueData.schoolName,
+
+          los: self.addClueData.academicSystem,
+          grade: self.addClueData.schoolLevel,
+          // professor_grade
+
+          contacts_professor_grade: self.addClueData.grade,
+          contacts_professor_subjects: self.addClueData.professorSubjects,
+
+          province_id: self.addClueData.selectCityData[0],
+          city_id: self.addClueData.selectCityData[1],
+          area_id: self.addClueData.selectCityData[2],
+          address: self.addClueData.address,
+          contacts_name: self.addClueData.teacherName,
+          contacts_post: self.addClueData.contactPosition,
+          contacts_mobile: self.addClueData.contactPhone,
+          contacts_telephone: self.addClueData.contactTel,
+          contacts_wechat: self.addClueData.contactWeixin,
+          contacts_qq: self.addClueData.contactQq,
+          contacts_email: self.addClueData.contactEmail
+        };
+      } else {
+        paramObj = {
+          token: localStorage.getItem("crm_token"),
+          cue_source: self.addClueData.sourceTypeValue,
+          cue_type: self.addClueData.clueType,
+          name: self.addClueData.studentName,
+          the_science: self.addClueData.artsAndSciences,
+          sex: self.addClueData.sex,
+          school_name: self.addClueData.schoolName,
+
+          // los: self.addClueData.academicSystem,
+          grade: self.addClueData.schoolLevel,
+          student_grade: self.addClueData.grade,
+
+          province_id: self.addClueData.selectCityData[0],
+          city_id: self.addClueData.selectCityData[1],
+          area_id: self.addClueData.selectCityData[2],
+          address: self.addClueData.address,
+          contacts_name: self.addClueData.contactName,
+          contacts_post: self.addClueData.contactPosition,
+          contacts_mobile: self.addClueData.contactPhone,
+          contacts_telephone: self.addClueData.contactTel,
+          contacts_wechat: self.addClueData.contactWeixin,
+          contacts_qq: self.addClueData.contactQq,
+          contacts_email: self.addClueData.contactEmail
+        };
+      }
+      console.log("提交线索参数:" + JSON.stringify(paramObj, null, 4));
+      let objFlag = 1;
+      for (const key in paramObj) {
+        if (!paramObj[key]) {
+          objFlag = 0;
+        }
+      }
+      console.log(objFlag);
+      if (objFlag) {
+        self
+          .$axios({
+            method: "POST",
+            withCredentials: false,
+            url: "/api/clue/applyClue",
+            data: paramObj
+          })
+          .then(function(res) {
+            if (res.data.code == 200) {
+              self.$message({
+                message: "添加线索成功",
+                type: "success"
+              });
+              self.filterClue();
+            } else {
+              self.$message.error(res.data.msg);
+            }
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+      } else {
+        self.$message.error("请完善参数");
+      }
     }
+  },
+
+  created() {
+    this.applyCompany();
+    this.filterClue();
+
+    this.typeList.schoolLevel.show = true;
+    this.typeList.academicSystem.show = true;
+    if (localStorage.getItem("cityData")) {
+      console.log("有缓存");
+      this.cityList = JSON.parse(localStorage.getItem("cityData"));
+    } else {
+      console.log("无缓存");
+      this.requestCity();
+    }
+  },
+  computed: {
+    // 是否禁用子公司选择框
+    rangeFlag() {
+      if (this.selectRangeItem == 1) {
+        // 如果选择母公司, 禁用选公司列表, 请求母公司部门
+        this.getDepartment();
+        return true;
+      } else {
+        return false;
+      }
+    },
+    // 显示哪一个表格
+    schoolTable() {
+      if (this.clueType == 1) {
+        this.addClueData.clueType = "1";
+        this.addClueData.schoolTable = false;
+        // 学校表格显示
+        return false;
+      } else {
+        this.addClueData.schoolTable = true;
+        return true;
+      }
+    },
+    mechanismTable() {
+      if (this.clueType == 2) {
+        // 学校表格显示
+        this.addClueData.clueType = "2";
+        this.addClueData.mechanismTable = false;
+        return false;
+      } else {
+        this.addClueData.mechanismTable = true;
+        return true;
+      }
+    },
+    teacherTable() {
+      if (this.clueType == 3) {
+        // 学校表格显示
+        this.addClueData.clueType = "3";
+        this.addClueData.teacherTable = false;
+        return false;
+      } else {
+        this.addClueData.teacherTable = true;
+        return true;
+      }
+    },
+    studentTable() {
+      if (this.clueType == 4) {
+        // 学校表格显示
+        this.addClueData.clueType = "4";
+        this.addClueData.studentTable = false;
+        return false;
+      } else {
+        this.addClueData.studentTable = true;
+        return true;
+      }
+    }
+  }
+};
 </script>
 
 <style scoped>
-    @import "../css/clue.css";
+@import "../css/clue.css";
 
-    .leftWrap,
-    .rightWrap {
-        line-height: 40px;
-        height: 40px;
-    }
+.leftWrap,
+.rightWrap {
+  line-height: 40px;
+  height: 40px;
+}
 
-    .el-row {
-        margin: 5px 0;
-    }
+.el-row {
+  margin: 5px 0;
+}
 
-    /* 省市区选着器 */
-    .el-cascader {
-        width: 95%;
-    }
+/* 省市区选着器 */
+.el-cascader {
+  width: 95%;
+}
 
-    /* 新增线索选着 */
-    .dialogWrap .el-cascader {
-        width: 100%;
-    }
+/* 新增线索选着 */
+.dialogWrap .el-cascader {
+  width: 100%;
+}
 
-    .wrap {
-        border: 1px solid #d9d9d9;
-        padding: 10px;
-        border-radius: 10px;
-        margin-bottom: 10px;
-    }
+.wrap {
+  border: 1px solid #d9d9d9;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
 
-    .tableTitle {
-        margin-bottom: 10px;
-        padding: 10px 0;
-    }
+.tableTitle {
+  margin-bottom: 10px;
+  padding: 10px 0;
+}
 
-    .el-button i {
-        width: 100%;
-        height: 100%;
-    }
+.el-button i {
+  width: 100%;
+  height: 100%;
+}
 
-    .iptName {
-        display: inline-block;
-        margin: 5px 0;
-    }
+.iptName {
+  display: inline-block;
+  margin: 5px 0;
+}
 
-    .colorBlue {
-        cursor: pointer
-    }
+.colorBlue {
+  cursor: pointer;
+}
 
-    .select .el-select {
-        width: 90%;
-    }
+.select .el-select {
+  width: 90%;
+}
 
-    .hide {
-        display: none;
-    }
+.hide {
+  display: none;
+}
 </style>

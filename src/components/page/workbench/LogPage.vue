@@ -40,15 +40,32 @@
                               :options="parentCompanyList"
                               @change="handleChange"
                               :disabled="rangeFlag"
-                              :show-all-levels=false
+                              :show-all-levels='false'
                               filterable
                               change-on-select
                               clearable
+                              v-model="children_id"
                           >
                           </el-cascader>
                       </div>
                   </el-col>
-                  <el-col :span="6">
+                 <el-col :span="4" v-if="selectRangeItem==3" >
+                <div class="select rightWrap">
+                    <el-select
+                        v-model="franchisee_id"
+                        placeholder="请选择"
+                        @change="getFranchiseeEmp"
+                    >
+                        <el-option
+                            v-for="item in franchiseeList"
+                            :key="item.apply_company_id"
+                            :label="item.apply_company_name"
+                            :value="item.apply_company_id">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col>
+            <el-col :span="selectRangeItem==3?4:6">
                       <!-- 选择部门 -->
                       <div class="select rightWrap">
                           <el-cascader
@@ -64,7 +81,7 @@
                       </div>
                   </el-col>
                   <!-- 当前部门与昂 -->
-                  <el-col :span="6">
+                  <el-col :span="selectRangeItem==3?4:6">
                       <div class="select rightWrap">
                           <el-select
                               v-model="employees_id"
@@ -306,627 +323,721 @@
 </template>
 
 <script>
+export default {
+  name: "clue",
+  data() {
+    return {
+      // 加盟公司id
+      franchisee_id: "",
+      franchiseeList: [],
+      // 当前公司部门
+      currentCompanyDepartment: [],
+      // 当前公司下的部门
+      parentCompanyDepartment: [],
+      // 当前部门员工列表
+      currentDepartmentStaff: [],
+      // 选项
+      selectedItems: {
+        // 客户类型
+        clientType: "",
+        //contact_ifmt
+        status: "",
+        // 客户类型
+        fromto: "",
+        // 联系方式
+        contactifmt: "",
 
-    export default {
-        name: "clue",
-        data() {
-            return {
-         // 当前公司部门
-         currentCompanyDepartment: [],
-         // 当前公司下的部门
-         parentCompanyDepartment: [],
-         // 当前部门员工列表
-         currentDepartmentStaff: [],
-                // 选项
-                selectedItems: {
-                    // 客户类型
-                    clientType: '',
-                    //contact_ifmt
-                    status: '',
-                     // 客户类型
-                    fromto: '',
-                     // 联系方式
-                    contactifmt: '',
-
-
-                    // 来源
-                    sourceType :'',
-                    // 地区
-                    area:[],
-                    // area:[1,2,115],
-                    // 最后跟进时间
-                    lastFollowupTime: '',
-                    // 范围
-                    parentCompanyList: [],
-                },
-                  // 母公司id
-                  mother_id: '',
-                  // 当前子公司id
-                  children_id: '',
-                  // 当前部门id
-                  department_id: '',
-                  // 当前员工id
-                  employees_id: '',
-                  // 当前员工姓名
-                employees_id: '',
-                // 城市选择器数据
-                cityList: [],
-                // 时间选择器
-                pickerOptions2: {
-                    shortcuts: [{
-                        text: '最近一周',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近一个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近三个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }]
-                },
-                    // 范围
-                   parentCompanyList: [],
-                   // 范围数据
-                   rangeData: [
-                       {
-                           label: '母公司',
-                           value: 1
-                       }, {
-                           label: '子公司',
-                           value: 2
-                       }, {
-                           label: '加盟商',
-                           value: 3
-                       }
-                   ],
-
-                // 表格数据
-                tableData: [],
-                options: [{
-                    label: '第一学',
-                    value: 1
-                }, {
-                    label: '第二学',
-                    value: 2
-                }, {
-                    label: '第三学',
-                    value: 3
-                }],
-                // 搜索框筛选列表
-                optionsValue: 2,
-                // 搜索框内容
-                searchIptValue: '',
-                 // 范围选中内容
-                 selectRangeItem: 1,
+        // 来源
+        sourceType: "",
+        // 地区
+        area: [],
+        // area:[1,2,115],
+        // 最后跟进时间
+        lastFollowupTime: "",
+        // 范围
+        parentCompanyList: []
+      },
+      // 母公司id
+      mother_id: "",
+      // 当前子公司id
+      children_id: [],
+      // 当前部门id
+      department_id: "",
+      // 当前员工id
+      employees_id: "",
+      // 当前员工姓名
+      employees_id: "",
+      // 城市选择器数据
+      cityList: [],
+      // 时间选择器
+      pickerOptions2: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
             }
-        },
-        computed: {
-           // 是否禁用子公司选择框
-           rangeFlag() {
-               if (this.selectRangeItem == 1) {
-                   // 如果选择母公司, 禁用选公司列表, 请求母公司部门
-                   this.getDepartment();
-                   return true
-               } else {
-                   return false
-               }
-           },
-        },
-        methods: {
-
-       // 批量删除日志
-        delLogItem() {
-            let arr = [];
-            for (let i = 0; i < this.multipleSelection.length; i++) {
-                    this.tableData = this.tableData.filter((value) => {
-                        return value.followup_id != this.multipleSelection[i].followup_id
-                    })
-                    arr.push(this.multipleSelection[i].followup_id)
-                }
-
-                this.$axios({
-                            method: 'POST',
-                            withCredentials: false,
-                            url: '/api/clueFollowup/deleteClueFollowups',
-                            data: {
-                                token: localStorage.getItem('crm_token'),
-                                followupIds: JSON.stringify(arr),
-                            }
-                        })
-                            .then(function (res) {
-                                if (res.data.code == 200) {
-                                         self.$message({
-                                               message: '批量删除日志成功',
-                                               type: 'success'
-                                           })
-                                           self.filterClue();
-                                } else {
-                                    alert(res.data.msg)
-                                }
-                            })
-                            .catch(function (err) {
-                                console.log(err);
-                            });
-
-        },
-            //复选框状态改变
-        changeFun(val) {
-            this.multipleSelection = val;
-        },
-        // 更新时间
-        timeUpdata(data) {
-            console.log(data)
-            console.log(this.updateTime)
-            console.log(this.lastFollowUpTime)
-            console.log(this.createTime)
-            this.filterClue();
-        },
-         // 子公司/ 母公司/ 加盟商修改
-         bigRangeChange(data) {
-             this.selectRangeItem = data;
-             // if (data === 2) {
-             //     // 获取子公司
-             //     this.applyCompany();
-             // }
-             this.filterClue();
-         },
-            // 当前母公司下的所有部门
-            getDepartment() {
-                let self = this;
-                this.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/department/getChildrenDepartment',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        mother_id: localStorage.getItem("motherCompanyId")
-                    }
-                })
-                    .then(function (res) {
-                        if (res.data.code === 200) {
-                            // 当前母公司下的部门 parentCompanyDepartment
-                            // console.log(JSON.stringify(res.data.data,null,4))
-                            // console.log(self.mother_id)
-                            self.currentCompanyDepartment = res.data.data.list
-                        } else {
-                            alert(res.data.msg)
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-                   // 选择部门
-                   selectDepartment(data) {
-                       // department_id
-                       console.log(data);
-                       let department = this.department_id;
-                       this.department_id = data[data.length - 1];
-                       // 获取部门所有员工
-                       if (department !== this.department_id) {
-                           this.getDepartmentEmployees();
-                           this.filterClue()
-                       }
-
-                   },
-            // 获取部门所有员工
-            getDepartmentEmployees() {
-                console.log('获取部门所有员工')
-                let self = this;
-                self.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/department/makeAdminDepartmentList',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        department_id: self.department_id
-                    }
-                })
-                    .then(function (res) {
-                        if (res.data.code == 200) {
-                            console.log('获取部门所有员工:' + self.department_id)
-
-                            for (var i = 0; i < res.data.data.list.length; i++) {
-                                var obj = res.data.data.list[i];
-                                obj.label = obj.user_name
-                                obj.value = obj.user_id
-                            }
-                            console.log('获取部门所有员工数据:' + JSON.stringify(res.data, null, 4))
-                            self.currentDepartmentStaff = res.data.data.list
-                        } else {
-                            alert(res.data.msg)
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-            // selectEmployees 选择员工
-            selectEmployees(data) {
-                console.log(this.employees_id)
-                console.log(data);
-                // this.employees_id =
-                this.filterClue();
-            },
-           filterClue() {
-                    console.log('筛选表格数据')
-                    // 筛选表格数据
-                    // console.log(this.clueType)
-                    let self = this;
-                    for (const key in self.selectedItems) {
-                        if (self.selectedItems.hasOwnProperty(key)) {
-                            let element = self.selectedItems[key];
-                            if (element == null) {
-                                self.selectedItems[key] = "";
-                            }
-                        }
-                    }
-                    let obj = {
-                      type: self.selectRangeItem,
-                      token: localStorage.getItem('crm_token'),
-                      page_num: "",
-                      cue_type: self.selectedItems.clientType,
-                      status: self.selectedItems.status,
-                      fromto: self.selectedItems.fromto,
-                      contact_ifmt:self.selectedItems.contactifmt,
-                     followup_start: self.selectedItems.lastFollowupTime[0],
-                      followup_end: self.selectedItems.lastFollowupTime[1],
-                     children_id: self.children_id,
-                     department_id: self.department_id,
-                     user_id: self.employees_id,
-                      name: "",
-                    };
-
-                    console.log('请求参数:'+JSON.stringify(obj,null,4))
-                    self.$axios({
-                        method: 'POST',
-                        withCredentials: false,
-                        url: '/api/clueFollowup/getFollowupList',
-                        data: obj
-                    })
-                        .then(function (res) {
-                            if (res.data.code === 200) {
-                                // console.log('返回参数:');
-                                console.log(res);
-                                console.log('返回参数:'+JSON.stringify(res.data,null,4));
-                                for (var i = 0; i < res.data.data.list.length; i++) {
-                                   if (res.data.data.list[i].fromto == 1)
-                                   {
-                                          res.data.data.list[i].fromto =  "线索"
-                                    }else if(res.data.data.list[i].fromto == 2){
-                                         res.data.data.list[i].fromto =  "客户"
-                                    }else if(res.data.data.list[i].fromto == 3){
-                                         res.data.data.list[i].fromto =  "合同"
-                                    }
-                                     if (res.data.data.list[i].status == 1)
-                                   {
-                                          res.data.data.list[i].status = "前期跟进"
-                                    }else if(res.data.data.list[i].status == 2){
-                                        res.data.data.list[i].status = "售中跟进"
-                                    }else if(res.data.data.list[i].status == 3){
-                                           res.data.data.list[i].status = "售后跟进"
-                                     }else if(res.data.data.list[i].status == 4){
-                                         res.data.data.list[i].status = "售后服务"
-                                   }
-                                     if (res.data.data.list[i].cue_type == 1)
-                                      {
-                                             res.data.data.list[i].cue_type = "学校"
-                                       }else if(res.data.data.list[i].cue_type == 2){
-                                           res.data.data.list[i].cue_type = "机构"
-                                       }else if(res.data.data.list[i].cue_type == 3){
-                                              res.data.data.list[i].cue_type = "教师"
-                                        }else if(res.data.data.list[i].cue_type == 4){
-                                            res.data.data.list[i].cue_type = "学生"
-                                      }
-                                     if (res.data.data.list[i].cue_type !== 3)
-                                   {
-                                      res.data.data.list[i].clue_name = res.data.data.list[i].clue_name
-                                    }else{
-                                       res.data.data.list[i].clue_name = res.data.data.list[i].contacts_name
-                                    }
-                                    if (res.data.data.list[i].contact_ifmt == 1)
-                                   {
-                                      res.data.data.list[i].contact_ifmt = "手机"
-                                    }else if(res.data.data.list[i].contact_ifmt == 2){
-                                      res.data.data.list[i].contact_ifmt = "电话"
-                                    }else if(res.data.data.list[i].contact_ifmt == 3){
-                                       res.data.data.list[i].contact_ifmt = "qq"
-                                    }else if(res.data.data.list[i].contact_ifmt == 4){
-                                        res.data.data.list[i].contact_ifmt = "微信"
-                                    }else if(res.data.data.list[i].contact_ifmt == 5){
-                                        res.data.data.list[i].contact_ifmt = "邮箱"
-                                    }
-
-                                    for (let key in obj) {
-                                        if (obj[key] == null) {
-                                            obj[key] = '-'
-                                        }
-                                    }
-                                }
-                                console.log(JSON.stringify(res.data.data.list,null,4))
-                                self.tableData = res.data.data.list
-                            } else {
-                                alert(res.data.msg)
-                            }
-                        })
-                        .catch(function (err) {
-                            console.log(err);
-                        });
-                },
-                //导出
-                    exportData() {
-                        console.log('筛选表格数据')
-                        // 筛选表格数据
-                        // console.log(this.clueType)
-                        let self = this;
-                        for (const key in self.selectedItems) {
-                            if (self.selectedItems.hasOwnProperty(key)) {
-                                let element = self.selectedItems[key];
-                                if (element == null) {
-                                    self.selectedItems[key] = "";
-                                }
-                            }
-                        }
-                        let obj = {
-                          type: self.selectRangeItem,
-                          statutype: 1,
-                          token: localStorage.getItem('crm_token'),
-                          page_num: "",
-                          cue_type: self.selectedItems.clientType,
-                          status: self.selectedItems.status,
-                          fromto: self.selectedItems.fromto,
-                          contact_ifmt:self.selectedItems.contactifmt,
-                         followup_start: self.selectedItems.lastFollowupTime[0],
-                          followup_end: self.selectedItems.lastFollowupTime[1],
-                         children_id: self.children_id,
-                         department_id: self.department_id,
-                         user_id: self.employees_id,
-                          name: "",
-                        };
-
-                        console.log('请求参数:'+JSON.stringify(obj,null,4))
-                        self.$axios({
-                            method: 'POST',
-                            withCredentials: false,
-                            url: '/api/clueFollowup/getFollowupList',
-                            data: obj
-                        })
-                            .then(function (res) {
-                                // console.log('返回参数:');
-                                  console.log(JSON.stringify(res.data,null,4))
-                                  window.open("http://crm.tonyliangli.cn"+res.data.url);
-                            })
-                            .catch(function (err) {
-                                console.log(err);
-                            });
-                    },
-            // 所有子公司
-       applyCompany() {
-           let self = this;
-           this.$axios({
-               method: 'POST',
-               withCredentials: false,
-               url: '/api/company/CompanyMyList',
-               data: {
-                   token: localStorage.getItem('crm_token'),
-               }
-           })
-               .then(function (res) {
-                   if (res.data.code == 200) {
-                       // 当前用户只会有一个母公司
-                       self.parentCompanyList = res.data.data.list[0].children;
-                       self.mother_id = res.data.data.list[0].id
-                   } else {
-                       alert(res.data.msg)
-                   }
-               })
-               .catch(function (err) {
-                   console.log(err);
-               });
-       },
-                 // 子公司变化
-                 handleChange(data) {
-                     let children = this.children_id;
-                     this.children_id = data[data.length - 1];
-                     // 获取子公司所有部门
-                     if (children !== this.children_id) {
-                         this.getChildrenDepartment();
-                         this.filterClue();
-                     }
-                 },
-            clueTypeChange(data) {
-                console.log(data)
-                this.filterClue();
-            },
-
-            // 省市县数据
-            requestCity() {
-                let self = this;
-                this.$axios({
-                    method: 'POST',
-                    withCredentials: false,
-                    url: '/api/area/evepce',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                    }
-                })
-                    .then(function (res) {
-                        var arr = [];
-                        self.cityList = res.data.data.list;
-                        localStorage.setItem('cityData', JSON.stringify(res.data.data.list))
-                        // console.log(JSON.stringify(res.data.data.list));
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-              // 当前子公司下的所有部门
-              getChildrenDepartment() {
-                  let self = this;
-                  this.$axios({
-                      method: 'POST',
-                      withCredentials: false,
-                      url: '/api/department/getChildrenDepartmentTo',
-                      data: {
-                          token: localStorage.getItem('crm_token'),
-                          mother_id: self.children_id
-                      }
-                  })
-                      .then(function (res) {
-                          if (res.data.code === 200) {
-                              // 当前子公司下的部门 parentCompanyDepartment
-                              self.currentCompanyDepartment = res.data.data.list
-                          } else {
-                              alert(res.data.msg)
-                          }
-                      })
-                      .catch(function (err) {
-                          console.log(err);
-                      });
-              },
-            // 表格数据
-            getTableData() {
-                var self = this;
-                self.$axios({
-                    method: 'GET',
-                    withCredentials: false,
-                    url: 'http://localhost:8081/mock/clueTableData',
-                })
-                    .then(function (res) {
-                        // console.log(JSON.stringify(res,null,4));
-                        self.tableData = res.data
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
-            // 点击c城市级联选择器
-            selCity(data) {
-                 this.selectedItems.area = data;
-                 console.log('选择'+this.selectedItems.area);
-                 this.filterClue();
-            },
-            // 表格按钮
-             // 单选删除日志
-             showModelTable(index,data,flag) {
-                if(flag == 'deleteBtn'){
-                        let paramObj = {};
-                        console.log();
-                        let self = this;
-                           paramObj = {
-                             token: localStorage.getItem('crm_token'),
-                             followup_id: data.followup_id,
-                             }
-                      console.log('提交线索参数:'+JSON.stringify(paramObj,null,4))
-                             self.$axios({
-                                 method: 'POST',
-                                 withCredentials: false,
-                                 url: '/api/clueFollowup/deleteClueFollowup',
-                                 data: paramObj
-                             })
-                                 .then(function (res) {
-                                     if (res.data.code == 200) {
-                                           self.$message({
-                                               message: '删除日志成功',
-                                               type: 'success'
-                                           })
-                                           self.filterClue();
-                                     } else {
-                                         alert(res.data.msg)
-                                     }
-                                 })
-                                 .catch(function (err) {
-                                     console.log(err);
-                                 });
-                     }else if(flag == 'handover'){
-
-
-                     }
-                     }
-        },
-        created() {
-            this.getTableData();
-            this.applyCompany();
-            this.filterClue();
-            if (localStorage.getItem('cityData')) {
-                console.log('有缓存')
-                this.cityList = JSON.parse(localStorage.getItem('cityData'))
-            } else {
-                console.log('无缓存')
-                this.requestCity();
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
             }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
+      },
+      // 范围
+      parentCompanyList: [],
+      // 范围数据
+      rangeData: [
+        {
+          label: "母公司",
+          value: 1
+        },
+        {
+          label: "子公司",
+          value: 2
+        },
+        {
+          label: "加盟商",
+          value: 3
         }
+      ],
+
+      // 表格数据
+      tableData: [],
+      options: [
+        {
+          label: "第一学",
+          value: 1
+        },
+        {
+          label: "第二学",
+          value: 2
+        },
+        {
+          label: "第三学",
+          value: 3
+        }
+      ],
+      // 搜索框筛选列表
+      optionsValue: 2,
+      // 搜索框内容
+      searchIptValue: "",
+      // 范围选中内容
+      selectRangeItem: 1
+    };
+  },
+  computed: {
+    // 是否禁用子公司选择框
+    rangeFlag() {
+      if (this.selectRangeItem == 1) {
+        // 如果选择母公司, 禁用选公司列表, 请求母公司部门
+        this.getDepartment();
+        return true;
+      } else {
+        return false;
+      }
     }
+  },
+  methods: {
+    // 获取加盟商员工
+    getFranchiseeEmp() {
+      let self = this;
+      self
+        .$axios({
+          method: "POST",
+          withCredentials: false,
+          url: "/api/department/getChildrenDepartmentTo",
+          data: {
+            token: localStorage.getItem("crm_token"),
+            mother_id: self.franchisee_id
+          }
+        })
+        .then(function(res) {
+          if (res.data.code == 200) {
+            self.getMenuName(res.data.data.list);
+            console.log(
+              "获取部门所有部门数据:" + JSON.stringify(res.data, null, 4)
+            );
+            self.currentCompanyDepartment = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 处理树形数据, 删除空的children
+    getMenuName(menus) {
+      for (var value of menus) {
+        if (value.children) {
+          this.getMenuName(value.children);
+        }
+        if (value.children.length == 0) {
+          delete value.children;
+        }
+      }
+    },
+    // 批量删除日志
+    delLogItem() {
+      let arr = [];
+      for (let i = 0; i < this.multipleSelection.length; i++) {
+        this.tableData = this.tableData.filter(value => {
+          return value.followup_id != this.multipleSelection[i].followup_id;
+        });
+        arr.push(this.multipleSelection[i].followup_id);
+      }
+
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/clueFollowup/deleteClueFollowups",
+        data: {
+          token: localStorage.getItem("crm_token"),
+          followupIds: JSON.stringify(arr)
+        }
+      })
+        .then(function(res) {
+          if (res.data.code == 200) {
+            self.$message({
+              message: "批量删除日志成功",
+              type: "success"
+            });
+            self.filterClue();
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    //复选框状态改变
+    changeFun(val) {
+      this.multipleSelection = val;
+    },
+    // 更新时间
+    timeUpdata(data) {
+      console.log(data);
+      console.log(this.updateTime);
+      console.log(this.lastFollowUpTime);
+      console.log(this.createTime);
+      this.filterClue();
+    },
+    // 子公司/ 母公司/ 加盟商修改
+    bigRangeChange(data) {
+      this.selectRangeItem = data;
+      // if (data === 2) {
+      //     // 获取子公司
+      //     this.applyCompany();
+      // }
+      this.filterClue();
+    },
+    // 当前母公司下的所有部门
+    getDepartment() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/department/getChildrenDepartment",
+        data: {
+          token: localStorage.getItem("crm_token"),
+          mother_id: localStorage.getItem("motherCompanyId")
+        }
+      })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            // 当前母公司下的部门 parentCompanyDepartment
+            // console.log(JSON.stringify(res.data.data,null,4))
+            // console.log(self.mother_id)
+            self.currentCompanyDepartment = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 选择部门
+    selectDepartment(data) {
+      // department_id
+      console.log(data);
+      let department = this.department_id;
+      this.department_id = data[data.length - 1];
+      // 获取部门所有员工
+      if (department !== this.department_id) {
+        this.getDepartmentEmployees();
+        this.filterClue();
+      }
+    },
+    // 获取部门所有员工
+    getDepartmentEmployees() {
+      console.log("获取部门所有员工");
+      let self = this;
+      self
+        .$axios({
+          method: "POST",
+          withCredentials: false,
+          url: "/api/department/makeAdminDepartmentList",
+          data: {
+            token: localStorage.getItem("crm_token"),
+            department_id: self.department_id
+          }
+        })
+        .then(function(res) {
+          if (res.data.code == 200) {
+            console.log("获取部门所有员工:" + self.department_id);
+
+            for (var i = 0; i < res.data.data.list.length; i++) {
+              var obj = res.data.data.list[i];
+              obj.label = obj.user_name;
+              obj.value = obj.user_id;
+            }
+            console.log(
+              "获取部门所有员工数据:" + JSON.stringify(res.data, null, 4)
+            );
+            self.currentDepartmentStaff = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // selectEmployees 选择员工
+    selectEmployees(data) {
+      console.log(this.employees_id);
+      console.log(data);
+      // this.employees_id =
+      this.filterClue();
+    },
+    filterClue() {
+      console.log("筛选表格数据");
+      // 筛选表格数据
+      // console.log(this.clueType)
+      let self = this;
+      for (const key in self.selectedItems) {
+        if (self.selectedItems.hasOwnProperty(key)) {
+          let element = self.selectedItems[key];
+          if (element == null) {
+            self.selectedItems[key] = "";
+          }
+        }
+      }
+      let obj = {
+        type: self.selectRangeItem,
+        token: localStorage.getItem("crm_token"),
+        page_num: "",
+        cue_type: self.selectedItems.clientType,
+        status: self.selectedItems.status,
+        fromto: self.selectedItems.fromto,
+        contact_ifmt: self.selectedItems.contactifmt,
+        followup_start: self.selectedItems.lastFollowupTime[0],
+        followup_end: self.selectedItems.lastFollowupTime[1],
+        children_id:
+          self.selectRangeItem == 3
+            ? self.franchisee_id
+            : self.children_id[self.children_id.length - 1],
+        department_id: self.department_id,
+        user_id: self.employees_id,
+        name: ""
+      };
+
+      console.log("请求参数:" + JSON.stringify(obj, null, 4));
+      self
+        .$axios({
+          method: "POST",
+          withCredentials: false,
+          url: "/api/clueFollowup/getFollowupList",
+          data: obj
+        })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            // console.log('返回参数:');
+            // console.log(res);
+            // console.log('返回参数:'+JSON.stringify(res.data,null,4));
+            for (var i = 0; i < res.data.data.list.length; i++) {
+              if (res.data.data.list[i].fromto == 1) {
+                res.data.data.list[i].fromto = "线索";
+              } else if (res.data.data.list[i].fromto == 2) {
+                res.data.data.list[i].fromto = "客户";
+              } else if (res.data.data.list[i].fromto == 3) {
+                res.data.data.list[i].fromto = "合同";
+              }
+              if (res.data.data.list[i].status == 1) {
+                res.data.data.list[i].status = "前期跟进";
+              } else if (res.data.data.list[i].status == 2) {
+                res.data.data.list[i].status = "售中跟进";
+              } else if (res.data.data.list[i].status == 3) {
+                res.data.data.list[i].status = "售后跟进";
+              } else if (res.data.data.list[i].status == 4) {
+                res.data.data.list[i].status = "售后服务";
+              }
+              if (res.data.data.list[i].cue_type == 1) {
+                res.data.data.list[i].cue_type = "学校";
+              } else if (res.data.data.list[i].cue_type == 2) {
+                res.data.data.list[i].cue_type = "机构";
+              } else if (res.data.data.list[i].cue_type == 3) {
+                res.data.data.list[i].cue_type = "教师";
+              } else if (res.data.data.list[i].cue_type == 4) {
+                res.data.data.list[i].cue_type = "学生";
+              }
+              if (res.data.data.list[i].cue_type !== 3) {
+                res.data.data.list[i].clue_name =
+                  res.data.data.list[i].clue_name;
+              } else {
+                res.data.data.list[i].clue_name =
+                  res.data.data.list[i].contacts_name;
+              }
+              if (res.data.data.list[i].contact_ifmt == 1) {
+                res.data.data.list[i].contact_ifmt = "手机";
+              } else if (res.data.data.list[i].contact_ifmt == 2) {
+                res.data.data.list[i].contact_ifmt = "电话";
+              } else if (res.data.data.list[i].contact_ifmt == 3) {
+                res.data.data.list[i].contact_ifmt = "qq";
+              } else if (res.data.data.list[i].contact_ifmt == 4) {
+                res.data.data.list[i].contact_ifmt = "微信";
+              } else if (res.data.data.list[i].contact_ifmt == 5) {
+                res.data.data.list[i].contact_ifmt = "邮箱";
+              }
+
+              for (let key in obj) {
+                if (obj[key] == null) {
+                  obj[key] = "-";
+                }
+              }
+            }
+            self.tableData = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    //导出
+    exportData() {
+      console.log("筛选表格数据");
+      // 筛选表格数据
+      // console.log(this.clueType)
+      let self = this;
+      for (const key in self.selectedItems) {
+        if (self.selectedItems.hasOwnProperty(key)) {
+          let element = self.selectedItems[key];
+          if (element == null) {
+            self.selectedItems[key] = "";
+          }
+        }
+      }
+      let obj = {
+        type: self.selectRangeItem,
+        statutype: 1,
+        token: localStorage.getItem("crm_token"),
+        page_num: "",
+        cue_type: self.selectedItems.clientType,
+        status: self.selectedItems.status,
+        fromto: self.selectedItems.fromto,
+        contact_ifmt: self.selectedItems.contactifmt,
+        followup_start: self.selectedItems.lastFollowupTime[0],
+        followup_end: self.selectedItems.lastFollowupTime[1],
+        children_id:
+          self.selectRangeItem == 3
+            ? self.franchisee_id
+            : self.children_id[self.children_id.length - 1],
+        department_id: self.department_id,
+        user_id: self.employees_id,
+        name: ""
+      };
+
+      console.log("请求参数:" + JSON.stringify(obj, null, 4));
+      self
+        .$axios({
+          method: "POST",
+          withCredentials: false,
+          url: "/api/clueFollowup/getFollowupList",
+          data: obj
+        })
+        .then(function(res) {
+          // console.log('返回参数:');
+          console.log(JSON.stringify(res.data, null, 4));
+          window.open("http://crm.tonyliangli.cn" + res.data.url);
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 所有子公司
+    applyCompany() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/company/CompanyMyList",
+        data: {
+          token: localStorage.getItem("crm_token")
+        }
+      })
+        .then(function(res) {
+          if (res.data.code == 200) {
+            // 当前用户只会有一个母公司
+            self.getMenuName(res.data.data.list);
+            self.parentCompanyList = res.data.data.list;
+            self.mother_id = localStorage.getItem("motherCompanyId");
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 子公司变化
+    handleChange(data) {
+      if (this.selectRangeItem == 3) {
+        // 获取加盟商
+        this.getFranchiseeList();
+      } else {
+        // 获取子公司所有部门
+
+        this.getChildrenDepartment();
+        this.filterClue();
+      }
+    },
+    // 获取加盟商列表
+    getFranchiseeList() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/joiningTrader/FranchiseeMyListId",
+        data: {
+          token: localStorage.getItem("crm_token"),
+          company_id: self.children_id[self.children_id.length - 1]
+        }
+      })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            console.log(JSON.stringify(res.data.data, null, 4));
+            self.$message({
+              message: "成功",
+              type: "success"
+            });
+            self.franchiseeList = res.data.data.list;
+          } else {
+            self.$message.error(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    clueTypeChange(data) {
+      console.log(data);
+      this.filterClue();
+    },
+
+    // 省市县数据
+    requestCity() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/area/evepce",
+        data: {
+          token: localStorage.getItem("crm_token")
+        }
+      })
+        .then(function(res) {
+          var arr = [];
+          self.cityList = res.data.data.list;
+          localStorage.setItem("cityData", JSON.stringify(res.data.data.list));
+          // console.log(JSON.stringify(res.data.data.list));
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 当前子公司下的所有部门
+    getChildrenDepartment() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/department/getChildrenDepartmentTo",
+        data: {
+          token: localStorage.getItem("crm_token"),
+          mother_id: self.children_id[self.children_id.length - 1]
+        }
+      })
+        .then(function(res) {
+          console.log(
+            "子公司id:" + self.selectRangeItem == 3
+              ? self.franchisee_id
+              : self.children_id[self.children_id.length - 1]
+          );
+
+          if (res.data.code === 200) {
+            console.log("子公司部门:" + JSON.stringify(res.data.data));
+
+            self.getMenuName(res.data.data.list);
+            // 当前子公司下的部门 parentCompanyDepartment
+            self.currentCompanyDepartment = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 表格数据
+    getTableData() {
+      var self = this;
+      self
+        .$axios({
+          method: "GET",
+          withCredentials: false,
+          url: "http://localhost:8081/mock/clueTableData"
+        })
+        .then(function(res) {
+          // console.log(JSON.stringify(res,null,4));
+          self.tableData = res.data;
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 点击c城市级联选择器
+    selCity(data) {
+      this.selectedItems.area = data;
+      console.log("选择" + this.selectedItems.area);
+      this.filterClue();
+    },
+    // 表格按钮
+    // 单选删除日志
+    showModelTable(index, data, flag) {
+      if (flag == "deleteBtn") {
+        let paramObj = {};
+        console.log();
+        let self = this;
+        paramObj = {
+          token: localStorage.getItem("crm_token"),
+          followup_id: data.followup_id
+        };
+        console.log("提交线索参数:" + JSON.stringify(paramObj, null, 4));
+        self
+          .$axios({
+            method: "POST",
+            withCredentials: false,
+            url: "/api/clueFollowup/deleteClueFollowup",
+            data: paramObj
+          })
+          .then(function(res) {
+            if (res.data.code == 200) {
+              self.$message({
+                message: "删除日志成功",
+                type: "success"
+              });
+              self.filterClue();
+            } else {
+              alert(res.data.msg);
+            }
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+      } else if (flag == "handover") {
+      }
+    }
+  },
+  created() {
+    this.getTableData();
+    this.applyCompany();
+    this.filterClue();
+    if (localStorage.getItem("cityData")) {
+      console.log("有缓存");
+      this.cityList = JSON.parse(localStorage.getItem("cityData"));
+    } else {
+      console.log("无缓存");
+      this.requestCity();
+    }
+  }
+};
 </script>
 
 <style scoped>
-    @import "css/clue.css";
-     .leftWrap,
-     .rightWrap {
-         line-height: 40px;
-         height: 40px;
-     }
+@import "css/clue.css";
+.leftWrap,
+.rightWrap {
+  line-height: 40px;
+  height: 40px;
+}
 
-     .el-row {
-         margin: 5px 0;
-     }
+.el-row {
+  margin: 5px 0;
+}
 
-     /* 省市区选着器 */
-     .el-cascader {
-         width: 95%;
-     }
+/* 省市区选着器 */
+.el-cascader {
+  width: 95%;
+}
 
-     /* 新增线索选着 */
-     .dialogWrap .el-cascader {
-         width: 100%;
-     }
+/* 新增线索选着 */
+.dialogWrap .el-cascader {
+  width: 100%;
+}
 
-     .wrap {
-         border: 1px solid #d9d9d9;
-         padding: 10px;
-         border-radius: 10px;
-         margin-bottom: 10px;
-     }
+.wrap {
+  border: 1px solid #d9d9d9;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
 
-     .tableTitle {
-         margin-bottom: 10px;
-         padding: 10px 0;
-     }
+.tableTitle {
+  margin-bottom: 10px;
+  padding: 10px 0;
+}
 
-     .el-button i {
-         width: 100%;
-         height: 100%;
-     }
+.el-button i {
+  width: 100%;
+  height: 100%;
+}
 
-     .iptName {
-         display: inline-block;
-         margin: 5px 0;
-     }
+.iptName {
+  display: inline-block;
+  margin: 5px 0;
+}
 
-     .colorBlue {
-         cursor: pointer
-     }
+.colorBlue {
+  cursor: pointer;
+}
 
-     .select .el-select {
-         width: 90%;
-     }
+.select .el-select {
+  width: 90%;
+}
 
-     .hide {
-         display: none;
-     }
+.hide {
+  display: none;
+}
 </style>

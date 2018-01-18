@@ -32,9 +32,9 @@
                 </div>
 
             </el-col>
-            <el-col :span="6">
+            <el-col :span='6' >
                 <!-- 选着子公司 -->
-                <div class="select rightWrap">
+                <div class="select rightWrap" >
                     <el-cascader
                         expand-trigger="hover"
                         :options="parentCompanyList"
@@ -44,11 +44,29 @@
                         filterable
                         change-on-select
                         clearable
+                        v-model="children_id"
                     >
                     </el-cascader>
                 </div>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="4" v-if="selectRangeItem==3">
+                <!-- 选着加盟商 -->
+                <div class="select rightWrap">
+                     <el-select
+                        v-model="franchisee_id"
+                        placeholder="请选择加盟商"
+                        @change="getFranchiseeEmp"
+                    >
+                        <el-option
+                            v-for="item in franchiseeList"
+                            :key="item.apply_company_id"
+                            :label="item.apply_company_name"
+                            :value="item.apply_company_id">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col>
+            <el-col :span="selectRangeItem==3?4:6" >
                 <!-- 选择部门 -->
                 <div class="select rightWrap">
                     <el-cascader
@@ -64,7 +82,7 @@
                 </div>
             </el-col>
             <!-- 当前部门与昂 -->
-            <el-col :span="6">
+            <el-col :span="selectRangeItem==3?4:6">
                 <div class="select rightWrap">
                     <el-select
                         v-model="employees_id"
@@ -220,7 +238,7 @@
                             v-model="filterTime.lastFollowUpTime"
                             @change="timeUpdata"
                             type="daterange"
-                            :editable=false
+                            :editable='false'
                             align="right"
                             unlink-panels
                             range-separator="至"
@@ -1261,6 +1279,9 @@ export default {
   name: "clue",
   data() {
     return {
+         // 加盟公司id
+                franchisee_id: '',
+                franchiseeList: [],
     // 公司所有部门
     companyDepartment: [],
     // z转成客户
@@ -1370,7 +1391,7 @@ export default {
       // 母公司id
       mother_id: "",
       // 当前子公司id
-      children_id: "",
+      children_id: [],
       // 当前部门id
       department_id: "",
       // 当前员工id
@@ -2250,7 +2271,7 @@ export default {
         url: "/api/department/getChildrenDepartmentTo",
         data: {
           token: localStorage.getItem("crm_token"),
-          mother_id: self.children_id
+          mother_id: self.children_id[self.children_id.length - 1]
         }
       })
         .then(function(res) {
@@ -2268,13 +2289,46 @@ export default {
     },
     // 子公司变化
     handleChange(data) {
-      let children = this.children_id;
-      this.children_id = data[data.length - 1];
-      // 获取子公司所有部门
-      if (children !== this.children_id) {
+    //   let children = this.children_id;
+    //   this.children_id = data[data.length - 1];
+    //   // 获取子公司所有部门
+    //   if (children !== this.children_id) {
+         if (this.selectRangeItem == 3) {
+                    // 获取加盟商
+                    this.getFranchiseeList();
+                } else {
         this.getChildrenDepartment();
         this.filterClue();
-      }
+                }
+    //   }
+    },
+     // 获取加盟商列表
+    getFranchiseeList() {
+            let self = this;
+            this.$axios({
+                method: 'POST',
+                withCredentials: false,
+                url: '/api/joiningTrader/FranchiseeMyListId',
+                data: {
+                    token: localStorage.getItem('crm_token'),
+                    company_id: self.children_id[self.children_id.length-1]
+                }
+            })
+            .then(function(res){
+                if (res.data.code === 200) {
+                    console.log(JSON.stringify(res.data.data, null, 4))
+                    self.$message({
+                        message: '成功',
+                        type: 'success'
+                    })
+                    self.franchiseeList = res.data.data.list
+                } else {
+                    self.$message.error(res.data.msg);
+                }
+            })
+            .catch(function(err){
+                console.log(err);
+            });
     },
     // 子公司/ 母公司/ 加盟商修改
     bigRangeChange(data) {
@@ -2455,7 +2509,7 @@ export default {
           update_end: self.filterTime.updateTime[1],
           create_start: self.filterTime.createTime[0],
           create_end: self.filterTime.createTime[1],
-          children_id: self.children_id,
+          children_id: self.selectRangeItem==3?self.franchisee_id:self.children_id[self.children_id.length-1],
           department_id: self.department_id,
           user_id: self.employees_id,
           province_id: self.selectCityData[0],
@@ -2487,7 +2541,7 @@ export default {
           update_end: self.filterTime.updateTime[1],
           create_start: self.filterTime.createTime[0],
           create_end: self.filterTime.createTime[1],
-          children_id: self.children_id,
+          children_id: self.selectRangeItem==3?self.franchisee_id:self.children_id[self.children_id.length-1],
           department_id: self.department_id,
           user_id: self.employees_id,
           province_id: self.selectCityData[0],
@@ -2518,7 +2572,7 @@ export default {
           update_end: self.filterTime.updateTime[1],
           create_start: self.filterTime.createTime[0],
           create_end: self.filterTime.createTime[1],
-          children_id: self.children_id,
+          children_id: self.selectRangeItem==3?self.franchisee_id:self.children_id[self.children_id.length-1],
           department_id: self.department_id,
           user_id: self.employees_id,
           province_id: self.selectCityData[0],
@@ -2550,7 +2604,7 @@ export default {
           update_end: self.filterTime.updateTime[1],
           create_start: self.filterTime.createTime[0],
           create_end: self.filterTime.createTime[1],
-          children_id: self.children_id,
+          children_id: self.selectRangeItem==3?self.franchisee_id:self.children_id[self.children_id.length-1],
           department_id: self.department_id,
           user_id: self.employees_id,
           province_id: self.selectCityData[0],
@@ -2654,7 +2708,7 @@ export default {
                   update_end: self.filterTime.updateTime[1],
                   create_start: self.filterTime.createTime[0],
                   create_end: self.filterTime.createTime[1],
-                  children_id: self.children_id,
+                  children_id: self.selectRangeItem==3?self.franchisee_id:self.children_id[self.children_id.length-1],
                   department_id: self.department_id,
                   user_id: self.employees_id,
                   province_id: self.selectCityData[0],
@@ -2687,7 +2741,7 @@ export default {
                   update_end: self.filterTime.updateTime[1],
                   create_start: self.filterTime.createTime[0],
                   create_end: self.filterTime.createTime[1],
-                  children_id: self.children_id,
+                  children_id: self.selectRangeItem==3?self.franchisee_id:self.children_id[self.children_id.length-1],
                   department_id: self.department_id,
                   user_id: self.employees_id,
                   province_id: self.selectCityData[0],
@@ -2719,7 +2773,7 @@ export default {
                   update_end: self.filterTime.updateTime[1],
                   create_start: self.filterTime.createTime[0],
                   create_end: self.filterTime.createTime[1],
-                  children_id: self.children_id,
+                  children_id: self.selectRangeItem==3?self.franchisee_id:self.children_id[self.children_id.length-1],
                   department_id: self.department_id,
                   user_id: self.employees_id,
                   province_id: self.selectCityData[0],
@@ -2752,7 +2806,7 @@ export default {
                   update_end: self.filterTime.updateTime[1],
                   create_start: self.filterTime.createTime[0],
                   create_end: self.filterTime.createTime[1],
-                  children_id: self.children_id,
+                  children_id: self.selectRangeItem==3?self.franchisee_id:self.children_id[self.children_id.length-1],
                   department_id: self.department_id,
                   user_id: self.employees_id,
                   province_id: self.selectCityData[0],
@@ -3041,6 +3095,31 @@ export default {
             }
         }
 
+    },
+    // 获取加盟商员工
+    getFranchiseeEmp() {
+        let self = this;
+        self.$axios({
+            method: 'POST',
+            withCredentials: false,
+            url: '/api/department/getChildrenDepartmentTo',
+            data: {
+                token: localStorage.getItem('crm_token'),
+                mother_id: self.franchisee_id
+            }
+        })
+            .then(function (res) {
+                if (res.data.code == 200) {
+                    self.getMenuName(res.data.data.list)
+                    console.log('获取部门所有部门数据:' + JSON.stringify(res.data, null, 4))
+                    self.currentCompanyDepartment = res.data.data.list
+                } else {
+                    alert(res.data.msg)
+                }
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
     },
   },
   created() {

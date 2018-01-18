@@ -39,7 +39,7 @@
                     <span class="fl departmentText">{{ departmentName }}</span>
                     <div class="fr ">
                         <el-button :disabled="departmentName==''" type="text" @click="showModel('rename')">重命名</el-button>
-                        <el-button :disabled="departmentName==''" type="text" @click="showModel('subDepartment')">添加子部门</el-button>
+                        <el-button type="text" @click="showModel('subDepartment')">添加子部门</el-button>
                         <el-button :disabled="departmentName==''" type="text" @click="move(1)">上移</el-button>
                         <el-button :disabled="departmentName==''" type="text" @click="move(2)">下移</el-button>
                         <el-button :disabled="departmentName==''" type="text" @click="showModel('delDepartment')">删除</el-button>

@@ -42,13 +42,30 @@
                               :disabled="rangeFlag"
                               :show-all-levels='false'
                               filterable
+                               v-model="children_id"
                               change-on-select
                               clearable
                           >
                           </el-cascader>
                       </div>
                   </el-col>
-                  <el-col :span="6">
+                  <el-col :span="4" v-if="selectRangeItem==3" >
+                        <div class="select rightWrap">
+                            <el-select
+                                v-model="franchisee_id"
+                                placeholder="请选择"
+                                @change="getFranchiseeEmp"
+                            >
+                                <el-option
+                                    v-for="item in franchiseeList"
+                                    :key="item.apply_company_id"
+                                    :label="item.apply_company_name"
+                                    :value="item.apply_company_id">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </el-col>
+                    <el-col :span="selectRangeItem==3?4:6">
                       <!-- 选择部门 -->
                       <div class="select rightWrap">
                           <el-cascader
@@ -64,7 +81,7 @@
                       </div>
                   </el-col>
                   <!-- 当前部门与昂 -->
-                  <el-col :span="6">
+                  <el-col :span="selectRangeItem==3?4:6">
                       <div class="select rightWrap">
                           <el-select
                               v-model="employees_id"
@@ -476,7 +493,7 @@ export default {
       // 母公司id
       mother_id: "",
       // 当前子公司id
-      children_id: "",
+      children_id: [],
       // 当前部门id
       department_id: "",
       // 当前员工id
@@ -539,11 +556,12 @@ export default {
       tableData: [],
       options: [
         {
-            label: '合同名称',
-            value: 1
-        }, {
-            label: '合同编号',
-            value: 2
+          label: "合同名称",
+          value: 1
+        },
+        {
+          label: "合同编号",
+          value: 2
         }
       ],
       // 搜索框筛选列表
@@ -553,12 +571,14 @@ export default {
       // 范围选中内容
       selectRangeItem: 1,
       // 搜索关键字
-        searchName:'',
-        searchNumber:'',
+      searchName: "",
+      searchNumber: "",
+      // 加盟公司id
+      franchisee_id: "",
+      franchiseeList: []
     };
   },
   computed: {
-       
     // 是否禁用子公司选择框
     rangeFlag() {
       if (this.selectRangeItem == 1) {
@@ -571,19 +591,45 @@ export default {
     }
   },
   methods: {
-      // 搜索
-        searchBtn() {
-            console.log(this.searchType);
-            console.log(this.searchIptValue);
-            if (this.searchType == 1) {
-                this.searchName = this.searchIptValue,
-                this.searchNumber = '';
-            } else if (this.searchType == 2) {
-                this.searchName = '',
-                this.searchNumber = this.searchIptValue;
-            } 
-            this.filterClue();
-        },
+    // 获取加盟商员工
+    getFranchiseeEmp() {
+      let self = this;
+      self
+        .$axios({
+          method: "POST",
+          withCredentials: false,
+          url: "/api/department/getChildrenDepartmentTo",
+          data: {
+            token: localStorage.getItem("crm_token"),
+            mother_id: self.franchisee_id
+          }
+        })
+        .then(function(res) {
+          if (res.data.code == 200) {
+            self.getMenuName(res.data.data.list);
+            console.log(
+              "获取部门所有部门数据:" + JSON.stringify(res.data, null, 4)
+            );
+            self.currentCompanyDepartment = res.data.data.list;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+    // 搜索
+    searchBtn() {
+      console.log(this.searchType);
+      console.log(this.searchIptValue);
+      if (this.searchType == 1) {
+        (this.searchName = this.searchIptValue), (this.searchNumber = "");
+      } else if (this.searchType == 2) {
+        (this.searchName = ""), (this.searchNumber = this.searchIptValue);
+      }
+      this.filterClue();
+    },
     // 打开合同详情
     openContractInfo(index, data) {
       console.log(JSON.stringify(data));
@@ -705,7 +751,9 @@ export default {
               obj.label = obj.user_name;
               obj.value = obj.user_id;
             }
-            console.log("获取部门所有员工数据:" + JSON.stringify(res.data, null, 4));
+            console.log(
+              "获取部门所有员工数据:" + JSON.stringify(res.data, null, 4)
+            );
             self.currentDepartmentStaff = res.data.data.list;
           } else {
             alert(res.data.msg);
@@ -754,7 +802,10 @@ export default {
         end_end: self.selectedItems.maturityTime[1] || "",
         contract_start: self.selectedItems.signingTime[0] || "",
         contract_end: self.selectedItems.signingTime[1] || "",
-        children_id: self.children_id,
+        children_id:
+          self.selectRangeItem == 3
+            ? self.franchisee_id
+            : self.children_id[self.children_id.length - 1],
         department_id: self.department_id,
         user_id: self.employees_id,
         name: self.searchName,
@@ -762,7 +813,8 @@ export default {
       };
 
       console.log("请求2参数:" + JSON.stringify(obj, null, 4));
-      self.$axios({
+      self
+        .$axios({
           method: "POST",
           withCredentials: false,
           url: "/api/clueContract/getContractList",
@@ -831,62 +883,66 @@ export default {
         });
     },
     //导出
-     exportData() {
-          console.log("筛选表格数据");
-          // 筛选表格数据
-          let self = this;
-          for (const key in self.selectedItems) {
-            if (self.selectedItems.hasOwnProperty(key)) {
-              let element = self.selectedItems[key];
-              if (element == null) {
-                self.selectedItems[key] = "";
-              }
-            }
+    exportData() {
+      console.log("筛选表格数据");
+      // 筛选表格数据
+      let self = this;
+      for (const key in self.selectedItems) {
+        if (self.selectedItems.hasOwnProperty(key)) {
+          let element = self.selectedItems[key];
+          if (element == null) {
+            self.selectedItems[key] = "";
           }
-          let obj = {
-            type: self.selectRangeItem,
-            statutype: 1,
-            token: localStorage.getItem("crm_token"),
-            page_num: "",
-            cue_type: self.selectedItems.clientType,
-            business_type: self.selectedItems.businessType,
-            statu: self.selectedItems.contractStatue,
-            payment_statu: self.selectedItems.repaymentsStatus,
-            cue_source: self.selectedItems.sourceType,
-            province_id: self.selectedItems.area[0],
-            city_id: self.selectedItems.area[1],
-            area_id: self.selectedItems.area[2],
-            followup_start: self.selectedItems.lastFollowupTime[0] || "",
-            followup_end: self.selectedItems.lastFollowupTime[1] || "",
-            start_start: self.selectedItems.startAndEndTime[0] || "",
-            start_end: self.selectedItems.startAndEndTime[1] || "",
-            end_start: self.selectedItems.maturityTime[0] || "",
-            end_end: self.selectedItems.maturityTime[1] || "",
-            contract_start: self.selectedItems.signingTime[0] || "",
-            contract_end: self.selectedItems.signingTime[1] || "",
-            children_id: self.children_id,
-            department_id: self.department_id,
-            user_id: self.employees_id,
-            name: self.searchName,
-            number: self.searchNumber
-          };
+        }
+      }
+      let obj = {
+        type: self.selectRangeItem,
+        statutype: 1,
+        token: localStorage.getItem("crm_token"),
+        page_num: "",
+        cue_type: self.selectedItems.clientType,
+        business_type: self.selectedItems.businessType,
+        statu: self.selectedItems.contractStatue,
+        payment_statu: self.selectedItems.repaymentsStatus,
+        cue_source: self.selectedItems.sourceType,
+        province_id: self.selectedItems.area[0],
+        city_id: self.selectedItems.area[1],
+        area_id: self.selectedItems.area[2],
+        followup_start: self.selectedItems.lastFollowupTime[0] || "",
+        followup_end: self.selectedItems.lastFollowupTime[1] || "",
+        start_start: self.selectedItems.startAndEndTime[0] || "",
+        start_end: self.selectedItems.startAndEndTime[1] || "",
+        end_start: self.selectedItems.maturityTime[0] || "",
+        end_end: self.selectedItems.maturityTime[1] || "",
+        contract_start: self.selectedItems.signingTime[0] || "",
+        contract_end: self.selectedItems.signingTime[1] || "",
+        children_id:
+          self.selectRangeItem == 3
+            ? self.franchisee_id
+            : self.children_id[self.children_id.length - 1],
+        department_id: self.department_id,
+        user_id: self.employees_id,
+        name: self.searchName,
+        number: self.searchNumber
+      };
 
-          console.log("请求2参数:" + JSON.stringify(obj, null, 4));
-          self.$axios({
-              method: "POST",
-              withCredentials: false,
-              url: "/api/clueContract/getContractList",
-              data: obj
-            })
-            .then(function(res) {
-             // console.log('返回参数:');
-             console.log(JSON.stringify(res.data,null,4))
-             window.open("http://crm.tonyliangli.cn"+res.data.url);
-            })
-            .catch(function(err) {
-              console.log(err);
-            });
-        },
+      console.log("请求2参数:" + JSON.stringify(obj, null, 4));
+      self
+        .$axios({
+          method: "POST",
+          withCredentials: false,
+          url: "/api/clueContract/getContractList",
+          data: obj
+        })
+        .then(function(res) {
+          // console.log('返回参数:');
+          console.log(JSON.stringify(res.data, null, 4));
+          window.open("http://crm.tonyliangli.cn" + res.data.url);
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
     // 所有子公司
     getMenuName(menus) {
       for (var value of menus) {
@@ -924,13 +980,50 @@ export default {
     },
     // 子公司变化
     handleChange(data) {
-      let children = this.children_id;
-      this.children_id = data[data.length - 1];
-      // 获取子公司所有部门
-      if (children !== this.children_id) {
+      //   let children = this.children_id;
+      //   this.children_id = data[data.length - 1];
+      //   // 获取子公司所有部门
+      //   if (children !== this.children_id) {
+      //     this.getChildrenDepartment();
+      //     this.filterClue();
+      //   }
+      if (this.selectRangeItem == 3) {
+        // 获取加盟商
+        this.getFranchiseeList();
+      } else {
+        // 获取子公司所有部门
+
         this.getChildrenDepartment();
         this.filterClue();
       }
+    },
+    // 获取加盟商列表
+    getFranchiseeList() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/joiningTrader/FranchiseeMyListId",
+        data: {
+          token: localStorage.getItem("crm_token"),
+          company_id: self.children_id[self.children_id.length - 1]
+        }
+      })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            console.log(JSON.stringify(res.data.data, null, 4));
+            self.$message({
+              message: "成功",
+              type: "success"
+            });
+            self.franchiseeList = res.data.data.list;
+          } else {
+            self.$message.error(res.data.msg);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
     },
     clueTypeChange(data) {
       console.log(data);
@@ -967,7 +1060,7 @@ export default {
         url: "/api/department/getChildrenDepartmentTo",
         data: {
           token: localStorage.getItem("crm_token"),
-          mother_id: self.children_id
+          mother_id: self.children_id[self.children_id.length - 1]
         }
       })
         .then(function(res) {
@@ -1011,11 +1104,11 @@ export default {
           })
           .then(function(res) {
             if (res.data.code == 200) {
-               self.$message({
-                     message: '删除合同成功',
-                     type: 'success'
-                 })
-                 self.filterClue();
+              self.$message({
+                message: "删除合同成功",
+                type: "success"
+              });
+              self.filterClue();
             } else {
               alert(res.data.msg);
             }
