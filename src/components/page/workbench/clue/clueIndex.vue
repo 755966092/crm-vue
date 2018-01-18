@@ -270,17 +270,17 @@
         <div>
             <div class="tableTitle">
                 <el-row>
-                    <el-col :span="10">
+                    <el-col :span="12">
                         <el-button type="text" @click="addClue">新增线索</el-button>
                         <el-button type="text" >导入线索</el-button>
-                        <el-button type="text" style="color: #999">批量转移</el-button>
-                        <el-button type="text" style="color: #999" @click="delLogItem">批量删除</el-button>
+                        <el-button type="text" style="color: #999" @click="moveClueFlag=2;moveStatu = true">批量转移</el-button>
+                        <el-button type="text" style="color: #999" @click="delLogItem('del')">批量删除</el-button>
                          <!-- <span class="btn">
                           <el-button @click="exportData" type="success"></el-button>
                          </span> -->
                          <el-button @click="exportData" type="text" >导出</el-button>
                     </el-col>
-                    <el-col :span="8" :offset="6">
+                    <el-col :span="8" :offset="4">
                         <el-input placeholder="请输入内容" v-model="searchIptValue" class="input-with-select">
                             <el-select v-model="searchType" slot="prepend" placeholder="请选择">
                                 <el-option
@@ -1688,7 +1688,8 @@ export default {
       // 搜索关键字
       searchName: "",
       searchPhone: "",
-      searchCname: ""
+      searchCname: "",
+      moveClueFlag: 1
     };
   },
   methods: {
@@ -1735,17 +1736,22 @@ export default {
       } else if (flag == "moveStatu") {
         self.moveStatu = false;
         // 提交转移
-        str = "转移线索成功";
-        (url = "/api/clue/transferClue"),
-          (paramObj = {
-            token: localStorage.getItem("crm_token"),
-            clue_id: self.selTableData.clue_id,
-            company_id:
-              self.moveClueCompanyId[self.moveClueCompanyId.length - 1],
-            department_id:
-              self.moveClueDepartmentId[self.moveClueDepartmentId.length - 1],
-            user_new: self.moveClueEmployeesId
-          });
+        if(self.moveClueFlag == 1){
+            str = "转移线索成功";
+            (url = "/api/clue/transferClue"),
+            (paramObj = {
+                token: localStorage.getItem("crm_token"),
+                clue_id: self.selTableData.clue_id,
+                company_id:
+                self.moveClueCompanyId[self.moveClueCompanyId.length - 1],
+                department_id:
+                self.moveClueDepartmentId[self.moveClueDepartmentId.length - 1],
+                user_new: self.moveClueEmployeesId
+            });
+        } else {
+            self.delLogItem();
+        }
+      
       } else if (flag == "emp") {
         // 选择部门
         url = "/api/department/makeAdminDepartmentList";
@@ -1758,38 +1764,39 @@ export default {
       }
       console.log("提交参数:" + JSON.stringify(paramObj, null, 4));
       // console.log('提交参数:'+JSON.stringify(selTableData,null,4));
+        if (paramObj) {
+            this.$axios({
+                method: "POST",
+                withCredentials: false,
+                url: url,
+                data: paramObj
+            })
+                .then(function(res) {
+                if (res.data.code === 200) {
+                    console.log(JSON.stringify(res.data.data));
 
-      this.$axios({
-        method: "POST",
-        withCredentials: false,
-        url: url,
-        data: paramObj
-      })
-        .then(function(res) {
-          if (res.data.code === 200) {
-            console.log(JSON.stringify(res.data.data));
-
-            // 当前子公司下的部门 parentCompanyDepartment
-            if (flag == "depa") {
-              self.getMenuName(res.data.data.list);
-              self.moveDepartmentList = res.data.data.list;
-            } else if (flag == "emp") {
-              self.moveDepartmentStaff = res.data.data.list;
-            } else if (flag == "moveStatu") {
-              self.$message({
-                message: str,
-                type: "success"
-              });
-              self.filterClue();
-            } else {
-            }
-          } else {
-            self.$message.error(res.data.msg);
-          }
-        })
-        .catch(function(err) {
-          console.log(err);
-        });
+                    // 当前子公司下的部门 parentCompanyDepartment
+                    if (flag == "depa") {
+                    self.getMenuName(res.data.data.list);
+                    self.moveDepartmentList = res.data.data.list;
+                    } else if (flag == "emp") {
+                    self.moveDepartmentStaff = res.data.data.list;
+                    } else if (flag == "moveStatu") {
+                    self.$message({
+                        message: str,
+                        type: "success"
+                    });
+                    self.filterClue();
+                    } else {
+                    }
+                } else {
+                    self.$message.error(res.data.msg);
+                }
+                })
+                .catch(function(err) {
+                console.log(err);
+                });
+        }
     },
     // 搜索
     searchBtn() {
@@ -1811,31 +1818,60 @@ export default {
       this.filterClue();
     },
     // 删除线索
-    delLogItem() {
-      let arr = [];
+    delLogItem(flag) {
+      let arr = [],obj,url;
+      let self = this;
       for (let i = 0; i < this.multipleSelection.length; i++) {
-        this.tableData = this.tableData.filter(value => {
-          return value.clue_id != this.multipleSelection[i].clue_id;
-        });
+        // this.tableData = this.tableData.filter(value => {
+        //   return value.clue_id != this.multipleSelection[i].clue_id;
+        // });
         arr.push(this.multipleSelection[i].clue_id);
       }
-
+      console.log(arr);
+    //   console.log(this.moveClueCompanyId);
+    //   console.log(this.moveClueDepartmentId);
+      
+        if (flag == 'del') {
+            obj = {
+                token: localStorage.getItem("crm_token"),
+                clueIds: JSON.stringify(arr)
+            }
+            url = '/api/clue/deleteStudentClues'
+        } else {
+            url = '/api/clue/transferClues';
+            obj = {
+                token: localStorage.getItem("crm_token"),
+                clueIds: JSON.stringify(arr),
+                company_id:
+                self.moveClueCompanyId[self.moveClueCompanyId.length - 1],
+                department_id:
+                self.moveClueDepartmentId[self.moveClueDepartmentId.length - 1],
+                user_new: self.moveClueEmployeesId
+            }
+        }
+        console.log('参数:'+JSON.stringify(obj,null,4));
+        
       this.$axios({
         method: "POST",
         withCredentials: false,
-        url: "/api/clue/deleteStudentClues",
-        data: {
-          token: localStorage.getItem("crm_token"),
-          clueIds: JSON.stringify(arr)
-        }
+        url: url,
+        data: obj
       })
         .then(function(res) {
           if (res.data.code == 200) {
-            self.$message({
-              message: "批量删除线索成功",
-              type: "success"
-            });
+              if (flag == 'del') {
+                   self.$message({
+                    message: "批量删除线索成功",
+                    type: "success"
+                    });
+              } else {
+                  self.$message({
+                    message: "批量转移线索成功",
+                    type: "success"
+                    });
+              }
             self.filterClue();
+           
           } else {
             alert(res.data.msg);
           }

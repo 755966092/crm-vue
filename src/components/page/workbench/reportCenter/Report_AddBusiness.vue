@@ -329,6 +329,8 @@ export default {
       })
         .then(function(res) {
           if (res.data.code === 200) {
+              console.log('');
+              
             // 当前子公司下的部门 parentCompanyDepartment
             self.getMenuName(res.data.data.list);
             self.currentCompanyDepartment = res.data.data.list;
