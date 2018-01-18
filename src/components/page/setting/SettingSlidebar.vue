@@ -14,7 +14,8 @@
             theme="dark" 
             unique-opened 
             router>
-            <template v-for="item in items">
+            <div v-for="item in items" v-if="item.show">
+            <!-- <div v-for="item in items"> -->
                 <template v-if="item.subs">
                     <el-submenu :index="item.index">
                         <template slot="title">
@@ -35,7 +36,7 @@
                         <span slot="title">{{ item.title }}</span>
                     </el-menu-item>
                 </template>
-            </template>
+            </div>
         </el-menu>
     </div>
 </template>
@@ -45,9 +46,8 @@
         data() {
             return {
                 isCollapse: false,
+                quanxian:localStorage.getItem('role_opat_auth').split(','),
                 items: [
-                   
-                    
                     {
                         icon: 'el-icon-setting',
                         index: '/setting',
@@ -120,6 +120,40 @@
                 }
                 // that.clientHeight = `${document.documentElement.clientHeight}px`;
             };
+            var arr = [
+                    {
+                        icon: 'el-icon-setting',
+                        index: '/setting',
+                        title: '部门和用户设置',
+                        show: this.quanxian.indexOf('42')>-1?true:false,
+                    },
+                    {
+                        icon: 'el-icon-menu',
+                        index: '/permissionSettings',
+                        title: '角色和权限设置',
+                        show: this.quanxian.indexOf('44')>-1?true:false,
+
+                    },
+                   {
+                        icon: 'el-icon-date',
+                        index: '/companyInfo',
+                        title: '公司信息',
+                        show: this.quanxian.indexOf('46')>-1?true:false,
+                    },
+                    {
+                        icon: 'el-icon-star-on',
+                        index: '/joinCompany',
+                        title: '加盟公司管理',
+                        show: this.quanxian.indexOf('48')>-1?true:false,
+                    },
+                    {
+                        icon: 'el-icon-upload2',
+                        index: '/Franchisee',
+                        title: '加盟商管理',
+                        show: this.quanxian.indexOf('49')>-1?true:false,
+                    }
+                ];
+                this.items = arr;
         }
     }
 </script>

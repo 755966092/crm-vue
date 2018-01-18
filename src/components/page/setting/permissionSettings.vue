@@ -273,8 +273,8 @@ export default {
         }
       })
         .then(function(res) {
-            console.log('所有权限');
             self.allClueList = res.data.data.list;
+            console.log('所有权限'+JSON.stringify(res.data.data.list));
           self.getMotherCompanyRole();
         })
         .catch(function(err) {
