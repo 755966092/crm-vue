@@ -2588,6 +2588,8 @@ export default {
         }
       })
         .then(function(res) {
+            console.log('cityData:'+res.data.data.list.length);
+            console.log('cityData:'+res.data.data.list);
           // objrr = [];
           self.cityList = res.data.data.list;
           localStorage.setItem("cityData", JSON.stringify(res.data.data.list));

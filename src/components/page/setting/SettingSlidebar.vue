@@ -14,8 +14,8 @@
             theme="dark" 
             unique-opened 
             router>
-            <div v-for="item in items" v-if="item.show">
-            <!-- <div v-for="item in items"> -->
+            <!-- <div v-for="item in items" v-if="item.show"> -->
+            <div v-for="item in items">
                 <template v-if="item.subs">
                     <el-submenu :index="item.index">
                         <template slot="title">

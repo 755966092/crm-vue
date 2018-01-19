@@ -15,8 +15,8 @@
             :collapse="isCollapse"
             unique-opened
             router>
-            <div v-for="item in items" :key="item.title" v-if="item.show">
-            <!-- <div v-for="item in items" :key="item.title" > -->
+            <!-- <div v-for="item in items" :key="item.title" v-if="item.show"> -->
+            <div v-for="item in items" :key="item.title" >
                 <template v-if="item.subs ">
                     <el-submenu :index="item.index">
                         <template slot="title">
