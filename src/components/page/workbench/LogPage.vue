@@ -974,13 +974,14 @@ export default {
     this.getTableData();
     this.applyCompany();
     this.filterClue();
-    if (localStorage.getItem("cityData")) {
-      console.log("有缓存");
-      this.cityList = JSON.parse(localStorage.getItem("cityData"));
-    } else {
-      console.log("无缓存");
-      this.requestCity();
-    }
+    this.cityList = this.$cityData;
+    // if (localStorage.getItem("cityData")) {
+    //   console.log("有缓存");
+    //   this.cityList = JSON.parse(localStorage.getItem("cityData"));
+    // } else {
+    //   console.log("无缓存");
+    //   this.requestCity();
+    // }
   }
 };
 </script>

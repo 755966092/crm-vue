@@ -2616,11 +2616,12 @@
             console.log(this.$route)
             this.clueType = this.$route.query.clueType;
             this.clueDetails();
-            if (localStorage.getItem('cityData')) {
-                this.cityList = JSON.parse(localStorage.getItem('cityData'))
-            } else {
-                this.requestCity();
-            }
+            this.cityList = this.$cityData;
+            // if (localStorage.getItem('cityData')) {
+            //     this.cityList = JSON.parse(localStorage.getItem("cityData"))
+            // } else {
+            //     this.requestCity();
+            // }
             
         }
     }

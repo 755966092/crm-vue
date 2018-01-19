@@ -3099,13 +3099,13 @@
             this.clueType = this.$route.query.clueType;
             this.paramData = this.$route.query;
             console.log(this.paramData.parentCompanyList);
-            
+            this.cityList = this.$cityData;
             this.clueDetails();
-            if (localStorage.getItem('cityData')) {
-                this.cityList = JSON.parse(localStorage.getItem('cityData'))
-            } else {
-                this.requestCity();
-            }
+            // if (localStorage.getItem('cityData')) {
+            //     this.cityList = JSON.parse(localStorage.getItem("cityData"))
+            // } else {
+            //     this.requestCity();
+            // }
             
         }
     }

@@ -3340,16 +3340,16 @@ export default {
     this.applyCompany();
     this.filterClue();
     this.getCompanyDepartment();
-
+    this.cityList = this.$cityData;
     this.typeList.schoolLevel.show = true;
     this.typeList.academicSystem.show = true;
-    if (localStorage.getItem("cityData")) {
-      console.log("有缓存");
-      this.cityList = JSON.parse(localStorage.getItem("cityData"));
-    } else {
-      console.log("无缓存");
-      this.requestCity();
-    }
+    // if (localStorage.getItem("cityData")) {
+    //   console.log("有缓存");
+    //   this.cityList = JSON.parse(localStorage.getItem("cityData"));
+    // } else {
+    //   console.log("无缓存");
+    //   this.requestCity();
+    // }
   },
   computed: {
     // 是否禁用子公司选择框

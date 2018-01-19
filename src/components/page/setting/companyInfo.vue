@@ -276,16 +276,17 @@
         created() {
             this.applyCompany();
             this.getCompanyDetails();
-            if (localStorage.getItem('cityData')) {
-                console.log('有缓存')
-                // console.log(typeof localStorage.getItem('cityData'))
-                // console.log(localStorage.getItem('cityData'))
-                // console.log(JSON.parse(localStorage.getItem('cityData')))
-                this.cityList = JSON.parse(localStorage.getItem('cityData'))
-            } else {
-                console.log('无缓存')
-                this.requestCity();
-            }
+            this.cityList = this.$cityData;
+            // if (localStorage.getItem('cityData')) {
+            //     console.log('有缓存')
+            //     // console.log(typeof localStorage.getItem('cityData'))
+            //     // console.log(localStorage.getItem('cityData'))
+            //     // console.log(JSON.parse(localStorage.getItem('cityData')))
+            //     this.cityList = JSON.parse(localStorage.getItem("cityData"))
+            // } else {
+            //     console.log('无缓存')
+            //     this.requestCity();
+            // }
 
         }
     }

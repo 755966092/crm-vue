@@ -505,13 +505,14 @@
             this.applyCompany();
             this.typeList.schoolLevel.show = true;
             this.typeList.academicSystem.show = true;
-            if (localStorage.getItem('cityData')) {
-                console.log('有缓存')
-                this.cityList = JSON.parse(localStorage.getItem('cityData'))
-            } else {
-                console.log('无缓存')
-                this.requestCity();
-            }
+            this.cityList = this.$cityData;
+            // if (localStorage.getItem('cityData')) {
+            //     console.log('有缓存')
+            //     this.cityList = JSON.parse(localStorage.getItem("cityData"))
+            // } else {
+            //     console.log('无缓存')
+            //     this.requestCity();
+            // }
         }
     }
 </script>

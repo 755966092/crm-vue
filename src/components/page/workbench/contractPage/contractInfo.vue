@@ -2257,11 +2257,12 @@
             
             this.clueDetails();
             this.applyCompany();
-            if (localStorage.getItem('cityData')) {
-                this.cityList = JSON.parse(localStorage.getItem('cityData'))
-            } else {
-                this.requestCity();
-            }
+            this.cityList = this.$cityData;
+            // if (localStorage.getItem('cityData')) {
+            //     this.cityList = JSON.parse(localStorage.getItem("cityData"))
+            // } else {
+            //     this.requestCity();
+            // }
             
         }
     }
