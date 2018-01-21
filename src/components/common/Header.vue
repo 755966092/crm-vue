@@ -1,6 +1,7 @@
 <template>
     <div class="header">
-        <div class="logo">
+        <div class="logo flex-def flex-cCenter">
+            <img src="../../images/defaultHead.png" alt="">
             <a class="el-dropdown-link" href="#/workbench">后台管理系统</a>
         </div>
         <div class="user-info">
@@ -55,6 +56,7 @@
         font-size: 22px;
         line-height: 70px;
         color: #fff;
+        padding: 0 50px;
     }
     .header .logo{
         float: left;
@@ -64,9 +66,13 @@
     .header .logo a {
         color: #fff;
     }
+    .header .logo img {
+        width: 30px;
+        height: 30px;
+        margin-right: 20px;
+    }
     .user-info {
         float: right;
-        padding-right: 50px;
         font-size: 16px;
         color: #fff;
     }

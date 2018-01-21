@@ -54,7 +54,7 @@
                 .then(function (res) {
                     // 登录成功
                     if (res.data.code === 200) {
-                        // console.log('正确:'+JSON.stringify(res,null,4));
+                        console.log('正确:'+JSON.stringify(res.data.data,null,4));
                         self.$refs[formName].validate((valid) => {
                             if (valid) {
                                 // 用户名缓存
@@ -65,8 +65,10 @@
                                  localStorage.setItem('adminRole', res.data.data.adminRole);
                                  //是否有权限进入设置
                                  localStorage.setItem('isGoWeb', res.data.data.isGoWeb);
+                                 localStorage.setItem('userId', res.data.data.list.user_id);
                                  
                                  localStorage.setItem('role_opat_auth', res.data.data.list.role_opat_auth);
+                                 localStorage.setItem('role_data_auth', res.data.data.list.role_data_auth);
                                 self.selfCompany();
                                 
                                 self.$router.push('/workbench');

@@ -1,105 +1,443 @@
 <template>
     <div class="componentsRoot clueWrap">
-        <el-row>
+        <el-row v-if="role_data_auth=='5'">
             <el-col :span="3">
                 <p class="leftWrap">范围</p>
             </el-col>
-                  <el-col :span="3">
-                      <!-- 选择子公司母公司 -->
-                      <div class="select rightWrap">
-                          <!--<el-cascader-->
-                          <!--expand-trigger="hover"-->
-                          <!--:options="rangeData"-->
-                          <!--@change="handleChange"-->
-                          <!--:show-all-levels='false'-->
-                          <!--filterable-->
-                          <!--change-on-select-->
-                          <!--&gt;-->
-                          <!--</el-cascader>-->
-                          <el-select
-                              v-model="selectRangeItem"
-                              slot="prepend"
-                              placeholder="请选择"
-                              @change="bigRangeChange"
-                          >
-                              <el-option
-                                  v-for="item in rangeData"
-                                  :key="item.value"
-                                  :label="item.label"
-                                  :value="item.value">
-                              </el-option>
-                          </el-select>
-                      </div>
-
-                  </el-col>
-                  <el-col :span="6" >
-                      <!-- 选着子公司 -->
-                      <div class="select rightWrap">
-                          <el-cascader
-                              expand-trigger="hover"
-                              :options="parentCompanyList"
-                              @change="handleChange"
-                              :disabled="rangeFlag"
-                              :show-all-levels='false'
-                              filterable
-                               v-model="children_id"
-                              change-on-select
-                              clearable
-                          >
-                          </el-cascader>
-                      </div>
-                  </el-col>
-                  <el-col :span="4" v-if="selectRangeItem==3" >
-                        <div class="select rightWrap">
-                            <el-select
-                                v-model="franchisee_id"
-                                placeholder="请选择"
-                                @change="getFranchiseeEmp"
-                            >
-                                <el-option
-                                    v-for="item in franchiseeList"
-                                    :key="item.apply_company_id"
-                                    :label="item.apply_company_name"
-                                    :value="item.apply_company_id">
-                                </el-option>
-                            </el-select>
-                        </div>
-                    </el-col>
-                    <el-col :span="selectRangeItem==3?4:6">
-                      <!-- 选择部门 -->
-                      <div class="select rightWrap">
-                          <el-cascader
-                              expand-trigger="hover"
-                              :options="currentCompanyDepartment"
-                              :show-all-levels='false'
-                              @change="selectDepartment"
-                              filterable
-                              change-on-select
-                              clearable
-                          >
-                          </el-cascader>
-                      </div>
-                  </el-col>
-                  <!-- 当前部门与昂 -->
-                  <el-col :span="selectRangeItem==3?4:6">
-                      <div class="select rightWrap">
-                          <el-select
-                              v-model="employees_id"
-                              slot="prepend"
-                              placeholder="请选择"
-                              @change="selectEmployees"
-                          >
-                              <el-option
-                                  v-for="item in currentDepartmentStaff"
-                                  :key="item.value"
-                                  :label="item.label"
-                                  :value="item.value">
-                              </el-option>
-                          </el-select>
-                      </div>
-                  </el-col>
-              </el-row>
+            <el-col :span="3">
+                <!-- 选择子公司母公司 -->
+                <div class="select rightWrap">
+                    <el-select
+                        v-model="selectRangeItem"
+                        slot="prepend"
+                        placeholder="请选择"
+                        @change="bigRangeChange"
+                    >
+                        <el-option
+                            v-for="item in rangeData"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col>
+            <el-col :span="6">
+                <!-- 选着子公司 -->
+                <div class="select rightWrap">
+                    <el-cascader
+                        expand-trigger="hover"
+                        placeholder="请选择子公司"
+                        :options="parentCompanyList"
+                        @change="handleChange"
+                        :disabled="rangeFlag"
+                        :show-all-levels='false'
+                        filterable
+                        change-on-select
+                        clearable
+                        v-model="children_id"
+                    >
+                    </el-cascader>
+                </div>
+            </el-col>
+             <el-col :span="4" v-if="selectRangeItem==3" >
+                <div class="select rightWrap">
+                    <el-select
+                        v-model="franchisee_id"
+                        placeholder="请选择加盟商"
+                        @change="getFranchiseeEmp"
+                    >
+                        <el-option
+                            v-for="item in franchiseeList"
+                            :key="item.apply_company_id"
+                            :label="item.apply_company_name"
+                            :value="item.apply_company_id">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col>
+            <el-col :span="selectRangeItem==3?4:6">
+                <!-- 选择部门 -->
+                <div class="select rightWrap">
+                    <el-cascader
+                        placeholder="请选择部门"
+                        expand-trigger="hover"
+                        :options="currentCompanyDepartment"
+                        :show-all-levels='false'
+                        @change="selectDepartment"
+                        v-model="department_id"
+                        filterable
+                        change-on-select
+                        clearable
+                    >
+                    </el-cascader>
+                </div>
+            </el-col>
+            <!-- 当前部门员工 -->
+            <el-col :span="selectRangeItem==3?4:6">
+                <div class="select rightWrap">
+                    <el-select
+                        v-model="employees_id"
+                        slot="prepend"
+                        placeholder="请选择员工"
+                        @change="selectEmployees"
+                    >
+                        <el-option
+                            v-for="item in currentDepartmentStaff"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col>
         </el-row>
+        <el-row v-else-if ="role_data_auth=='4'">
+            <el-col :span="3">
+                <p class="leftWrap">范围</p>
+            </el-col>
+                <!-- 选择子公司母公司 -->
+         <el-col :span="3">
+                <div class="select rightWrap">
+                    <el-select
+                        v-model="selectRangeItem"
+                        slot="prepend"
+                        placeholder="请选择"
+                        @change="bigRangeChange"
+                        clearable
+                    >
+                        <el-option
+                            v-for="item in rangeData"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col> 
+            <el-col :span="6">
+                <!-- 选着子公司 -->
+                <div class="select rightWrap">
+                    <el-cascader
+                        :disabled="selectRangeItem!=3 && selectRangeItem!=2 "
+                        expand-trigger="hover"
+                        :options="franchiseeList"
+                        :show-all-levels='false'
+                        placeholder="请选择"
+                        :props = 'props'
+                        @change="getFranchiseeEmp"
+                        v-model="franchisee_id"
+                        filterable
+                        change-on-select
+                        clearable
+                    >
+                    </el-cascader>
+                </div>
+            </el-col>
+             <!-- <el-col :span="4">
+                <div class="select rightWrap">
+                    <el-select
+                        v-model="franchisee_id"
+                        placeholder="请选择公司"
+                        @change="getFranchiseeEmp"
+                    >
+                        <el-option
+                            v-for="item in franchiseeList"
+                            :key="item.apply_company_id"
+                            :label="item.apply_company_name"
+                            :value="item.apply_company_id">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col> -->
+            <el-col :span="6">
+                <!-- 选择部门 -->
+                <div class="select rightWrap">
+                     <el-cascader
+                        expand-trigger="hover"
+                        :options="currentCompanyDepartment"
+                        :show-all-levels='false'
+                        placeholder="请选择部门"
+                        :props = 'props'
+                        @change="selectDepartment"
+                        v-model="department_id"
+                        filterable
+                        change-on-select
+                        clearable
+                    >
+                    </el-cascader>
+                </div>
+            </el-col>
+            <!-- 当前部门员工 -->
+            <el-col :span="6">
+                <div class="select rightWrap">
+                    <el-select
+                        v-model="employees_id"
+                        slot="prepend"
+                        placeholder="请选择"
+                        @change="selectEmployees"
+                    >
+                        <el-option
+                            v-for="item in currentDepartmentStaff"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col>
+        </el-row>
+        <el-row v-else-if ="role_data_auth=='3'">
+            <el-col :span="3">
+                <p class="leftWrap">范围</p>
+            </el-col>
+                <!-- 选择子公司母公司 -->
+             <el-col :span="3">
+                <div class="select rightWrap">
+                    <el-select
+                        v-model="selectRangeItem"
+                        slot="prepend"
+                        placeholder="请选择"
+                        @change="bigRangeChange"
+                        clearable
+                    >
+                        <el-option
+                            v-for="item in rangeData"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col>
+             <el-col :span="6">
+                <div class="select rightWrap">
+                    <el-cascader
+                        :disabled="selectRangeItem!=3"
+                        expand-trigger="hover"
+                        :options="franchiseeList"
+                        :show-all-levels='false'
+                        placeholder="请选择加盟商"
+                        :props = 'props'
+                        @change="getFranchiseeEmp"
+                        v-model="franchisee_id"
+                        filterable
+                        change-on-select
+                        clearable
+                    >
+                    </el-cascader>
+                </div>
+            </el-col>
+            <el-col :span="6">
+                <!-- 选择部门 -->
+                <div class="select rightWrap">
+                    <el-cascader
+                        expand-trigger="hover"
+                        :options="currentCompanyDepartment"
+                        :show-all-levels='false'
+                        placeholder="请选择部门"
+                        :props = 'props'
+                        @change="selectDepartment"
+                        v-model="department_id"
+                        filterable
+                        change-on-select
+                        clearable
+                    >
+                    </el-cascader>
+                </div>
+            </el-col>
+            <!-- 当前部门员工 -->
+            <el-col :span="6">
+                <div class="select rightWrap">
+                    <el-select
+                        v-model="employees_id"
+                        slot="prepend"
+                        placeholder="请选择"
+                        @change="selectEmployees"
+                    >
+                        <el-option
+                            v-for="item in currentDepartmentStaff"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col>
+        </el-row>
+        <el-row v-else-if ="role_data_auth=='2'">
+            <el-col :span="3">
+                <p class="leftWrap">范围</p>
+            </el-col>
+             <el-col :span="3">
+                <!-- 选择子公司母公司 -->
+                <div class="select rightWrap">
+                    <el-select
+                        v-model="selectRangeItem"
+                        slot="prepend"
+                        placeholder="请选择"
+                        @change="bigRangeChange"
+                        clearable
+                    >
+                        <el-option
+                            v-for="item in rangeData"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col>
+             <el-col :span="6" >
+                <div class="select rightWrap">
+                    <el-cascader
+                        :disabled="selectRangeItem!=3"
+                        expand-trigger="hover"
+                        :options="franchiseeList"
+                        :show-all-levels='false'
+                        placeholder="请选择加盟商"
+                        :props = 'props'
+                        @change="getFranchiseeEmp"
+                        v-model="franchisee_id"
+                        filterable
+                        change-on-select
+                        clearable
+                    >
+                    </el-cascader>
+                </div>
+            </el-col>
+            <el-col :span="6">
+                <!-- 选择当前所属部门, 不包括子部门, 单选框 -->
+                <div class="select rightWrap">
+                    <el-cascader
+                        expand-trigger="hover"
+                        :options="currentCompanyDepartment"
+                        :show-all-levels='false'
+                        placeholder="请选择部门"
+                        :props = 'props'
+                        @change="selectDepartment"
+                        v-model="department_id"
+                        filterable
+                        change-on-select
+                        clearable
+                    >
+                    </el-cascader>
+                    <!-- <el-select
+                        v-else
+                        v-model="department_id"
+                        slot="prepend"
+                        placeholder="请选择部门"
+                        @change="selectDepartment"
+                    >
+                        <el-option
+                            v-for="item in currentCompanyDepartment"
+                            :key="item.department_id"
+                            :label="item.department_name"
+                            :value="item.department_id">
+                        </el-option>
+                    </el-select> -->
+                    
+                </div>
+            </el-col>
+            <!-- 当前部门员工 -->
+            <el-col :span="6">
+                <div class="select rightWrap">
+                    <el-select
+                        v-model="employees_id"
+                        slot="prepend"
+                        placeholder="请选择"
+                        @change="selectEmployees"
+                    >
+                        <el-option
+                            v-for="item in currentDepartmentStaff"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col>
+        </el-row>
+        <el-row v-if="role_data_auth=='1'">
+            <el-col :span="3">
+                <p class="leftWrap">范围</p>
+            </el-col>
+            <el-col :span="3">
+                <div class="select rightWrap">
+                    <el-select
+                        v-model="selectRangeItem"
+                        slot="prepend"
+                        placeholder="请选择"
+                        @change="bigRangeChange"
+                        clearable
+                    >
+                        <el-option
+                            v-for="item in rangeData"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col>
+             <el-col :span="6" >
+                <div class="select rightWrap">
+                    <el-cascader
+                        :disabled="selectRangeItem!=3"
+                        expand-trigger="hover"
+                        :options="franchiseeList"
+                        :show-all-levels='false'
+                        placeholder="请选择加盟商"
+                        :props = 'props'
+                        @change="getFranchiseeEmp"
+                        v-model="franchisee_id"
+                        filterable
+                        change-on-select
+                        clearable
+                    >
+                    </el-cascader>
+                </div>
+            </el-col>
+            <el-col :span="6">
+                <!-- 选择部门 -->
+                <div class="select rightWrap">
+                    <el-cascader
+                        :disabled="selectRangeItem!=3"
+                        expand-trigger="hover"
+                        :options="currentCompanyDepartment"
+                        
+                        :show-all-levels='false'
+                        placeholder="请选择部门"
+                        @change="selectDepartment"
+                        v-model="department_id"
+                        filterable
+                        change-on-select
+                        clearable
+                    >
+                    </el-cascader>
+                </div>
+            </el-col>
+            <!-- 当前部门员工 -->
+            <el-col :span="6">
+                <div class="select rightWrap">
+                    <el-select
+                        v-model="employees_id"
+                        slot="prepend"
+                        placeholder="请选择员工"
+                        @change="selectEmployees"
+                        :disabled="selectRangeItem!=3"
+                    >
+                        <el-option
+                            v-for="item in currentDepartmentStaff"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+            </el-col>
+        </el-row>
+        <template v-else></template>
 
         <el-row>
             <el-col :span="3">
@@ -456,6 +794,12 @@ export default {
   name: "clue",
   data() {
     return {
+         props: {
+            label: "name",
+            value: 'id'
+        },
+        // 数据权限
+        role_data_auth: localStorage.getItem('role_data_auth'),
       // 当前公司部门
       currentCompanyDepartment: [],
       // 当前公司下的部门
@@ -495,7 +839,7 @@ export default {
       // 当前子公司id
       children_id: [],
       // 当前部门id
-      department_id: "",
+      department_id: [],
       // 当前员工id
       employees_id: "",
       // 当前员工姓名
@@ -569,13 +913,13 @@ export default {
       // 搜索框内容
       searchIptValue: "",
       // 范围选中内容
-      selectRangeItem: 1,
+      selectRangeItem:'',
       // 搜索关键字
       searchName: "",
       searchNumber: "",
       // 加盟公司id
-      franchisee_id: "",
-      franchiseeList: []
+      franchisee_id: [],
+      franchiseeList: [],
     };
   },
   computed: {
@@ -591,7 +935,7 @@ export default {
     }
   },
   methods: {
-    // 获取加盟商员工
+   // 获取公司部门
     getFranchiseeEmp() {
       let self = this;
       self
@@ -601,7 +945,7 @@ export default {
           url: "/api/department/getChildrenDepartmentTo",
           data: {
             token: localStorage.getItem("crm_token"),
-            mother_id: self.franchisee_id
+            mother_id: self.franchisee_id[self.franchisee_id.length-1]
           }
         })
         .then(function(res) {
@@ -611,6 +955,7 @@ export default {
               "获取部门所有部门数据:" + JSON.stringify(res.data, null, 4)
             );
             self.currentCompanyDepartment = res.data.data.list;
+            self.filterClue();
           } else {
             alert(res.data.msg);
           }
@@ -683,12 +1028,60 @@ export default {
     },
     // 子公司/ 母公司/ 加盟商修改
     bigRangeChange(data) {
-      this.selectRangeItem = data;
-      // if (data === 2) {
-      //     // 获取子公司
-      //     this.applyCompany();
-      // }
+       console.log('选择权限:'+data);
+      this.employees_id = '',
+      this.currentDepartmentStaff = [];
+      this.children_id = [];
+      this.franchiseeList = [];
+      this.franchisee_id = [];
+      this.currentCompanyDepartment = [];
+      
+      if (this.selectRangeItem == 3) {
+          // 选择了加盟商
+            this.franchisee_id = [];
+            this.department_id = [];
+            
+            this.usersWhereTheFranchisee();
+      } else if(this.selectRangeItem == 2) {
+          // 选择子公司, 请求子公司列表
+            this.getCurrentCompanyChildren();
+      } else if(this.selectRangeItem == '') {
+          if (self.role_data_auth == 4) {
+              this.getUserCompany()
+          } else if (self.role_data_auth == 2) {
+              self.userDepartmentList();
+          }
+      }
       this.filterClue();
+    },
+     // 获取当前公司的所有子公司
+    getCurrentCompanyChildren() {
+        let self = this;
+        this.$axios({
+            method: 'POST',
+            withCredentials: false,
+            url: '/api/company/CompanyChMyList',
+            data: {
+                token: localStorage.getItem('crm_token'),
+                company_id: self.currentCompanyId
+            }
+        })
+        .then(function(res){
+            if (res.data.code === 200) {
+                console.log(JSON.stringify(res.data.data, null, 4))
+                self.$message({
+                    message: '成功',
+                    type: 'success'
+                })
+                self.getMenuName(res.data.data.list);
+                self.franchiseeList = res.data.data.list
+            } else {
+                self.$message.error(res.data.msg);
+            }
+        })
+        .catch(function(err){
+            console.log(err);
+        });
     },
     // 当前母公司下的所有部门
     getDepartment() {
@@ -718,20 +1111,18 @@ export default {
     },
     // 选择部门
     selectDepartment(data) {
-      // department_id
-      console.log(data);
-      let department = this.department_id;
-      this.department_id = data[data.length - 1];
-      // 获取部门所有员工
-      if (department !== this.department_id) {
-        this.getDepartmentEmployees();
-        this.filterClue();
-      }
+     this.getDepartmentEmployees();
+      this.filterClue();
     },
     // 获取部门所有员工
     getDepartmentEmployees() {
       console.log("获取部门所有员工");
       let self = this;
+       let department_id = self.department_id[self.department_id.length-1];
+        // 数据权限2 并且 选择的加盟商
+        if (self.role_data_auth==2 && self.selectRangeItem != 3) {
+            department_id = self.department_id;
+        }
       self
         .$axios({
           method: "POST",
@@ -739,7 +1130,7 @@ export default {
           url: "/api/department/makeAdminDepartmentList",
           data: {
             token: localStorage.getItem("crm_token"),
-            department_id: self.department_id
+            department_id: department_id
           }
         })
         .then(function(res) {
@@ -782,6 +1173,21 @@ export default {
           }
         }
       }
+      let children_id;
+         if (self.role_data_auth == 5) {
+             if (self.selectRangeItem == 3) {
+                 console.log('加盟商'+JSON.stringify(self.franchisee_id));
+                 // 加盟商
+                children_id = self.franchisee_id;
+             } else  if (self.selectRangeItem == 1) {
+                 children_id = ''
+             }  
+             else {
+                 children_id = self.children_id[self.children_id.length - 1];
+             }
+         } else {
+             children_id = self.franchisee_id[self.franchisee_id.length-1];
+         }
       let obj = {
         type: self.selectRangeItem,
         token: localStorage.getItem("crm_token"),
@@ -802,11 +1208,9 @@ export default {
         end_end: self.selectedItems.maturityTime[1] || "",
         contract_start: self.selectedItems.signingTime[0] || "",
         contract_end: self.selectedItems.signingTime[1] || "",
-        children_id:
-          self.selectRangeItem == 3
-            ? self.franchisee_id
-            : self.children_id[self.children_id.length - 1],
-        department_id: self.department_id,
+       children_id: children_id,
+
+          department_id: self.department_id[self.department_id.length - 1],
         user_id: self.employees_id,
         name: self.searchName,
         number: self.searchNumber
@@ -895,6 +1299,21 @@ export default {
           }
         }
       }
+      let children_id;
+         if (self.role_data_auth == 5) {
+             if (self.selectRangeItem == 3) {
+                 console.log('加盟商'+JSON.stringify(self.franchisee_id));
+                 // 加盟商
+                children_id = self.franchisee_id;
+             } else  if (self.selectRangeItem == 1) {
+                 children_id = ''
+             }  
+             else {
+                 children_id = self.children_id[self.children_id.length - 1];
+             }
+         } else {
+             children_id = self.franchisee_id[self.franchisee_id.length-1];
+         }
       let obj = {
         type: self.selectRangeItem,
         statutype: 1,
@@ -916,11 +1335,9 @@ export default {
         end_end: self.selectedItems.maturityTime[1] || "",
         contract_start: self.selectedItems.signingTime[0] || "",
         contract_end: self.selectedItems.signingTime[1] || "",
-        children_id:
-          self.selectRangeItem == 3
-            ? self.franchisee_id
-            : self.children_id[self.children_id.length - 1],
-        department_id: self.department_id,
+        children_id: children_id,
+
+          department_id: self.department_id[self.department_id.length - 1],
         user_id: self.employees_id,
         name: self.searchName,
         number: self.searchNumber
@@ -1082,6 +1499,19 @@ export default {
       console.log("选择" + this.selectedItems.area);
       this.filterClue();
     },
+     // 处理树形数据, 删除空的children
+    getMenuName(menus) {
+      for (var value of menus) {
+        if (value.children) {
+          this.getMenuName(value.children);
+        }
+        if (value.children) {
+            if (value.children.length == 0) {
+                delete value.children;
+            }
+        }
+      }
+    },
     // 表格按钮
     // 单选删除合同
     showModelTable(index, data, flag) {
@@ -1118,10 +1548,177 @@ export default {
           });
       } else if (flag == "handover") {
       }
+    },
+     // 请求当前用户所属公司所有部门
+    // 请求当前用户所在部门及其子部门
+    // 请求当前用户所在部门
+    
+    // 权限4: 获取当前用户公司, or 当前公司部门
+    getUserCompany() {
+        let self = this;
+        this.$axios({
+            method: 'POST',
+            withCredentials: false,
+            url: '/api/company/CompanyMyCompany',
+            // url: '/api/company/CompanyChMyList',
+            data: {
+                token: localStorage.getItem('crm_token'),
+            }
+        })
+        .then(function(res){
+            if (res.data.code === 200) {
+                // res.data.data.children.id
+                self.currentCompanyId = res.data.data.children.id;
+                self.children_id = [res.data.data.children.id];
+                self.franchisee_id = [res.data.data.children.id];
+                self.filterClue();
+                self.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/department/getChildrenDepartmentTo',
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        mother_id: res.data.data.children.id
+                    }
+                })
+                .then(function(res){
+                    if (res.data.code === 200) {
+                        self.getMenuName(res.data.data.list)
+                        self.currentCompanyDepartment = res.data.data.list;
+                    } else {
+                        self.$message.error(res.data.msg);
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
+            } else {
+                self.$message.error(res.data.msg);
+            }
+        })
+        .catch(function(err){
+            console.log(err);
+        });
+    },
+    // 权限1: 当前用户所在的加盟商
+    usersWhereTheFranchisee() {
+        // 所属加盟商
+        let self = this;
+        this.$axios({
+            method: 'POST',
+            withCredentials: false,
+            url: '/api/User/userJiameng',
+            data: {
+                token: localStorage.getItem('crm_token'),
+            }
+        })
+        .then(function(res){
+            if (res.data.code === 200) {
+                console.log('加盟商:'+JSON.stringify(res.data.data));
+                self.getMenuName(res.data.data.list)
+                self.franchiseeList = res.data.data.list;
+            } else {
+                self.$message.error(res.data.msg);
+            }
+        })
+        .catch(function(err){
+            console.log(err);
+        });
+    },
+    // 权限2: 当前用户所在部门
+   userDepartmentList() {
+        let self = this,url;
+        if (self.role_data_auth==2) {
+            // 用户所在部门, 不包含子部门
+            url = '/api/department/UserDepartmentList';
+        } else if (self.role_data_auth==3) {
+            // 用户所在部门 包含子部门
+            url = '/api/Department/shaiChaUserDepartmentCh'
+        }
+        else {
+            
+        }
+        this.$axios({
+            method: 'POST',
+            withCredentials: false,
+            url: url,
+            data: {
+                token: localStorage.getItem('crm_token'),
+            }
+        })
+        .then(function(res){
+            if (res.data.code === 200) {
+                // currentDepartmentStaff
+                console.log('所在部门:'+JSON.stringify(res.data.data))
+                self.$message({
+                    message: '成功',
+                    type: 'success'
+                })
+                self.getMenuName(res.data.data.list);
+                
+                self.currentCompanyDepartment = res.data.data.list;
+                // self.currentDepartmentId = 
+            } else {
+                self.$message.error(res.data.msg);
+            }
+        })
+        .catch(function(err){
+            console.log(err);
+        });
     }
   },
   created() {
-    this.applyCompany();
+     if (this.role_data_auth==5) {
+        // 所有权限
+        this.applyCompany();
+    } else if (this.role_data_auth==4) {
+        // 公司权限
+        // 请求当前用户所属公司所有部门
+        this.getUserCompany();
+        this.rangeData = [
+             {
+            label: "子公司",
+            value: 2
+            }
+            ,{
+            label: "加盟商",
+            value: 3
+            }
+        ]
+    } else if (this.role_data_auth==3) {
+        // 部门及其子部门
+        // 请求当前用户所在部门及其子部门
+        this.rangeData = [
+            {
+            label: "加盟商",
+            value: 3
+            }
+        ]
+        this.userDepartmentList();
+    } else if (this.role_data_auth==2) {
+        // 部门(不包含子部门)
+        // 请求当前用户所在部门
+        this.userDepartmentList();
+        this.rangeData = [
+            {
+            label: "加盟商",
+            value: 3
+            }
+        ]
+     } else if (this.role_data_auth==1) {
+         // 个人
+        // 请求个人所有线索
+        // 范围数据
+        this.rangeData = [
+            {
+            label: "加盟商",
+            value: 3
+            }
+        ]
+        this.usersWhereTheFranchisee();
+    } else {
+        
+    }
     this.filterClue();
     this.cityList = this.$cityData;
     // if (localStorage.getItem("cityData")) {
@@ -1131,7 +1728,8 @@ export default {
     //   console.log("无缓存");
     //   this.requestCity();
     // }
-  }
+  },
+  
 };
 </script>
 
