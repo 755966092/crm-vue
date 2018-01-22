@@ -871,7 +871,7 @@ export default {
         .$axios({
           method: "POST",
           withCredentials: false,
-          url: "/api/department/makeAdminDepartmentList",
+          url: "/api/Department/shaiChaUser",
           data: {
             token: localStorage.getItem("crm_token"),
             department_id: department_id

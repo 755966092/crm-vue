@@ -2410,7 +2410,7 @@ export default {
       
       } else if (flag == "emp") {
         // 选择部门
-        url = "/api/department/makeAdminDepartmentList";
+        url = "/api/Department/shaiChaUser";
         paramObj = {
           token: localStorage.getItem("crm_token"),
           department_id:
@@ -2938,7 +2938,7 @@ export default {
         .$axios({
           method: "POST",
           withCredentials: false,
-          url: "/api/department/makeAdminDepartmentList",
+          url: "/api/Department/shaiChaUser",
           data: {
             token: localStorage.getItem("crm_token"),
             department_id: department_id
