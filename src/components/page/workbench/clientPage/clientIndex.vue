@@ -2410,7 +2410,8 @@ export default {
       
       } else if (flag == "emp") {
         // 选择部门
-        url = "/api/Department/shaiChaUser";
+        // url = "/api/Department/shaiChaUser";
+        url: "/api/Department/ZhuanDUser",
         paramObj = {
           token: localStorage.getItem("crm_token"),
           department_id:
