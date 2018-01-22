@@ -2,11 +2,11 @@
     <div class="header">
         <div class="logo flex-def flex-cCenter">
             <img src="../../images/defaultHead.png" alt="">
-            <a class="el-dropdown-link" href="#/workbench">后台管理系统</a>
+            <a class="el-dropdown-link">后台管理系统</a>
         </div>
         <div class="user-info">
-            <a class="el-dropdown-link" href="#/setting" v-if = "isGoWeb == 1">
-                    设置
+            <a class="el-dropdown-link" @click="openNewPage" :href="urlLink" v-if = "isGoWeb == 1">
+                    {{showText}}
                 </a>
             <el-dropdown trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link">
@@ -24,7 +24,9 @@
         data() {
             return {
                 isGoWeb:'',
-                name: 'linxin'
+                name: '',
+                showText: '设置',
+                urlLink:'#/setting'
             }
         },
         computed:{
@@ -34,6 +36,17 @@
             }
         },
         methods:{
+            openNewPage() {
+                if (this.showText == '设置') {
+                    this.showText = '返回CRM'
+                    this.urlLink = '#/workbench'
+                    this.$emit('id-selected', 1)
+                } else {
+                    this.showText = '设置'
+                    this.urlLink = '#/setting'
+                    this.$emit('id-selected', 2)
+                }
+            },
             handleCommand(command) {
                 if(command == 'loginout'){
                     localStorage.removeItem('crm_token')
@@ -44,7 +57,8 @@
         },
         created(){
             this.isGoWeb =  localStorage.getItem('isGoWeb');
-        }
+        },
+       
     }
 </script>
 <style scoped>

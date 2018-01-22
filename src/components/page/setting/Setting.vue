@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <v-head></v-head>
+        <v-head props="aaa"></v-head>
         <v-sidebar @increment="addCls"></v-sidebar>
         <div class="content" :class="{left70:is850}">
             <transition name="move" mode="out-in">

@@ -106,7 +106,8 @@ export default new Router({
         },
         {
             path: '/setting',
-            component: resolve => require(['../components/page/setting/Setting.vue'], resolve),
+            // component: resolve => require(['../components/page/setting/.vue'], resolve),
+            component: resolve => require(['../components/common/Home.vue'], resolve),
             children:[
                 {
                     path: '/',

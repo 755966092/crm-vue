@@ -47,8 +47,8 @@
                 </div>
                 <div>
                     <span>部门成员(不包括子部门成员)</span>
-                    <el-button :disabled="departmentName==''" type="text" @click="showModel('addEmployee')">添加成员</el-button>
-                    <el-button :disabled="departmentName==''" type="text" @click="showModel('setSupervisor')">设置主管</el-button>
+                    <el-button type="text" @click="showModel('addEmployee')">添加成员</el-button>
+                    <el-button type="text" @click="showModel('setSupervisor')">设置主管</el-button>
                 </div>
                 <template>
                     <div>
@@ -153,11 +153,11 @@
                     </div>
                     <div>
                         <span class="iptName">电话:</span>
-                        <el-input v-model="selRoleData.user_mobile" placeholder="请输入内容"></el-input>
+                        <el-input type="number" v-model="selRoleData.user_mobile" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">手机:</span>
-                        <el-input v-model="selRoleData.user_telephone" placeholder="请输入内容"></el-input>
+                        <el-input type="number" v-model="selRoleData.user_telephone" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">微信:</span>
@@ -165,11 +165,11 @@
                     </div>
                     <div>
                         <span class="iptName">QQ:</span>
-                        <el-input v-model="selRoleData.user_qq" placeholder="请输入内容"></el-input>
+                        <el-input type="number" v-model="selRoleData.user_qq" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">邮箱:</span>
-                        <el-input v-model="selRoleData.user_email" placeholder="请输入内容"></el-input>
+                        <el-input type="email" v-model="selRoleData.user_email" placeholder="请输入内容"></el-input>
                     </div>
                     <p style="margin:10px 0; font-size:16px;">部门: {{selRoleData.departmens}}</p>
                     <span slot="footer" class="dialog-footer">
@@ -324,7 +324,7 @@
                 姓名
                 <el-input style="width:100%" v-model="addEmployeeData.name" placeholder="请输入姓名"></el-input>
                 手机号
-                <el-input style="width:100%" v-model="addEmployeeData.phone" placeholder="请输入手机号"></el-input>
+                <el-input type="number" style="width:100%" v-model="addEmployeeData.phone" placeholder="请输入手机号"></el-input>
 
                 角色
                 <div style="width:100%">
@@ -338,7 +338,7 @@
                     </el-select>
                 </div>
                 初始密码
-                <el-input style="width:100%" v-model="addEmployeeData.psd" placeholder="请输入初始密码"></el-input>
+                <el-input  style="width:100%" v-model="addEmployeeData.psd" placeholder="请输入初始密码"></el-input>
 
                 <span slot="footer" class="dialog-footer">
 								<el-button @click="newEmployee = false">取 消</el-button>
@@ -562,6 +562,47 @@
             };
         },
         methods: {
+            // 获取公司员工(不包括部门员工)
+            getCompanyUser() {
+                let self = this;
+                    this.$axios({
+                       method: 'POST',
+                       withCredentials: false,
+                       url: '/api/Company/CompanyUserNoDe',
+                       data: {
+                           token: localStorage.getItem('crm_token'),
+                           company_id: self.selCompanyList[self.selCompanyList.length - 1]
+                       }
+                    })
+                    .then(function(res){
+                       if (res.data.code === 200) {
+                        //    console.log(JSON.stringify(res.data.data, null, 4))
+                           self.$message({
+                               message: '成功',
+                               type: 'success'
+                           })
+                           self.departmentStaff = res.data.data.list;
+                            let arr = [];
+                                for (let i = 0; i < res.data.data.list.length; i++) {
+                                    let obj = res.data.data.list[i];
+                                    arr.push({
+                                        label: obj.user_name,
+                                        value: obj.user_id
+                                    })
+                                }
+                                  arr.push({
+                                        label: '无',
+                                        value: ''
+                                    })
+                                self.departmentStaffOption = arr;
+                       } else {
+                           self.$message.error(res.data.msg);
+                       }
+                    })
+                    .catch(function(err){
+                        console.log(err);
+                    });
+            },
             // 部门移动
             move(num) {
                 
@@ -663,10 +704,10 @@
                 this.$axios({
                     method: 'POST',
                     withCredentials: false,
-                    url: '/api/company/companyUsers',
+                    url: '/api/company/companyMotherUsersSuo',
                     data: {
                         token: localStorage.getItem('crm_token'),
-                        company_id: self.selCompanyList[self.selCompanyList.length-1]
+                        // company_id: self.selCompanyList[self.selCompanyList.length-1]
                     }
                 })
                 .then(function(res){
@@ -753,6 +794,7 @@
                         department_id: self.departmentId,
                         name: name
                     }
+                    
                 } else if (flag == 'del') {
                     // 删除部门
                     self.delDepartment = false;
@@ -764,17 +806,32 @@
                     }
                 } else if (flag == 'newEmployee'){
                     // 添加新员工
-                    self.newEmployee = false;
+                    
                     str = '添加成功'
-                    url = '/api/department/applyUserNewDepartment',
-                    paramObj = {
-                        token: localStorage.getItem('crm_token'),
-                        department_id: self.departmentId,
-                        name: self.addEmployeeData.name,
-                        mobile: self.addEmployeeData.phone,
-                        role_id: self.addEmployeeData.role,
-                        password: self.addEmployeeData.psd,
+                    if (self.departmentId) {
+                        // 添加到部门
+                         url = '/api/department/applyUserNewDepartment',
+                        paramObj = {
+                            token: localStorage.getItem('crm_token'),
+                            department_id: self.departmentId,
+                            name: self.addEmployeeData.name,
+                            mobile: self.addEmployeeData.phone,
+                            role_id: self.addEmployeeData.role,
+                            password: self.addEmployeeData.psd,
+                        }
+                    } else {
+                        // 添加到公司
+                         url = '/api/Company/addCompanyUser',
+                        paramObj = {
+                            token: localStorage.getItem('crm_token'),
+                            name: self.addEmployeeData.name,
+                            mobile: self.addEmployeeData.phone,
+                            role_id: self.addEmployeeData.role,
+                            password: self.addEmployeeData.psd,
+                            company_id: self.selCompanyList[self.selCompanyList.length - 1]
+                        }
                     }
+                   
                 } else if (flag == 'currentEmployee' ) {
                     // 添加员工(从公司员工选择)
                     self.currentEmployee = false;
@@ -788,13 +845,23 @@
                 } else if (flag == 'setSupervisor') {
                     // 设置部门主管
                     self.setSupervisor = false;
-                    str = '设置成功'
-                    url = '/api/department/makeAdminDepartment',
-                    paramObj = {
-                        token: localStorage.getItem('crm_token'),
-                        department_id: self.departmentId,
-                        admin_id: self.selUserId
+                    if (self.departmentId) {
+                         url = '/api/department/makeAdminDepartment',
+                        paramObj = {
+                            token: localStorage.getItem('crm_token'),
+                            department_id: self.departmentId,
+                            admin_id: self.selUserId
+                        }
+                    } else {
+                        url = '/api/Company/addCompanyZg',
+                        paramObj = {
+                            token: localStorage.getItem('crm_token'),
+                            company_id: self.selCompanyList[self.selCompanyList.length - 1],
+                            admin_id: self.selUserId
+                        }
                     }
+                    str = '设置成功'
+                   
                 } else if (flag == 'selectRole') {
                     // 修改员工角色
                     self.selectRole = false;
@@ -878,6 +945,7 @@
                             } else {
                                 self.getChildrenDepartment();
                             }
+                            self.departmentName = self.departmentNewName || self.departmentName;
                         }  else if (flag == 'del') {
                             if (self.selCompanyList[self.selCompanyList.length-1] == self.motnerCompanyId) {
                                 self.childrenDepartment();
@@ -885,7 +953,12 @@
                                 self.getChildrenDepartment();
                             }
                         } else if (flag == 'setSupervisor' || flag == 'currentEmployee' || flag == 'newEmployee' || flag == 'selectRole'|| flag == 'deleteEmployee' || flag=="dialogVisible") {
-                            self.departmentMakeAdminDepartmentList();
+                             self.newEmployee = false;
+                             if (self.departmentId) {
+                                self.departmentMakeAdminDepartmentList();
+                             } else {
+                                 self.getCompanyUser();
+                             }
                         }  
                         else {
 
@@ -947,6 +1020,7 @@
             handleChange(data) {
                 this.departmentStaff = [];
                 this.subsidiaryId = data[data.length-1];
+                this.getCompanyUser();
                 this.getChildrenDepartment();
                 this.getRoleList();
                 this.departmentName = '';
@@ -1076,7 +1150,12 @@
             },
             // 当前部门下的员工
             departmentMakeAdminDepartmentList() {
-                var self = this;
+                var self = this,url;
+                if (self.departmentId) {
+                    
+                } else {
+
+                }
                 if(self.departmentId == 0) {
 
                 } else {
@@ -1084,6 +1163,8 @@
                         method: 'POST',
                         withCredentials: false,
                         url: '/api/department/makeAdminCDepartmentList',
+                        // url: '/api/Department/ZhuanDUser',
+                        
                         data: {
                             token: localStorage.getItem('crm_token'),
                             department_id: self.departmentId
@@ -1092,7 +1173,6 @@
                         .then(function (res) {
                             self.departmentStaff = res.data.data.list;
                             console.log(res.data.data.list);
-                            
                             if (res.data.data.list.length > 0) {
                                 let arr = [];
                                 for (let i = 0; i < res.data.data.list.length; i++) {
@@ -1102,6 +1182,10 @@
                                         value: obj.user_id
                                     })
                                 }
+                                 arr.push({
+                                        label: '无',
+                                        value: ''
+                                    })
                                 self.departmentStaffOption = arr;
                             }
                         })
@@ -1113,6 +1197,7 @@
         },
         //
         created() {
+            this.getCompanyUser();
             this.childrenDepartment();
             this.applyCompany();
             this.getRoleList();

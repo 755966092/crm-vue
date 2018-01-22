@@ -1186,6 +1186,7 @@
                             <span class="iptName">客户来源:</span>
                             <el-select v-model="addClueData.sourceTypeValue" placeholder="请选择">
                                 <el-option
+                                    v-if="item.label!='全部'"
                                     v-for="item in typeList.source.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1219,6 +1220,7 @@
                             <el-select v-model="addClueData.academicSystem" placeholder="请选择">
                                 <el-option
                                     v-for="item in typeList.academicSystem.content"
+                                    v-if="item.label!='全部'"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value">
@@ -1230,6 +1232,7 @@
                             <el-select v-model="addClueData.schoolLevel" placeholder="请选择">
                                 <el-option
                                     v-for="item in typeList.schoolLevel.content"
+                                    v-if="item.label!='全部'"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value">
@@ -1256,6 +1259,7 @@
                             <span class="iptName">类型:</span>
                             <el-select v-model="addClueData.organizationType" placeholder="请选择">
                                 <el-option
+                                v-if="item.label!='全部'"
                                     v-for="item in typeList.organizationType.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1267,6 +1271,7 @@
                             <span class="iptName">定位:</span>
                             <el-select v-model="addClueData.positioning" placeholder="请选择">
                                 <el-option
+                                v-if="item.label!='全部'"
                                     v-for="item in typeList.positioning.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1297,6 +1302,7 @@
                             <span class="iptName">教授年级:</span>
                             <el-select v-model="addClueData.grade" placeholder="请选择">
                                 <el-option
+                                v-if="item.label!='全部'"
                                     v-for="item in typeList.grade.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1308,6 +1314,7 @@
                             <span class="iptName">教授科目:</span>
                             <el-select v-model="addClueData.professorSubjects" placeholder="请选择">
                                 <el-option
+                                v-if="item.label!='全部'"
                                     v-for="item in typeList.professorSubjects.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1319,6 +1326,7 @@
                             <span class="iptName">学校等级:</span>
                             <el-select v-model="addClueData.schoolLevel" placeholder="请选择">
                                 <el-option
+                                v-if="item.label!='全部'"
                                     v-for="item in typeList.schoolLevel.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1330,6 +1338,7 @@
                             <span class="iptName">学制:</span>
                             <el-select v-model="addClueData.academicSystem" placeholder="请选择">
                                 <el-option
+                                v-if="item.label!='全部'"
                                     v-for="item in typeList.academicSystem.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1352,6 +1361,7 @@
                             <span class="iptName">性别:</span>
                             <el-select v-model="addClueData.sex" placeholder="请选择">
                                 <el-option
+                                v-if="item.label!='全部'"
                                     v-for="item in typeList.sex.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1363,6 +1373,7 @@
                             <span class="iptName">文理科:</span>
                             <el-select v-model="addClueData.artsAndSciences" placeholder="请选择">
                                 <el-option
+                                v-if="item.label!='全部'"
                                     v-for="item in typeList.artsAndSciences.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1374,6 +1385,7 @@
                             <span class="iptName">年级:</span>
                             <el-select v-model="addClueData.grade" placeholder="请选择">
                                 <el-option
+                                v-if="item.label!='全部'"
                                     v-for="item in typeList.grade.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1385,6 +1397,7 @@
                             <span class="iptName">学校等级:</span>
                             <el-select v-model="addClueData.schoolLevel" placeholder="请选择">
                                 <el-option
+                                v-if="item.label!='全部'"
                                     v-for="item in typeList.schoolLevel.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1408,6 +1421,7 @@
                        <div class="mt10">
                             <p class="mb10 ">业务部门</p>
                             <el-cascader
+                            
                                 expand-trigger="hover"
                                 :value="changeToClientData.businessDepartment"
                                 :options="companyDepartment"
@@ -1497,11 +1511,11 @@
 
                     <div>
                         <span class="iptName">手机:</span>
-                        <el-input v-model="addClueData.contactPhone" placeholder="请输入内容"></el-input>
+                        <el-input type="number" v-model="addClueData.contactPhone" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">电话:</span>
-                        <el-input v-model="addClueData.contactTel" placeholder="请输入内容"></el-input>
+                        <el-input type="number" v-model="addClueData.contactTel" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">微信:</span>
@@ -1509,11 +1523,11 @@
                     </div>
                     <div>
                         <span class="iptName">QQ:</span>
-                        <el-input v-model="addClueData.contactQq" placeholder="请输入内容"></el-input>
+                        <el-input    v-model="addClueData.contactQq" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">邮箱:</span>
-                        <el-input v-model="addClueData.contactEmail" placeholder="请输入内容"></el-input>
+                        <el-input type="email" v-model="addClueData.contactEmail" placeholder="请输入内容"></el-input>
                     </div>
                     <span slot="footer" class="dialog-footer">
                             <el-button @click="dialogVisible = false">取 消</el-button>
@@ -1719,10 +1733,10 @@ export default {
       shiftClueEmployeeId: "",
       addClueData: {
         clueType: "1",
-        sourceTypeValue: "全部",
+        sourceTypeValue: "",
         schoolName: "",
-        academicSystem: "全部",
-        schoolLevel: "全部",
+        academicSystem: "",
+        schoolLevel: "",
         selectCityData: [],
         address: "",
         contactName: "",
@@ -1738,6 +1752,7 @@ export default {
         positioning: "",
         teacherName: "",
         // 教授科目
+       
         professorSubjects: "",
         // 教授年级
         grade: "",
@@ -3140,7 +3155,7 @@ export default {
           create_start: self.filterTime.createTime[0],
           create_end: self.filterTime.createTime[1],
           children_id: children_id,
-department_id: self.department_id[self.department_id.length - 1],
+            department_id: self.department_id[self.department_id.length - 1],
           user_id: self.employees_id,
           province_id: self.selectCityData[0],
           city_id: self.selectCityData[1],
@@ -3507,7 +3522,7 @@ department_id: self.department_id[self.department_id.length - 1],
     },
     // 提交客户
     submitClue() {
-      this.dialogVisible = false;
+      
       console.log("新增客户");
       let paramObj = {};
       let self = this;
@@ -3676,9 +3691,15 @@ department_id: self.department_id[self.department_id.length - 1],
         .then(function(res) {
           if (res.data.code == 200) {
             console.log("提交成功:");
+            self.$message({
+                message: '提交成功',
+                type: "success"
+            });
+            self.dialogVisible = false;
             self.filterClue();
           } else {
-            alert(res.data.msg);
+            
+             self.$message.error(res.data.msg)
           }
         })
         .catch(function(err) {

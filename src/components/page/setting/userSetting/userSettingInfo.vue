@@ -128,14 +128,11 @@
                                         size="mini"
                                         @click="showModelTable(scope.$index, scope.row, 'selectRole')">更改角色
                                     </el-button>
-                                    <el-button
-                                        size="mini"
-                                        @click="showModelTable(scope.$index, scope.row, 'handover')">交接
-                                    </el-button>
+                                    
                                     <el-button
                                         size="mini"
                                         type="danger"
-                                        @click="showModelTable(scope.$index, scope.row, 'deleteBtn')">删除
+                                        @click="showModelTable(scope.$index, scope.row, 'deleteServer')">删除
                                     </el-button>
                                 </template>
                             </el-table-column>
@@ -219,6 +216,20 @@
 
             </el-col>
         </el-row>
+        <!-- 删除负责人 -->
+        <div class="deleteEmployee">
+            <el-dialog
+                title="删除员工"
+                :visible.sync="deleteServer"
+                width="50%"
+            >
+                <p>确定删除负责人</p>
+                <span slot="footer" class="dialog-footer">
+								<el-button @click="deleteServer = false">取 消</el-button>
+								<el-button type="primary" @click="addSubCompany('deleteServer')">确 定</el-button>
+						</span>
+            </el-dialog>
+        </div>
         <!-- 新建员工 -->
         <template>
             <div>
@@ -604,6 +615,7 @@
                 // g公司列表
                 selCompanyList: [parseInt(localStorage.getItem('motherCompanyId'))],
                 motnerCompanyId: parseInt(localStorage.getItem('motherCompanyId')),
+                deleteServer: false,
                 dialogVisible: false,
                 rename: false,
                 subDepartment: false,
@@ -950,6 +962,14 @@
                         apply_id: self.franchiseeId,
                         company_id: self.selFranchiseeCompanyId[self.selFranchiseeCompanyId.length - 1],
                     }
+                } else if (flag == 'deleteServer') {
+                    // 删除加盟商负责人
+                     str = '删除成功'
+                    url = '/api/UserJoinApply/joinUserdelete';
+                    paramObj = {
+                        token: localStorage.getItem('crm_token'),
+                        sheep_id: self.selRoleData.sheep_id
+                    }
                 }
                 else {
 
@@ -992,6 +1012,9 @@
                         } else if (flag == 'setSupervisor' || flag == 'currentEmployee' || flag == 'newEmployee' || flag == 'selectRole'|| flag == 'deleteEmployee' || flag=="dialogVisible") {
                             self.departmentMakeAdminDepartmentList();
                         } else if(flag == 'setSrve') {
+                            self.getPrincipalData();
+                        } else if (flag == 'deleteServer') {
+                            self.deleteServer = false;
                             self.getPrincipalData();
                         }
                         else {

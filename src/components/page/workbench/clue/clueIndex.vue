@@ -1153,6 +1153,7 @@
                             <span class="iptName">线索来源:</span>
                             <el-select v-model="addClueData.sourceTypeValue" placeholder="请选择">
                                 <el-option
+                                    v-if="item.label!='全部'"
                                     v-for="item in typeList.source.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1185,6 +1186,7 @@
                             <span class="iptName">学制:</span>
                             <el-select v-model="addClueData.academicSystem" placeholder="请选择">
                                 <el-option
+                                 v-if="item.label!='全部'"
                                     v-for="item in typeList.academicSystem.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1196,6 +1198,7 @@
                             <span class="iptName">等级:</span>
                             <el-select v-model="addClueData.schoolLevel" placeholder="请选择">
                                 <el-option
+                                 v-if="item.label!='全部'"
                                     v-for="item in typeList.schoolLevel.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1223,6 +1226,7 @@
                             <span class="iptName">类型:</span>
                             <el-select v-model="addClueData.organizationType" placeholder="请选择">
                                 <el-option
+                                 v-if="item.label!='全部'"
                                     v-for="item in typeList.organizationType.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1234,6 +1238,7 @@
                             <span class="iptName">定位:</span>
                             <el-select v-model="addClueData.positioning" placeholder="请选择">
                                 <el-option
+                                 v-if="item.label!='全部'"
                                     v-for="item in typeList.positioning.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1268,6 +1273,7 @@
                             <span class="iptName">教授年级:</span>
                             <el-select v-model="addClueData.grade" placeholder="请选择">
                                 <el-option
+                                 v-if="item.label!='全部'"
                                     v-for="item in typeList.grade.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1279,6 +1285,7 @@
                             <span class="iptName">教授科目:</span>
                             <el-select v-model="addClueData.professorSubjects" placeholder="请选择">
                                 <el-option
+                                 v-if="item.label!='全部'"
                                     v-for="item in typeList.professorSubjects.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1290,6 +1297,7 @@
                             <span class="iptName">学校等级:</span>
                             <el-select v-model="addClueData.schoolLevel" placeholder="请选择">
                                 <el-option
+                                 v-if="item.label!='全部'"
                                     v-for="item in typeList.schoolLevel.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1301,6 +1309,7 @@
                             <span class="iptName">学制:</span>
                             <el-select v-model="addClueData.academicSystem" placeholder="请选择">
                                 <el-option
+                                 v-if="item.label!='全部'"
                                     v-for="item in typeList.academicSystem.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1323,6 +1332,7 @@
                             <span class="iptName">性别:</span>
                             <el-select v-model="addClueData.sex" placeholder="请选择">
                                 <el-option
+                                
                                     v-for="item in typeList.sex.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1334,6 +1344,7 @@
                             <span class="iptName">文理科:</span>
                             <el-select v-model="addClueData.artsAndSciences" placeholder="请选择">
                                 <el-option
+                                 v-if="item.label!='全部'"
                                     v-for="item in typeList.artsAndSciences.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1345,6 +1356,7 @@
                             <span class="iptName">年级:</span>
                             <el-select v-model="addClueData.grade" placeholder="请选择">
                                 <el-option
+                                 v-if="item.label!='全部'"
                                     v-for="item in typeList.grade.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1356,6 +1368,7 @@
                             <span class="iptName">学校等级:</span>
                             <el-select v-model="addClueData.schoolLevel" placeholder="请选择">
                                 <el-option
+                                 v-if="item.label!='全部'"
                                     v-for="item in typeList.schoolLevel.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1368,8 +1381,8 @@
                             <el-input v-model="addClueData.contactName" placeholder="请输入内容"></el-input>
                         </div>
                         <div>
-                            <span class="iptName">家长职务:</span>
-                            <el-input v-model="addClueData.contactPosition" placeholder="请输入内容"></el-input>
+                            <span class="iptName">和学生关系:</span>
+                            <el-input v-model="addClueData.contacts_relationship" placeholder="请输入内容"></el-input>
                         </div>
                     </div>
                     <!-- 自定义内容 -->
@@ -1394,11 +1407,11 @@
 
                     <div>
                         <span class="iptName">手机:</span>
-                        <el-input v-model="addClueData.contactPhone" placeholder="请输入内容"></el-input>
+                        <el-input type="number" v-model="addClueData.contactPhone" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">电话:</span>
-                        <el-input v-model="addClueData.contactTel" placeholder="请输入内容"></el-input>
+                        <el-input type="number" v-model="addClueData.contactTel" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">微信:</span>
@@ -1406,11 +1419,11 @@
                     </div>
                     <div>
                         <span class="iptName">QQ:</span>
-                        <el-input v-model="addClueData.contactQq" placeholder="请输入内容"></el-input>
+                        <el-input type="number" v-model="addClueData.contactQq" placeholder="请输入内容"></el-input>
                     </div>
                     <div>
                         <span class="iptName">邮箱:</span>
-                        <el-input v-model="addClueData.contactEmail" placeholder="请输入内容"></el-input>
+                        <el-input type="email" v-model="addClueData.contactEmail" placeholder="请输入内容"></el-input>
                     </div>
                     <span slot="footer" class="dialog-footer">
                             <el-button @click="dialogVisible = false">取 消</el-button>
@@ -1499,11 +1512,12 @@ export default {
       // 转移状态看
       moveStatu: false,
       addClueData: {
+          contacts_relationship:'',
         clueType: "1",
-        sourceTypeValue: "全部",
+        sourceTypeValue: "",
         schoolName: "",
-        academicSystem: "全部",
-        schoolLevel: "全部",
+        academicSystem: "",
+        schoolLevel: "",
         selectCityData: [],
         address: "",
         contactName: "",
@@ -2082,7 +2096,7 @@ export default {
           mother_id: self.moveClueCompanyId[self.moveClueCompanyId.length - 1]
         };
       } else if (flag == "moveStatu") {
-        self.moveStatu = false;
+        
         // 提交转移
         if(self.moveClueFlag == 1){
             str = "转移线索成功";
@@ -2131,6 +2145,7 @@ export default {
                     } else if (flag == "emp") {
                     self.moveDepartmentStaff = res.data.data.list;
                     } else if (flag == "moveStatu") {
+                        self.moveStatu = false;
                     self.$message({
                         message: str,
                         type: "success"
@@ -3041,7 +3056,7 @@ export default {
     },
     // 提交线索
     submitClue() {
-      this.dialogVisible = false;
+      
       console.log("新增线索");
       let paramObj = {};
       let self = this;
@@ -3126,13 +3141,13 @@ export default {
           // los: self.addClueData.academicSystem,
           grade: self.addClueData.schoolLevel,
           student_grade: self.addClueData.grade,
-
+            contacts_relationship: self.addClueData.contacts_relationship,
           province_id: self.addClueData.selectCityData[0],
           city_id: self.addClueData.selectCityData[1],
           area_id: self.addClueData.selectCityData[2],
           address: self.addClueData.address,
           contacts_name: self.addClueData.contactName,
-          contacts_post: self.addClueData.contactPosition,
+        //   contacts_post: self.addClueData.contactPosition,
           contacts_mobile: self.addClueData.contactPhone,
           contacts_telephone: self.addClueData.contactTel,
           contacts_wechat: self.addClueData.contactWeixin,
@@ -3158,6 +3173,7 @@ export default {
           })
           .then(function(res) {
             if (res.data.code == 200) {
+                self.dialogVisible = false;
               self.$message({
                 message: "添加线索成功",
                 type: "success"

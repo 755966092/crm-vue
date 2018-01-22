@@ -148,7 +148,11 @@ a{text-decoration: none}
     padding-left: 10px;
 }
 
-
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none !important;    
+        margin: 0;
+    }
 /* flex类名 */
 /* 定义 */
 .flex-def { display: -webkit-box;  display: -moz-box; display: -ms-flexbox; display: -webkit-flex; display: flex;}
