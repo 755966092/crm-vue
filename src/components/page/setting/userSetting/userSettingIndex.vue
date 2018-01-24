@@ -10,7 +10,6 @@
                 <p class="companyName">本公司</p>
                 <div class="select">
                     <el-cascader
-                        expand-trigger="hover"
                         :options="parentCompanyList"
                         @change="handleChange"
                         change-on-select
@@ -171,7 +170,8 @@
                         <span class="iptName">邮箱:</span>
                         <el-input type="email" v-model="selRoleData.user_email" placeholder="请输入内容"></el-input>
                     </div>
-                    <p style="margin:10px 0; font-size:16px;">部门: {{selRoleData.departmens}}</p>
+                    <p style="margin:10px 0; font-size:16px;">公司: {{selRoleData.company_name}}</p>
+                    <p style="margin:10px 0; font-size:16px;">部门: {{selRoleData.departmens||'-'}}</p>
                     <span slot="footer" class="dialog-footer">
                             <el-button @click="dialogVisible = false">取 消</el-button>
                             <el-button type="primary" @click="addSubCompany('dialogVisible')">确 定</el-button>
@@ -576,11 +576,7 @@
                     })
                     .then(function(res){
                        if (res.data.code === 200) {
-                        //    console.log(JSON.stringify(res.data.data, null, 4))
-                           self.$message({
-                               message: '成功',
-                               type: 'success'
-                           })
+                           console.log(JSON.stringify(res.data.data, null, 4))
                            self.departmentStaff = res.data.data.list;
                             let arr = [];
                                 for (let i = 0; i < res.data.data.list.length; i++) {
@@ -590,10 +586,10 @@
                                         value: obj.user_id
                                     })
                                 }
-                                  arr.push({
-                                        label: '无',
-                                        value: ''
-                                    })
+                                arr.push({
+                                    value: '',
+                                    label: '无'
+                                })
                                 self.departmentStaffOption = arr;
                        } else {
                            self.$message.error(res.data.msg);
@@ -605,23 +601,33 @@
             },
             // 部门移动
             move(num) {
-                
+                let paramObj,url;
                     let self = this;
-                    // console.log(JSON.stringify({
-                    //        token: localStorage.getItem('crm_token'),
-                    //        departmen_id: self.moveDepartmentId,
-                    //        type: num
-                    //    }));
-                    
-                    this.$axios({
-                       method: 'POST',
-                       withCredentials: false,
-                       url: '/api/department/editDepartmentLimit',
-                       data: {
+                    if (self.departmentId == 0) {
+                        // 移动公司
+                        url = '/api/company/editCompanyLimit';
+                        paramObj = {
+                           token: localStorage.getItem('crm_token'),
+                           company_id: self.selCompanyList[self.selCompanyList.length-1],
+                           type: num
+                       }
+                    } else {
+                        // 移动部门
+                        url = '/api/department/editDepartmentLimit';
+                        paramObj = {
                            token: localStorage.getItem('crm_token'),
                            departmen_id: self.departmentId,
                            type: num
                        }
+                    }
+                    console.log('请求地址::'+url);
+                    console.log('请求参数::'+JSON.stringify(paramObj,null,4));
+                    
+                    self.$axios({
+                       method: 'POST',
+                       withCredentials: false,
+                       url: url,
+                       data: paramObj
                     })
                     .then(function(res){
                        if (res.data.code === 200) {
@@ -629,7 +635,11 @@
                                message: '成功',
                                type: 'success'
                            })
-                           self.getChildrenDepartment();
+                           if (self.departmentId == 0) {
+                               self.applyCompany();
+                           } else {
+                            self.getChildrenDepartment();
+                           }
                        } else {
                            self.$message.error(res.data.msg);
                        }
@@ -774,36 +784,61 @@
                     }
                 } else if (flag == 'department') { 
                     // 新建子部门
-                    self.subDepartment = false;
+                    
                     str = '创建子部门成功'
-                    url = '/api/department/applyDepartment',
+                    url = '/api/department/applyDepartment';
+                    
+
+
                     paramObj = {
                         token: localStorage.getItem('crm_token'),
                         name: self.subDepartmentName,
                         company_id: self.selCompanyList[self.selCompanyList.length-1],
                         parent_id: self.departmentId
                     }
+
                 } else if (flag == 'newName') {
                     // 重命名部门
-                     self.rename = false;
+                     
                      str = '重命名成功'
-                    let name = self.departmentNewName || self.departmentName;
-                    url = '/api/department/editDepartment'
-                    paramObj = {
-                        token: localStorage.getItem('crm_token'),
-                        department_id: self.departmentId,
-                        name: name
-                    }
+                     let name = self.departmentNewName || self.departmentName;
+                     if (self.departmentId == 0) {
+                         // 公司重命名
+                         url = '/api/company/CompanyRename'
+                        paramObj = {
+                            token: localStorage.getItem('crm_token'),
+                            company_id: self.selCompanyList[self.selCompanyList.length - 1],
+                            name: name
+                        }
+                     } else {
+                         url = '/api/department/editDepartment'
+                        paramObj = {
+                            token: localStorage.getItem('crm_token'),
+                            department_id: self.departmentId,
+                            name: name
+                        }
+                     }
+                    
+                    
                     
                 } else if (flag == 'del') {
-                    // 删除部门
+                    // 删除部门or公司
                     self.delDepartment = false;
-                    str = '删除成功'
-                    url = '/api/department/deleteDepartment',
-                    paramObj = {
-                        token: localStorage.getItem('crm_token'),
-                        department_id: self.departmentId,
+                    if (self.departmentId == 0) {
+                         url = '/api/company/companyDelete',
+                        paramObj = {
+                            token: localStorage.getItem('crm_token'),
+                            company_id: self.selCompanyList[self.selCompanyList.length-1],
+                        }
+                    } else {
+                        url = '/api/department/deleteDepartment',
+                        paramObj = {
+                            token: localStorage.getItem('crm_token'),
+                            department_id: self.departmentId,
+                        }
                     }
+                    str = '删除成功'
+                    
                 } else if (flag == 'newEmployee'){
                     // 添加新员工
                     
@@ -916,6 +951,7 @@
                 else {
 
                 }
+                console.log('请求地址::'+url);
                 console.log('参数::'+JSON.stringify(paramObj));
                 this.$axios({
                     method: 'POST',
@@ -933,26 +969,33 @@
                         if (flag == 'company') {
                             self.applyCompany();
                         } else if (flag == 'department') { 
-                            if (self.selCompanyList[self.selCompanyList.length-1] == self.motnerCompanyId) {
-                                self.childrenDepartment();
-                            } else {
+                            self.subDepartmentName = '';
+                            self.subDepartment = false;
                                 self.getChildrenDepartment();
-                            }
                         } else if (flag == 'newName') {
-                            // self.childrenDepartment();
-                            if (self.selCompanyList[self.selCompanyList.length-1] == self.motnerCompanyId) {
-                                self.childrenDepartment();
-                            } else {
+                            self.rename = false;
+                                if (self.departmentId == 0) {
+                                    self.applyCompany();
+                                }
                                 self.getChildrenDepartment();
-                            }
-                            self.departmentName = self.departmentNewName || self.departmentName;
+                                self.departmentName = self.departmentNewName || self.departmentName;
                         }  else if (flag == 'del') {
-                            if (self.selCompanyList[self.selCompanyList.length-1] == self.motnerCompanyId) {
-                                self.childrenDepartment();
+                            if (self.departmentId == 0) {
+                                
+                                self.selCompanyList = [self.motnerCompanyId]
+                                self.subsidiaryId = ''
+                                self.getCompanyUser();
+                                self.getChildrenDepartment();
+                                self.applyCompany();
+                                self.getRoleList();
                             } else {
+                                console.log('啛啛喳喳错错错错错错错错错错错');
+                                
+                                self.getCompanyUser();
                                 self.getChildrenDepartment();
                             }
                         } else if (flag == 'setSupervisor' || flag == 'currentEmployee' || flag == 'newEmployee' || flag == 'selectRole'|| flag == 'deleteEmployee' || flag=="dialogVisible") {
+                             self.selUserId = '';
                              self.newEmployee = false;
                              if (self.departmentId) {
                                 self.departmentMakeAdminDepartmentList();
@@ -975,13 +1018,28 @@
                 this[param] = true;
                 if (param == 'editFranchisee') {
                     this.getFranchisee();
+                } else if (param == 'setSupervisor') {
+                    let arr = this.departmentStaffOption;
+                    arr.push({
+                        value:'',
+                        label: '无'
+                    })
+                    this.departmentStaffOption = arr;
                 }
             },
             showModelTable(row, data, param) {
                 console.log('表格按钮:');
                 console.log(data);
+                console.log(row);
+                console.log(param);
                 this[param] = true;
                 this.selRoleData = data;
+                // self.departmentStaffOption
+                if (param=="handover") {
+                    this.departmentStaffOption = this.departmentStaffOption.filter((value)=>{
+                        return value.value != ''
+                    })
+                }
             },
             addCurrentEmployee() {
                 // 现有员工选择
@@ -1072,21 +1130,25 @@
                            mother_id: self.subsidiaryId || self.selCompanyList[self.selCompanyList.length-1]
                        }
                     })
-                    .then(function(res){
+                    .then(function(res,err){
+                        console.log('请求参数::'+self.subsidiaryId || self.selCompanyList[self.selCompanyList.length-1]);
+                        console.log('获取成功'+JSON.stringify(res));
                        if (res.data.code === 200) {
-                           console.log(JSON.stringify(res.data.data))
                          if (res.data.data.list.length > 0) {
                             self.getMenuName(res.data.data.list);
-                            self.treeData = res.data.data.list;
-                            // self.departmentName = res.data.data.list[0].label;
-                            // self.departmentNewName = res.data.data.list[0].label;
-                            // self.departmentId = res.data.data.list[0].id;
+                            res.data.data.company.children = res.data.data.list
+                            self.treeData = [res.data.data.company];
+
                             self.departmentId = 0;
                             self.departmentMakeAdminDepartmentList();
                          } else {
-                             self.treeData = res.data.data.list;
+                             self.treeData = [res.data.data.company];
                              self.departmentName = '';
                              self.departmentId = 0;
+                         }
+                         if (self.departmentId == 0) {
+                            self.departmentNewName = self.treeData[0].name
+                            self.departmentName = self.treeData[0].name;
                          }
                        } else {
                            self.$message.error(res.data.msg);
@@ -1110,7 +1172,14 @@
                     .then(function (res) {
                         self.getMenuName(res.data.data.list);
                         self.parentCompanyList = res.data.data.list
-                        // console.log(JSON.stringify(self.parentCompanyList))
+                        console.log(JSON.stringify(self.parentCompanyList));
+                        if (self.departmentId == 0) {
+                            
+                        } else {
+                            self.departmentNewName = self.parentCompanyList[0].name
+                            self.departmentName = self.parentCompanyList[0].name;
+                        }
+                        
                     })
                     .catch(function (err) {
                         console.log(err);
@@ -1140,13 +1209,19 @@
                 console.log('节点组件本身::');
                 console.log(self);
                 
-                
-                this.departmentNewName = data.name
-                this.departmentName = data.name;
-                this.departmentId = data.id;
-                this.moveDepartmentId = data.id;
-
-                this.departmentMakeAdminDepartmentList();
+                    this.departmentNewName = data.name
+                    this.departmentName = data.name;
+                if (data.company_id) {
+                    // 部门员工
+                    this.departmentId = data.id;
+                    this.moveDepartmentId = data.id;
+                    this.departmentMakeAdminDepartmentList();
+                } else {
+                    // 公司员工
+                    this.getCompanyUser();
+                    this.departmentId = 0;
+                    this.moveDepartmentId = 0;
+                }
             },
             // 当前部门下的员工
             departmentMakeAdminDepartmentList() {
@@ -1187,6 +1262,8 @@
                                         value: ''
                                     })
                                 self.departmentStaffOption = arr;
+                            } else {
+                                self.departmentStaffOption = [];
                             }
                         })
                         .catch(function (err) {
@@ -1198,7 +1275,8 @@
         //
         created() {
             this.getCompanyUser();
-            this.childrenDepartment();
+            // this.childrenDepartment();
+            this.getChildrenDepartment();
             this.applyCompany();
             this.getRoleList();
 

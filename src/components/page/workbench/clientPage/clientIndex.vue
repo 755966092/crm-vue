@@ -3273,6 +3273,21 @@ department_id: self.department_id[self.department_id.length - 1],
           }
         }
       }
+      let children_id;
+         if (self.role_data_auth == 5) {
+             if (self.selectRangeItem == 3) {
+                 console.log('加盟商'+JSON.stringify(self.franchisee_id));
+                 // 加盟商
+                children_id = self.franchisee_id;
+             } else  if (self.selectRangeItem == 1) {
+                 children_id = ''
+             }  
+             else {
+                 children_id = self.children_id[self.children_id.length - 1];
+             }
+         } else {
+             children_id = self.franchisee_id[self.franchisee_id.length-1];
+         }
       let token = localStorage.getItem("crm_token");
       let obj = {};
       if (self.clueType == 1) {

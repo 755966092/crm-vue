@@ -64,10 +64,13 @@
             </el-tab-pane>
             <el-tab-pane label="加盟商" class="franchisee">
                 <el-cascader 
-                    expand-trigger="hover" :options="companyList"
+                    expand-trigger="hover" 
+                    :options="companyList"
                     filterable
                     change-on-select
                     :show-all-levels="false"
+                    v-model="filterParam"
+                    @change="fliterJoin"
                     >
                 </el-cascader>
                 <template>
@@ -464,6 +467,8 @@ export default {
     return {
       // 加盟公司
       addCompany: [],
+      // 筛选数据
+      filterParam: [],
       joinInvitation: false,
       addInvitation: false,
       cancelFranchisee: false,
@@ -497,6 +502,11 @@ export default {
   },
 
   methods: {
+      // 筛选
+      fliterJoin(data) {
+          console.log(this.filterParam);
+          this.joiningTraderFranchiseeList();
+      },
     // 同意or拒绝加盟
     agreeAdd() {
       let self = this,
@@ -678,7 +688,19 @@ export default {
     },
     // 请求加盟商列表
     joiningTraderFranchiseeList() {
-      var self = this;
+      var self = this,paramObj;
+      if (self.filterParam.length > 0) {
+          paramObj = {
+              token: localStorage.getItem("crm_token"),
+              children_id: self.filterParam[self.filterParam.length - 1]
+            }
+      } else {
+          paramObj = {
+              token: localStorage.getItem("crm_token"),
+            }
+      }
+      console.log('参数:'+JSON.stringify(paramObj));
+      
       if (localStorage.getItem("adminRole") == 1) {
         //超管
         self
@@ -686,9 +708,7 @@ export default {
             method: "POST",
             withCredentials: false,
             url: "/api/joiningTrader/FranchiseeList",
-            data: {
-              token: localStorage.getItem("crm_token")
-            }
+            data: paramObj
           })
           .then(function(res) {
             if (res.data.code === 200) {
@@ -708,9 +728,7 @@ export default {
             method: "POST",
             withCredentials: false,
             url: "/api/joiningTrader/FranchiseeMyList",
-            data: {
-              token: localStorage.getItem("crm_token")
-            }
+            data: paramObj
           })
           .then(function(res) {
             if (res.data.code === 200) {
