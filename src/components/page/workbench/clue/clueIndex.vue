@@ -2117,11 +2117,10 @@ export default {
       } else if (flag == "emp") {
         // 选择部门
         // url = "/api/Department/shaiChaUser";
-        url: "/api/Department/ZhuanDUser",
+        url = "/api/Department/ZhuanDUser",
         paramObj = {
           token: localStorage.getItem("crm_token"),
-          department_id:
-            self.moveClueDepartmentId[self.moveClueDepartmentId.length - 1]
+          department_id: self.moveClueDepartmentId[self.moveClueDepartmentId.length - 1]
         };
       } else {
       }
@@ -2135,30 +2134,31 @@ export default {
                 data: paramObj
             })
                 .then(function(res) {
-                if (res.data.code === 200) {
-                    console.log(JSON.stringify(res.data.data));
-
-                    // 当前子公司下的部门 parentCompanyDepartment
-                    if (flag == "depa") {
-                    self.getMenuName(res.data.data.list);
-                    self.moveDepartmentList = res.data.data.list;
-                    } else if (flag == "emp") {
-                    self.moveDepartmentStaff = res.data.data.list;
-                    } else if (flag == "moveStatu") {
-                        self.moveStatu = false;
-                    self.$message({
-                        message: str,
-                        type: "success"
-                    });
-                    self.filterClue();
+                    
+                    console.log(res);
+                    if (res.data.code === 200) {
+                        console.log(JSON.stringify(res.data.data));
+                        // 当前子公司下的部门 parentCompanyDepartment
+                        if (flag == "depa") {
+                            self.getMenuName(res.data.data.list);
+                            self.moveDepartmentList = res.data.data.list;
+                        } else if (flag == "emp") {
+                            self.moveDepartmentStaff = res.data.data.list;
+                        } else if (flag == "moveStatu") {
+                            self.moveStatu = false;
+                            self.$message({
+                                message: str,
+                                type: "success"
+                            });
+                            self.filterClue();
+                        } else {
+                        }
                     } else {
+                        self.$message.error(res.data.msg);
                     }
-                } else {
-                    self.$message.error(res.data.msg);
-                }
                 })
                 .catch(function(err) {
-                console.log(err);
+                    console.log(err);
                 });
         }
     },

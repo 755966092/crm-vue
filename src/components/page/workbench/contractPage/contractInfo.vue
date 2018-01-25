@@ -53,7 +53,7 @@
                     </template>
                 </el-col>
                 <el-col :span="4">
-                     <el-button @click="turnIntoCustomersFn('delClue')">删除客户</el-button>
+                     <el-button @click="turnIntoCustomersFn('delClue')">删除合同</el-button>
                      <!-- <el-button @click="turnIntoCustomersFn('delClue')">删除客户</el-button> -->
                 </el-col>
             </el-row>

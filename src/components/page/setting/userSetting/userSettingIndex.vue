@@ -355,7 +355,7 @@
             >
                 选择员工
                 <div style="width:100%">
-                    <el-select v-model="selUserId" placeholder="请选择">
+                    <el-select v-model="selUserId" placeholder="请选择员工">
                         <el-option
                             v-for="item in departmentStaffOption"
                             :key="item.value"
@@ -419,9 +419,12 @@
             >
                 选择员工交接{{selectPeopleFlag}}
                 <div>
-                    <el-select v-model="selUserId" placeholder="请选择">
+                    <el-select
+                    placeholder="请选择员工"
+                    v-model="selUserId" 
+                    >
                         <el-option
-                            v-for="item in departmentStaffOption"
+                            v-for="item in departmentStaffOptionJJ"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
@@ -459,9 +462,9 @@
             >
                 选择员工交接{{deleteEmployeeFlag}}
                 <div>
-                    <el-select v-model="selUserId" placeholder="请选择">
+                    <el-select v-model="selUserId" placeholder="请选择员工">
                         <el-option
-                            v-for="item in departmentStaffOption"
+                            v-for="item in departmentStaffOptionJJ"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
@@ -539,6 +542,7 @@
                 // 部门员工
                 departmentStaff: [],
                 departmentStaffOption: [],
+                departmentStaffOptionJJ: [],
                 treeData: [],
                 parentCompanyList: [],
                 value: "",
@@ -576,7 +580,6 @@
                     })
                     .then(function(res){
                        if (res.data.code === 200) {
-                           console.log(JSON.stringify(res.data.data, null, 4))
                            self.departmentStaff = res.data.data.list;
                             let arr = [];
                                 for (let i = 0; i < res.data.data.list.length; i++) {
@@ -586,14 +589,20 @@
                                         value: obj.user_id
                                     })
                                 }
-                                arr.push({
+                                self.departmentStaffOptionJJ = arr;
+                                let arr2 = arr
+                                arr2.push({
                                     value: '',
                                     label: '无'
                                 })
-                                self.departmentStaffOption = arr;
+                                self.departmentStaffOption = arr2;
                        } else {
                            self.$message.error(res.data.msg);
                        }
+                       console.log('-------------------------');
+                       console.log(self.departmentStaffOptionJJ);
+                       console.log('-------------------------');
+                       
                     })
                     .catch(function(err){
                         console.log(err);
@@ -976,9 +985,10 @@
                             self.rename = false;
                                 if (self.departmentId == 0) {
                                     self.applyCompany();
+                                } else {
+                                    self.getChildrenDepartment();
+                                    // self.departmentName = self.departmentNewName || self.departmentName;
                                 }
-                                self.getChildrenDepartment();
-                                self.departmentName = self.departmentNewName || self.departmentName;
                         }  else if (flag == 'del') {
                             if (self.departmentId == 0) {
                                 
@@ -1028,10 +1038,6 @@
                 }
             },
             showModelTable(row, data, param) {
-                console.log('表格按钮:');
-                console.log(data);
-                console.log(row);
-                console.log(param);
                 this[param] = true;
                 this.selRoleData = data;
                 // self.departmentStaffOption
@@ -1040,6 +1046,8 @@
                         return value.value != ''
                     })
                 }
+                console.log(this.departmentStaffOption);
+                
             },
             addCurrentEmployee() {
                 // 现有员工选择
@@ -1131,25 +1139,25 @@
                        }
                     })
                     .then(function(res,err){
-                        console.log('请求参数::'+self.subsidiaryId || self.selCompanyList[self.selCompanyList.length-1]);
-                        console.log('获取成功'+JSON.stringify(res));
                        if (res.data.code === 200) {
                          if (res.data.data.list.length > 0) {
                             self.getMenuName(res.data.data.list);
                             res.data.data.company.children = res.data.data.list
                             self.treeData = [res.data.data.company];
-
-                            self.departmentId = 0;
                             self.departmentMakeAdminDepartmentList();
                          } else {
                              self.treeData = [res.data.data.company];
                              self.departmentName = '';
                              self.departmentId = 0;
                          }
-                         if (self.departmentId == 0) {
-                            self.departmentNewName = self.treeData[0].name
-                            self.departmentName = self.treeData[0].name;
-                         }
+                          if (self.departmentId == 0) {
+                                self.departmentNewName = self.treeData[0].name
+                                self.departmentName = self.treeData[0].name;
+                            } else {
+                                // self.departmentId = 0;
+                                self.departmentName = self.departmentNewName
+                            }
+                         
                        } else {
                            self.$message.error(res.data.msg);
                        }
@@ -1174,12 +1182,12 @@
                         self.parentCompanyList = res.data.data.list
                         console.log(JSON.stringify(self.parentCompanyList));
                         if (self.departmentId == 0) {
-                            
+                            self.getChildrenDepartment();
                         } else {
                             self.departmentNewName = self.parentCompanyList[0].name
                             self.departmentName = self.parentCompanyList[0].name;
                         }
-                        
+                        self.departmentName = self.departmentNewName;
                     })
                     .catch(function (err) {
                         console.log(err);
@@ -1257,6 +1265,7 @@
                                         value: obj.user_id
                                     })
                                 }
+                                self.departmentStaffOptionJJ = arr;
                                  arr.push({
                                         label: '无',
                                         value: ''
@@ -1265,6 +1274,10 @@
                             } else {
                                 self.departmentStaffOption = [];
                             }
+                            console.log('-------------------');
+                            console.log(self.departmentStaffOptionJJ);
+                            console.log('-------------------');
+                            
                         })
                         .catch(function (err) {
                             console.log(err);

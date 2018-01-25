@@ -39,9 +39,9 @@
                         </el-select>
                     </template>
                 </el-col>
-                <el-col :span="4">
+                <!-- <el-col :span="4">
                      <el-button @click="turnIntoCustomersFn('contract')">转成客户</el-button>
-                </el-col>
+                </el-col> -->
                 <el-col :span="4">
                      <el-button @click="turnIntoCustomersFn('shiftClue')">转移给他人</el-button>
                 </el-col>
@@ -911,6 +911,18 @@
                 width="30%"
                 >
                 <div class="mt10">
+                    <p class="mb10 ">选择公司</p>
+                    <el-cascader
+                        expand-trigger="hover"
+                        v-model="companyId"
+                        :options="businessCompanyList"
+                        @change="selectServiceDepartment($event,'businessCompany')"
+                        clearable
+                        change-on-select
+                    >
+                    </el-cascader>
+                </div>
+                <div class="mt10">
                     <p class="mb10 ">选择部门</p>
                     <el-cascader
                         expand-trigger="hover"
@@ -929,7 +941,7 @@
                         <el-option
                         v-for="item in changeToClientData.businessEmployee"
                         :key="item.user_id"
-                        :label="item.name"
+                        :label="item.user_name"
                         :value="item.user_id">
                         </el-option>
                     </el-select>
@@ -1261,6 +1273,7 @@
         },
         data() {
             return {
+                businessCompanyList: [],
                 fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
                 // 新增日志
                 addLogData: {
@@ -1607,7 +1620,7 @@
                 // 公司所有部门
                 companyDepartment: [],
                 changeToClientData: {
-                   
+                    businessCompany: [],
                     // 业务部门
                     businessDepartment: [],
                     // 业务部门员工
@@ -1626,6 +1639,8 @@
                     // 标记当前选择的是哪一个, 默认业务部门
                     flagDepartment: 'businessDepartment'
                 },
+                
+                companyId: [],
                 // 转移线索部门员工
                 shiftClueDepatment: [],
                 shiftClueEmployeeId: '',
@@ -1879,6 +1894,7 @@
                     url: '/api/clue/transferClue',
                     data: {
                         token: localStorage.getItem('crm_token'),
+                        company_id: self.companyId[self.companyId.length - 1],
                         clue_id: self.$route.query.data.clue_id,
                         department_id: self.changeToClientData.businessDepartment[self.changeToClientData.businessDepartment.length-1],
                         user_new: self.shiftClueEmployeeId
@@ -1965,9 +1981,49 @@
             selectServiceDepartment(data,flag) {
                 this.changeToClientData.flagDepartment = flag;
                 this.changeToClientData[flag] = data;
-                // 获取部门员工
-                this.getDepartmentEmployee();
+                if(flag == 'businessCompany') {
+                    // 获取公司部门
+                    this.getCompanyDepa();
+                    console.log(this.companyId);
+                    console.log(this.companyId);
+                    
+                } else {
+                    // 获取部门员工
+                    this.getDepartmentEmployee();
+                }
             },
+            // 获取公司部门
+            getCompanyDepa() {
+                let url, paramObj, str;
+                let self = this;
+                    // 选择公司
+                    url = "/api/department/getChildrenDepartmentTo";
+                    paramObj = {
+                        token: localStorage.getItem("crm_token"),
+                        mother_id: self.companyId[self.companyId.length - 1]
+                    };
+                        this.$axios({
+                            method: "POST",
+                            withCredentials: false,
+                            url: url,
+                            data: paramObj
+                        })
+                        .then(function(res) {
+                            if (res.data.code === 200) {
+                                console.log(JSON.stringify(res.data.data));
+                                // 当前子公司下的部门 parentCompanyDepartment
+                                // if (flag == "depa") {
+                                    self.getMenuName(res.data.data.list);
+                                    self.companyDepartment = res.data.data.list;
+                                // }
+                            } else {
+                                self.$message.error(res.data.msg);
+                            }
+                        })
+                        .catch(function(err) {
+                            console.log(err);
+                        });
+        },
             // 获取部门员工
             getDepartmentEmployee() {
                 let self = this;
@@ -1993,6 +2049,8 @@
                     }
                 })
                     .then(function (res) {
+                        console.log(JSON.stringify(res.data.data));
+                        
                         if (res.data.code === 200) {
                             self.changeToClientData[slectIpt] = res.data.data.list;
                             // console.log(JSON.stringify(self.changeToClientData));
@@ -2051,6 +2109,9 @@
                     this.turnIntoCustomersStatu = true;
                 } else if (flag == 'shiftClue') {
                     this.shiftClueStatu = true;
+                    // 转移线索
+                    // 获取公司
+                    this.applyCompany();
                 } else if (flag == 'addContact') {
                     this.addContactStatu = true;
                 } else if (flag == 'addLog') {
@@ -2072,7 +2133,9 @@
                     // clueInfoData.student
                     this.studentOrClueToCantract = false;
                     this.studentToCantract = this.clueInfoData.student[index].student_id;
-                } else {
+                } 
+                else {
+                    console.log('');
                     // 删除多个
                     this.turnIntoCustomersStatu = true;
                     this.studentOrClueToCantract = false;
@@ -2587,6 +2650,30 @@
                     this.addStudentData.selectCityData = data;
                 }
                
+            },
+            // 所有子公司
+            applyCompany() {
+                let self = this;
+                this.$axios({
+                    method: "POST",
+                    withCredentials: false,
+                    url: "/api/company/CompanyMyList",
+                    data: {
+                        token: localStorage.getItem("crm_token")
+                    }
+                })
+                    .then(function(res) {
+                    if (res.data.code == 200) {
+                        // 当前用户只会有一个母公司
+                        self.getMenuName(res.data.data.list);
+                        self.businessCompanyList = res.data.data.list;
+                    } else {
+                        alert(res.data.msg);
+                    }
+                    })
+                    .catch(function(err) {
+                    console.log(err);
+                    });
             },
              // 省市县数据
             requestCity() {

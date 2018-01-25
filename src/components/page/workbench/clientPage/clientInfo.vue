@@ -551,6 +551,10 @@
                             label="合同标题"
                             align="center"
                             min-width="120">
+                                 <template slot-scope="scope">
+                                <span class="colorBlue"
+                                    @click="openContractInfo(scope.$index, scope.row)">{{scope.row.name}}</span>
+                                </template> 
                             </el-table-column>
                             <el-table-column
                             prop="number"
@@ -3091,7 +3095,18 @@
                         console.log(err);
                     });
             },
-           
+             // 打开合同详情
+            openContractInfo(index, data) {
+            // this.$router.push({ path: "/contract/contractInfo"});
+            this.$router.push({
+                path: "/contract/contractInfo",
+                query: {
+                data: data,
+                // clueType: this.selectedItems.clientType,
+                // parentCompanyList: this.parentCompanyList
+                }
+            });
+            },
         },
         created() {
              // 传来的参数
@@ -3197,4 +3212,7 @@
     .el-date-editor.el-input {
         width: 100%;
     }
+    .colorBlue {
+  cursor: pointer;
+}
 </style>

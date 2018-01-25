@@ -504,7 +504,6 @@ export default {
   methods: {
       // 筛选
       fliterJoin(data) {
-          console.log(this.filterParam);
           this.joiningTraderFranchiseeList();
       },
     // 同意or拒绝加盟
