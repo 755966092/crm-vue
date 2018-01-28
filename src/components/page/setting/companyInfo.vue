@@ -48,6 +48,7 @@
                                     v-model="detailsCompanyList.cityArr" 
                                     expand-trigger="hover" 
                                     :options="cityList" 
+                                    change-on-select
                                    >
                                 </el-cascader>
                             </el-form-item>

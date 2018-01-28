@@ -557,6 +557,7 @@
                         expand-trigger="hover"
                         :value="selectCityData"
                         :options="cityList"
+                        change-on-select
                         @change="selectCity"
                         clearable
                     >
@@ -1499,6 +1500,7 @@
                             expand-trigger="hover"
                             :value="addClueData.selectCityData"
                             :options="cityList"
+                            change-on-select
                             @change="selectCity"
                             clearable
                         >

@@ -416,7 +416,17 @@
                 title="交接业务"
                 :visible.sync="selectPeople"
                 width="50%"
-            >
+            >   
+                选择部门
+                 <el-cascader
+                        :options="moveTreeData"
+                        @change="moveSelDepa"
+                        change-on-select
+                        filterable
+                        :show-all-levels="false"
+                        v-model="moveDepatmentId"
+                    >
+                    </el-cascader>
                 选择员工交接{{selectPeopleFlag}}
                 <div>
                     <el-select
@@ -424,7 +434,7 @@
                     v-model="selUserId" 
                     >
                         <el-option
-                            v-for="item in departmentStaffOptionJJ"
+                            v-for="item in moveStaffList"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
@@ -446,7 +456,7 @@
             >
                 删除
                 <div class="addEmployeeBtn">
-                    <el-button type="primary" class="addEmployeeBtn" @click="deleteEmployeeEvent(1)">从本部门删除</el-button>
+                    <el-button type="primary" class="addEmployeeBtn" @click="deleteEmployeeEvent(1)">从本{{departmentId?'部门':'公司'}}删除</el-button>
                 </div>
                 <div class="addEmployeeBtn">
                     <el-button type="primary" class="addEmployeeBtn" @click="deleteEmployeeEvent(0)">彻底删除</el-button>
@@ -460,11 +470,24 @@
                 :visible.sync="deleteEmployee"
                 width="50%"
             >
-                选择员工交接{{deleteEmployeeFlag}}
+                选择部门
+                 <el-cascader
+                        :options="moveTreeData"
+                        @change="moveSelDepa"
+                        change-on-select
+                        filterable
+                        :show-all-levels="false"
+                        v-model="moveDepatmentId"
+                    >
+                    </el-cascader>
+                选择员工交接{{selectPeopleFlag}}
                 <div>
-                    <el-select v-model="selUserId" placeholder="请选择员工">
+                    <el-select
+                    placeholder="请选择员工"
+                    v-model="selUserId" 
+                    >
                         <el-option
-                            v-for="item in departmentStaffOptionJJ"
+                            v-for="item in moveStaffList"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
@@ -496,6 +519,10 @@
         // },
         data() {
             return {
+                moveStaffList: [],
+                moveTreeData: [],
+                // 交接部门
+                moveDepatmentId: [],
                 // 调整加盟商上级公司
                 selFranchiseeCompanyId: [],
                 // 表格炒作的数据
@@ -542,7 +569,6 @@
                 // 部门员工
                 departmentStaff: [],
                 departmentStaffOption: [],
-                departmentStaffOptionJJ: [],
                 treeData: [],
                 parentCompanyList: [],
                 value: "",
@@ -562,12 +588,51 @@
                 // 所有加盟商
                 franchiseeList: [],
                 franchiseeId: '',
-              
+                // 区分当前列表数据是公司的还是部门的
+
             };
         },
         methods: {
+            // 交接选择部门
+            moveSelDepa() {
+                let  self = this;
+                self.$axios({
+                    method: 'POST',
+                    withCredentials: false,
+                    url: '/api/department/makeAdminCDepartmentList',
+                    // url: '/api/Department/ZhuanDUser',
+                    
+                    data: {
+                        token: localStorage.getItem('crm_token'),
+                        department_id: self.moveDepatmentId[self.moveDepatmentId.length-1]
+                    }
+                })
+                    .then(function (res) {
+                        console.log(res.data.data.list);
+                        if (res.data.data.list.length > 0) {
+                            let arr = [];
+                            for (let i = 0; i < res.data.data.list.length; i++) {
+                                let obj = res.data.data.list[i];
+                                arr.push({
+                                    label: obj.user_name,
+                                    value: obj.user_id
+                                })
+                            }
+                            self.moveStaffList = arr;
+                        } else {
+                            self.moveStaffList = [];
+                        }
+                        
+                        
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            },
             // 获取公司员工(不包括部门员工)
             getCompanyUser() {
+                
+                
                 let self = this;
                     this.$axios({
                        method: 'POST',
@@ -589,19 +654,16 @@
                                         value: obj.user_id
                                     })
                                 }
-                                self.departmentStaffOptionJJ = arr;
                                 let arr2 = arr
-                                arr2.push({
-                                    value: '',
-                                    label: '无'
-                                })
+                                // arr2.push({
+                                //     value: '',
+                                //     label: '无'
+                                // })
                                 self.departmentStaffOption = arr2;
                        } else {
                            self.$message.error(res.data.msg);
                        }
-                       console.log('-------------------------');
-                       console.log(self.departmentStaffOptionJJ);
-                       console.log('-------------------------');
+                    
                        
                     })
                     .catch(function(err){
@@ -720,14 +782,32 @@
             // 获取公司所有员工
             getCompanyAllUser() {
                 let self = this;
+                let paramObj,url;
+                if (self.departmentId) {
+                   
+                    // 
+                    // 部门添加
+                    url = '/api/company/companyMotherUsersSuo';
+                    paramObj = {
+                        token: localStorage.getItem('crm_token'),
+                    }
+                } else {
+                     // 公司添加
+                    url = '/api/company/companyUsers'
+                    paramObj = {
+                        token: localStorage.getItem('crm_token'),
+                        company_id: self.selCompanyList[self.selCompanyList.length-1]
+                    }
+                    
+                }
+                // console.log('url::'+ url);
+                // console.log('参数::'+ JSON.stringify(paramObj));
+                
                 this.$axios({
                     method: 'POST',
                     withCredentials: false,
-                    url: '/api/company/companyMotherUsersSuo',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        // company_id: self.selCompanyList[self.selCompanyList.length-1]
-                    }
+                    url: url,
+                    data: paramObj
                 })
                 .then(function(res){
                     if (res.data.code === 200) {
@@ -740,6 +820,8 @@
                             })
                         }
                         self.companyAllUser = arr;
+                        // console.log('公司员工::'+ JSON.stringify(res.data.data));
+                        
                     } else {
                         self.$message.error(res.data.msg);
                     }
@@ -880,14 +962,24 @@
                     // 添加员工(从公司员工选择)
                     self.currentEmployee = false;
                     str = '添加成功'
-                    url = '/api/department/applyUserDepartment',
-                    paramObj = {
-                        token: localStorage.getItem('crm_token'),
-                        department_id: self.departmentId,
-                        user_id: self.currentUserId
+                    if (self.departmentId) {
+                        url = '/api/department/applyUserDepartment',
+                        paramObj = {
+                            token: localStorage.getItem('crm_token'),
+                            department_id: self.departmentId,
+                            user_id: self.currentUserId
+                        }
+                    } else {
+                        url = '/api/Company/addCompanyDeUser',
+                        paramObj = {
+                            token: localStorage.getItem('crm_token'),
+                            user_id: self.currentUserId
+                        }
                     }
+                    
                 } else if (flag == 'setSupervisor') {
                     // 设置部门主管
+                    
                     self.setSupervisor = false;
                     if (self.departmentId) {
                          url = '/api/department/makeAdminDepartment',
@@ -924,21 +1016,37 @@
                     paramObj = {
                         token: localStorage.getItem('crm_token'),
                         user_id: self.selRoleData.user_id,
-                        to_user_id: self.departmentId,
+                        to_user_id: self.selUserId,
                         type: self.selectPeopleFlag == '本部门业务' ? 2 : 1,
-                        department_id: self.departmentId
+                        department_id: self.moveDepatmentId[self.moveDepatmentId.length-1]
                     }
                 } else if (flag == 'deleteEmployee') {
                     self.deleteEmployee = false;
                     str = '删除成功'
-                    url = '/api/User/userDelete';
-                    paramObj = {
-                        token: localStorage.getItem('crm_token'),
-                        user_id: self.selRoleData.user_id,
-                        to_user_id: self.departmentId,
-                        type: self.deleteEmployeeFlag == '本部门员工' ? 2 : 1,
-                        department_id: self.departmentId
+                    if (self.departmentId) {
+                        // 从部门删除
+                        url = '/api/User/userDelete';
+                        paramObj = {
+                            token: localStorage.getItem('crm_token'),
+                            user_id: self.selRoleData.user_id,
+                            to_user_id: self.selUserId,
+                            type: self.deleteEmployeeFlag == '本部门员工' ? 2 : 1,
+                            department_id: self.moveDepatmentId[self.moveDepatmentId.length-1]
+                        }
+                    } else {
+                        // 从公司删除
+                        url = '/api/Company/companyUserDelete';
+                        paramObj = {
+                            token: localStorage.getItem('crm_token'),
+                            user_id: self.selRoleData.user_id,
+                            company_id: self.selCompanyList[self.selCompanyList.length - 1],
+                            type: self.deleteEmployeeFlag == '本部门员工' ? 2 : 1,
+                            to_user_id: self.selUserId
+                            // type: self.deleteEmployeeFlag == '本部门员工' ? 2 : 1,
+                            // department_id: self.moveDepatmentId[self.moveDepatmentId.length-1]
+                        }
                     }
+                    
                 } else if (flag == 'dialogVisible') {
                     // 编辑员工
                     self.dialogVisible = false;
@@ -974,6 +1082,7 @@
                             message: str,
                             type: 'success'
                         });
+                        self.selUserId = ''
                         
                         if (flag == 'company') {
                             self.applyCompany();
@@ -999,7 +1108,7 @@
                                 self.applyCompany();
                                 self.getRoleList();
                             } else {
-                                console.log('啛啛喳喳错错错错错错错错错错错');
+                                
                                 
                                 self.getCompanyUser();
                                 self.getChildrenDepartment();
@@ -1030,23 +1139,43 @@
                     this.getFranchisee();
                 } else if (param == 'setSupervisor') {
                     let arr = this.departmentStaffOption;
-                    arr.push({
-                        value:'',
-                        label: '无'
-                    })
+                    let arrFlag=0
+                    for (let i = 0; i < arr.length; i++) {
+                        if (arr[i].label == '无') {
+                            arrFlag = 0;
+                            break;
+                        } else {
+                            arrFlag = 1;
+                        }
+                        
+                    }
+                    if (arrFlag) {
+                        arr.push({
+                            value: null,
+                            label: '无'
+                        })
+                    }
+                    
                     this.departmentStaffOption = arr;
+                    console.log('设置主管部门员工'+JSON.stringify(this.departmentStaffOption));
                 }
             },
             showModelTable(row, data, param) {
+                console.log(this.departmentId);
+                
                 this[param] = true;
                 this.selRoleData = data;
                 // self.departmentStaffOption
                 if (param=="handover") {
                     this.departmentStaffOption = this.departmentStaffOption.filter((value)=>{
-                        return value.value != ''
+                        return value.value != null
                     })
+                    
+                    
+                    
                 }
-                console.log(this.departmentStaffOption);
+                this.moveTreeData = this.treeData[0].children
+                
                 
             },
             addCurrentEmployee() {
@@ -1061,6 +1190,8 @@
                 this.newEmployee = true;
             },
             handoverBusiness(n) {
+                console.log('交接部门员工'+JSON.stringify(this.departmentStaffOption));
+                
                 // n=1 交接本部门业务
                 // n=0 交接全部业务
                 this.handover = false;
@@ -1265,18 +1396,11 @@
                                         value: obj.user_id
                                     })
                                 }
-                                self.departmentStaffOptionJJ = arr;
-                                 arr.push({
-                                        label: '无',
-                                        value: ''
-                                    })
                                 self.departmentStaffOption = arr;
                             } else {
                                 self.departmentStaffOption = [];
                             }
-                            console.log('-------------------');
-                            console.log(self.departmentStaffOptionJJ);
-                            console.log('-------------------');
+                           
                             
                         })
                         .catch(function (err) {

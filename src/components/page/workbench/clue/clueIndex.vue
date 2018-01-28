@@ -521,6 +521,7 @@
                         expand-trigger="hover"
                         :value="selectCityData"
                         :options="cityList"
+                        change-on-select
                         @change="selectCity"
                         clearable
                     >
@@ -1332,7 +1333,7 @@
                             <span class="iptName">性别:</span>
                             <el-select v-model="addClueData.sex" placeholder="请选择">
                                 <el-option
-                                
+                                    v-if="item.label!='全部'"
                                     v-for="item in typeList.sex.content"
                                     :key="item.value"
                                     :label="item.label"
@@ -1395,6 +1396,7 @@
                             expand-trigger="hover"
                             :value="addClueData.selectCityData"
                             :options="cityList"
+                            change-on-select
                             @change="selectCity"
                             clearable
                         >

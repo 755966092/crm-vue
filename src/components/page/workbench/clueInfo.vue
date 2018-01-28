@@ -105,7 +105,7 @@
             </el-col>
             <el-col :span="21">
                 <div class="select rightWrap">
-                    <el-cascader expand-trigger="hover" :options="cityList" @change="handleChange">
+                    <el-cascader expand-trigger="hover" change-on-select :options="cityList" @change="handleChange">
                     </el-cascader>
                 </div>
             </el-col>

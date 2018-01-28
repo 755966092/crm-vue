@@ -39,9 +39,9 @@
                         </el-select>
                     </template>
                 </el-col>
-                <!-- <el-col :span="4">
+                <el-col :span="4" v-if="clueType!=4">
                      <el-button @click="turnIntoCustomersFn('contract')">转成客户</el-button>
-                </el-col> -->
+                </el-col>
                 <el-col :span="4">
                      <el-button @click="turnIntoCustomersFn('shiftClue')">转移给他人</el-button>
                 </el-col>
@@ -171,6 +171,7 @@
                                         <el-cascader
                                             expand-trigger="hover"
                                             :options="cityList"
+                                            change-on-select
                                             v-model="school.selCityList"
                                             @change="selectCity"
                                             clearable
@@ -379,6 +380,7 @@
                                                 expand-trigger="hover"
                                                 :value="item.selectCityData"
                                                 :options="cityList"
+                                                change-on-select
                                                 @change="selectCity($event,index, 'contacts')"
                                                 clearable
                                                 separator="-"
@@ -563,6 +565,7 @@
                                                     expand-trigger="hover"
                                                     :value="item.selectCityData"
                                                     :options="cityList"
+                                                    change-on-select
                                                     @change="selectCity($event, index, 'student')"
                                                     clearable
                                                     separator="-"
@@ -1048,6 +1051,7 @@
                             expand-trigger="hover"
                             :value="addContactData.selectCityData"
                             :options="cityList"
+                            change-on-select
                             @change="addContactSelectCity"
                             clearable
                             separator="-"
@@ -1138,6 +1142,7 @@
                                 expand-trigger="hover"
                                 :value="addStudentData.selectCityData"
                                 :options="cityList"
+                                change-on-select
                                 @change="selectCity($event, 2, 'addStudent')"
                                 clearable
                                 separator="-"

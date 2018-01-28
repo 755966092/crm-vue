@@ -168,6 +168,7 @@
                                         <el-cascader
                                             expand-trigger="hover"
                                             :options="cityList"
+                                            change-on-select
                                             v-model="school.selCityList"
                                             @change="selectCity"
                                             clearable
@@ -376,6 +377,7 @@
                                                 expand-trigger="hover"
                                                 :value="item.selectCityData"
                                                 :options="cityList"
+                                                change-on-select
                                                 @change="selectCity($event,index, 'contacts')"
                                                 clearable
                                                 separator="-"
@@ -732,6 +734,7 @@
                                                     expand-trigger="hover"
                                                     :value="item.selectCityData"
                                                     :options="cityList"
+                                                    change-on-select
                                                     @change="selectCity($event, index, 'student')"
                                                     clearable
                                                     separator="-"
@@ -1233,6 +1236,7 @@
                             expand-trigger="hover"
                             :value="addContactData.selectCityData"
                             :options="cityList"
+                            change-on-select
                             @change="addContactSelectCity"
                             clearable
                             separator="-"
@@ -1323,6 +1327,7 @@
                                 expand-trigger="hover"
                                 :value="addStudentData.selectCityData"
                                 :options="cityList"
+                                change-on-select
                                 @change="selectCity($event, 2, 'addStudent')"
                                 clearable
                                 separator="-"

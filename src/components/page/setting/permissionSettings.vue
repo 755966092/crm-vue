@@ -29,9 +29,16 @@
                     <el-tabs v-model="activeName2" type="border-card">
                         <el-tab-pane label="操作权限" name="first">
                             <template v-for="(items, key) in allClueList" >
-                                <p class="checkTitle">{{ key }}</p>
+                                <p v-if="key == 1" class="checkTitle">线索</p>
+                                <p v-else-if="key == 2" class="checkTitle">客户</p>
+                                <p v-else-if="key == 3" class="checkTitle">合同</p>
+                                <p v-else-if="key == 4" class="checkTitle">款项</p>
+                                <p v-else-if="key == 5" class="checkTitle">报表</p>
+                                <p v-else-if="key == 6" class="checkTitle">系统</p>
                                 <el-row class="checkWrap">
-                                    <el-checkbox-group v-model="currentRolePermissions" @change="roleEditRole">
+                                    <el-checkbox-group 
+                                        v-model="currentRolePermissions" 
+                                        @change="roleEditRole" >
                                         <template v-for="item in items">
                                             <el-col class="checkCol" :span="6">
                                                 <el-checkbox :label="item.id">
@@ -168,6 +175,8 @@ export default {
                 }
             }
         }
+        console.log('权限列表:'+ self.currentRolePermissions);
+        
        
     },
     // 选择子公司
@@ -178,6 +187,8 @@ export default {
     // 修改角色权限
     roleEditRole() {
             let self = this;
+            console.log(self.currentRolePermissions);
+            
             let obj = {
                     token: localStorage.getItem('crm_token'),
                     role_id: self.currentRole,
@@ -185,7 +196,6 @@ export default {
                     data_auth: self.dataPermission
                }
                console.log(JSON.stringify(obj,null,4));
-               
             this.$axios({
                method: 'POST',
                withCredentials: false,
@@ -194,7 +204,6 @@ export default {
             })
             .then(function(res){
                if (res.data.code === 200) {
-                   console.log(JSON.stringify(res.data.data, null, 4))
                    self.$message({
                        message: '修改角色权限成功',
                        type: 'success'
@@ -251,6 +260,8 @@ export default {
                     self.currentRole = res.data.data.list[0].id;
                     self.dataPermission = res.data.data.list[0].data_auth;
                     self.currentRolePermissions = res.data.data.list[0].opat_auth;
+                    console.log('当前母公司所有角色:'+self.currentRolePermissions);
+                    
                 } 
                 
             } else {
@@ -303,14 +314,19 @@ export default {
                             res.data.data.list[i].opat_auth = res.data.data.list[i].opat_auth.split(',').map((value)=>value?parseInt(value):'')
                         }
                     }
+                    console.log('当前:::'+ JSON.stringify(res.data.data.list));
+                    
                     self.currentRole = res.data.data.list[0].id;
                     self.dataPermission = res.data.data.list[0].data_auth;
-                    self.currentRolePermissions = res.data.data.list[0].opat_auth;
+                    self.currentRolePermissions = res.data.data.list[0].opat_auth || [];
+                    console.log('当前子公司所有角色111:'+self.currentRolePermissions);
+                    
                     
                 } else {
                     self.currentRole = '';
                     self.dataPermission = '';
                     self.currentRolePermissions = [];
+                    console.log('当前子公司所有角色22:'+self.currentRolePermissions);
                 }
             } else {
                 self.$message.error(res.data.msg);

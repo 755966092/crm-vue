@@ -200,6 +200,7 @@
                         expand-trigger="hover"
                         :value="selectCityData"
                         :options="cityList"
+                        change-on-select
                         @change="selectCity"
                         clearable
                     >
@@ -1054,6 +1055,7 @@
                             :value="addClueData.selectCityData"
                             :options="cityList"
                             @change="selectCity"
+                            change-on-select
                             clearable
                         >
                         </el-cascader>

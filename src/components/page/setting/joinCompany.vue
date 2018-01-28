@@ -546,6 +546,9 @@ export default {
               message: "审批成功",
               type: "success"
             });
+            //请求加盟商列表
+            self.joiningTraderFranchiseeList();
+            // 加盟审批
             self.joiningTraderFranchiseeListEve();
           } else {
             self.$message.error(res.data.msg);
@@ -623,8 +626,8 @@ export default {
       if (flag) {
         this.diglogTitle = "同意加盟";
         this.diglogSubtitle = "同意";
-
         this.refusedJoin2 = true;
+
       } else {
         this.diglogTitle = "拒绝加盟";
         this.diglogSubtitle = "拒绝";
