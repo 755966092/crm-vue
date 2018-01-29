@@ -845,7 +845,7 @@
                         <div class="showBtn">
                             <span class="mr10">显示</span>
                              <el-radio-group @change="switchStudentShowContent('student')" v-model="studentShowContent">
-                                <el-radio  label="1">客户</el-radio>
+                                <el-radio  label="1">线索</el-radio>
                                 <el-radio  label="2">客户</el-radio>
                              </el-radio-group>
                         </div>
@@ -999,7 +999,7 @@
                 </el-tab-pane>
             </el-tabs>
          </div> 
-        <!-- 新增合同 -->
+       
 
          <!-- 转成客户 -->
          <div class="changeToClient">
@@ -1472,6 +1472,17 @@
                 width="30%"
                 >
                 <div>
+                     <div class="mt10">
+                        <p class="mb10 ">选择学生</p>
+                        <el-select v-model="addContractData.student_id" placeholder="请选择签约学生">
+                            <el-option
+                            v-for="item in clueInfoData.studentShowList"
+                            :key="item.student_id"
+                            :label="item.name"
+                            :value="item.student_id">
+                            </el-option>
+                        </el-select>
+                    </div>
                     <div>
                         <span class="iptName">合同标题</span>
                         <el-input v-model="addContractData.name" placeholder="请输入合同标题"></el-input>
@@ -1585,7 +1596,8 @@
                     contract_time: '',
                     company_id_arr: [],
                     company_id: '',
-                    user_id: ''
+                    user_id: '',
+                    student_id: ''
                 },
                 addContractParam: {
                     business_type: [
