@@ -749,6 +749,7 @@ export default {
       },
       // 范围
       parentCompanyList: [],
+      parentCompanyList_copy: [],
       // 范围数据
       rangeData: [
         {
@@ -910,6 +911,13 @@ export default {
       } else if(this.selectRangeItem == 2) {
           // 选择子公司, 请求子公司列表
             this.getCurrentCompanyChildren();
+       this.parentCompanyList = this.parentCompanyList_copy[0].children
+      } else if(this.selectRangeItem == 1) {
+          // 选择子公司, 请求子公司列表
+          this.parentCompanyList = this.parentCompanyList_copy
+            this.children_id = [this.parentCompanyList_copy[0].id];
+            console.log(this.currentCompanyDepartment);
+            
       } else if(this.selectRangeItem == '') {
           if (self.role_data_auth == 4) {
               this.getUserCompany()
@@ -954,7 +962,7 @@ export default {
       this.$axios({
         method: "POST",
         withCredentials: false,
-        url: "/api/department/getChildrenDepartment",
+        url: "/api/department/getChildrenDepartmentTo",
         data: {
           token: localStorage.getItem("crm_token"),
           mother_id: localStorage.getItem("motherCompanyId")
@@ -965,6 +973,7 @@ export default {
             // 当前母公司下的部门 parentCompanyDepartment
             // console.log(JSON.stringify(res.data.data,null,4))
             // console.log(self.mother_id)
+            self.getMenuName(res.data.data.list)
             self.currentCompanyDepartment = res.data.data.list;
           } else {
             alert(res.data.msg);
@@ -1229,6 +1238,7 @@ export default {
             // 当前用户只会有一个母公司
             self.getMenuName(res.data.data.list);
             self.parentCompanyList = res.data.data.list;
+            self.parentCompanyList_copy = res.data.data.list;
             self.mother_id = localStorage.getItem("motherCompanyId");
           } else {
             alert(res.data.msg);

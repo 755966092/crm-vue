@@ -1572,6 +1572,7 @@ export default {
       selectRangeItem: '',
       // 范围
       parentCompanyList: [],
+      parentCompanyList_copy: [],
       // 母公司id
       mother_id: "",
       // 当前公司id:
@@ -2304,10 +2305,11 @@ export default {
         .then(function(res) {
           if (res.data.code == 200) {
             // 当前用户只会有一个母公司
-            // console.log('报错数据:'+JSON.stringify(res.data.data.list));
+            console.log('报错数据:'+JSON.stringify(res.data.data.list));
             // console.log('数据格式:'+ typeof res.data.data.list);
             self.getMenuName(res.data.data.list);
             self.parentCompanyList = res.data.data.list;
+            self.parentCompanyList_copy = res.data.data.list;
             self.mother_id = localStorage.getItem("motherCompanyId");
           } else {
             alert(res.data.msg);
@@ -2323,7 +2325,7 @@ export default {
       this.$axios({
         method: "POST",
         withCredentials: false,
-        url: "/api/department/getChildrenDepartment",
+        url: "/api/department/getChildrenDepartmentTo",
         data: {
           token: localStorage.getItem("crm_token"),
           mother_id: localStorage.getItem("motherCompanyId")
@@ -2430,6 +2432,13 @@ export default {
       } else if(this.selectRangeItem == 2) {
           // 选择子公司, 请求子公司列表
             this.getCurrentCompanyChildren();
+            this.parentCompanyList = this.parentCompanyList_copy[0].children
+      } else if(this.selectRangeItem == 1) {
+          // 选择子公司, 请求子公司列表
+          this.parentCompanyList = this.parentCompanyList_copy
+            this.children_id = [this.parentCompanyList_copy[0].id];
+            console.log(this.currentCompanyDepartment);
+            
       } else if(this.selectRangeItem == '') {
           if (self.role_data_auth == 4) {
               this.getUserCompany()
@@ -2965,29 +2974,6 @@ export default {
       );
       this.filterClue();
     },
-    // 省市县数据
-    requestCity() {
-      let self = this;
-      this.$axios({
-        method: "POST",
-        withCredentials: false,
-        url: "/api/area/evepce",
-        data: {
-          token: localStorage.getItem("crm_token")
-        }
-      })
-        .then(function(res) {
-            console.log('cityData:'+res.data.data.list.length);
-            console.log('cityData:'+res.data.data.list);
-          // objrr = [];
-          self.cityList = res.data.data.list;
-          localStorage.setItem("cityData", JSON.stringify(res.data.data.list));
-          // console.log(JSON.stringify(res.data.data.list));
-        })
-        .catch(function(err) {
-          console.log(err);
-        });
-    },
     // 点击级联选择器选择城市
     selectCity(data) {
       console.log(data);
@@ -3315,6 +3301,7 @@ export default {
     if (this.role_data_auth==5) {
         // 所有权限
         this.applyCompany();
+
     } else if (this.role_data_auth==4) {
         // 公司权限
         // 请求当前用户所属公司所有部门
