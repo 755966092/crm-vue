@@ -495,9 +495,12 @@
                             value: '1',
                             text: '市重点'
                         }, {
-                            value: '3',
+                            value: '2',
                             text: '省重点'
-                        }]
+                        },    {
+                value: "3",
+              label: "其他"
+            }]
                     },
                     // 学制
                     'academicSystem': {
@@ -611,21 +614,44 @@
                         'show': false,
                         'value': 'all',
                         'content': [{
-                            value: 'all',
+                            value: '1',
                             text: '语文'
                         }, {
-                            value: '1',
+                            value: '2',
                             text: '数学'
                         }, {
-                            value: '2',
+                            value: '3',
                             text: '外语'
                         }, {
-                            value: '3',
+                            value: '4',
                             text: '物理'
                         }, {
-                            value: '3',
+                            value: '5',
                             text: '化学'
-                        }]
+                        },{
+              value: "6",
+              label: "生物"
+            },
+            {
+              value: "7",
+              label: "历史"
+            },
+            {
+              value: "8",
+              label: "地理"
+            },
+            {
+              value: "9",
+              label: "政治"
+            },
+            {
+              value: "10",
+              label: "技术"
+            },
+              {
+              value: "11",
+              label: "其他"
+            }]
                     },
                     // 文理科
                     'artsAndSciences': {

@@ -1812,7 +1812,11 @@
                     },{
                         value:2,
                         label:'区重点'
-                    }
+                    },
+            {
+                value: 3,
+              label: "其他"
+            }
                 ],
                 // 联系方式
                 contactType: [
@@ -1892,7 +1896,30 @@
                     {
                         value: 5,
                         label: '化学'
-                    },
+                    },{
+              value: "6",
+              label: "生物"
+            },
+            {
+              value: "7",
+              label: "历史"
+            },
+            {
+              value: "8",
+              label: "地理"
+            },
+            {
+              value: "9",
+              label: "政治"
+            },
+            {
+              value: "10",
+              label: "技术"
+            },
+              {
+              value: "11",
+              label: "其他"
+            }
                 ],
                 // 年级解析数组
                 studentGradeArr: [

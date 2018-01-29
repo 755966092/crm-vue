@@ -1255,6 +1255,10 @@ export default {
             {
               value: "2",
               label: "区重点"
+            },
+            {
+                value: "3",
+              label: "其他"
             }
           ]
         },
@@ -1516,6 +1520,30 @@ export default {
             {
               value: "5",
               label: "化学"
+            },
+            {
+              value: "6",
+              label: "生物"
+            },
+            {
+              value: "7",
+              label: "历史"
+            },
+            {
+              value: "8",
+              label: "地理"
+            },
+            {
+              value: "9",
+              label: "政治"
+            },
+            {
+              value: "10",
+              label: "技术"
+            },
+              {
+              value: "11",
+              label: "其他"
             }
           ]
         },
@@ -1728,13 +1756,13 @@ export default {
         }
       ],
       // 学校等级解析数组
-      schoolLevelArr: ["市重点", "区重点"],
+      schoolLevelArr: ["市重点", "区重点","其他"],
       // 学制解析数组, 教授年级解析数组
       academicSystemArr: ["初中", "高中", "初中+高中"],
       // 定位解析数组
       positionArr: ["K12", "英语", "出国"],
       // 教授科目解析数组
-      professorSubjectsArr: ["语文", "英语", "数学", "物理", "化学"],
+      professorSubjectsArr: ["语文", "英语", "数学", "物理", "化学","生物","历史","地理","政治","技术","其他"],
       // 年级解析数组
       studentGradeArr: ["初一", "初二", "初三", "高一", "高二", "高三"]
     };

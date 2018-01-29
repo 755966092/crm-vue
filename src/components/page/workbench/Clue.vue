@@ -41,9 +41,13 @@
                             value: '1',
                             text: '市重点'
                         }, {
-                            value: '3',
+                            value: '2',
                             text: '省重点'
-                        }]
+                        },
+            {
+                value: "3",
+              label: "其他"
+            }]
                     },
                     // 学制
                     'academicSystem': {
