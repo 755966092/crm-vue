@@ -612,9 +612,9 @@
                 <el-row>
                     <el-col :span="12">
                         <el-button type="text" @click="addClue">新增线索</el-button>
-                        <el-button type="text" >导入线索</el-button>
-                        <el-button type="text" style="color: #999" @click="moveClueFlag=2;moveStatu = true">批量转移</el-button>
-                        <el-button type="text" style="color: #999" @click="delLogItem('del')">批量删除</el-button>
+                        <el-button type="text" @click="inputClue('importStatu')">导入线索</el-button>
+                        <el-button type="text" @click="moveClueFlag=2;moveStatu = true">批量转移</el-button>
+                        <el-button type="text" @click="delLogItem('del')">批量删除</el-button>
                          <!-- <span class="btn">
                           <el-button @click="exportData" type="success"></el-button>
                          </span> -->
@@ -1174,7 +1174,17 @@
                             </el-option>
                         </el-select>
                     </div>
-
+                    <div style="width:100%">
+                        <span class="iptName">所属部门:</span>
+                        <el-select v-model="addClueData.department_id"  placeholder="请选择">
+                            <el-option
+                                v-for="item in currentUserDepartment"
+                                :key="item.department_id"
+                                :label="item.department_name"
+                                :value="item.department_id">
+                            </el-option>
+                        </el-select>
+                    </div>
                     <!-- 自定义内容 -->
 
                     <!-- 学校显示 -->
@@ -1486,6 +1496,66 @@
                         <el-button type="primary" @click="selMoveCompany('moveStatu')">确 定</el-button>
                 </span>
           </el-dialog>
+          <!-- 导入学生 -->
+        <el-dialog
+            title="批量导入--下载模板"
+            :visible.sync="importStatu"
+            width="30%"
+            >
+            <!-- <el-button type="text" @click="downDataTemplate">点击下载导入数据模板</el-button> -->
+            <a v-if="clueType == 1" href="http://crm.tonyliangli.cn/excel_muban/1.xlsx">点击下载学校导入数据模板</a>
+            <a v-else-if="clueType==2" href="http://crm.tonyliangli.cn/excel_muban/2.xlsx">点击下载机构导入数据模板</a>
+            <a v-else-if="clueType==3" href="http://crm.tonyliangli.cn/excel_muban/3.xlsx">点击下载教师导入数据模板</a>
+            <a v-else-if="clueType==4" href="http://crm.tonyliangli.cn/excel_muban/4.xlsx">点击下载学生导入数据模板</a>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="importStatu = false">取 消</el-button>
+                <el-button type="primary" @click="importStatu = false;importStatu2 = true">下一步</el-button>
+            </span>
+        </el-dialog>
+        <!-- 导入学生第二部 -->
+        <el-dialog
+            title="批量导入--上传数据文件"
+            :visible.sync="importStatu2"
+            width="30%"
+            >
+            <div style="width:100%">
+                <span class="iptName">所属部门:</span>
+                <el-select v-model="paramObj.department_id"  placeholder="请选择">
+                    <el-option
+                        v-for="item in currentUserDepartment"
+                        :key="item.department_id"
+                        :label="item.department_name"
+                        :value="item.department_id">
+                    </el-option>
+                </el-select>
+            </div>
+            <el-upload
+                class="upload-demo"
+                :action="uploadUrl"
+                :data="paramObj"
+                ref="upload"
+                :auto-upload="false"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :before-remove="beforeRemove"
+                multiple
+                name="excel"
+                :limit="3"
+                :on-exceed="handleExceed"
+                :on-change="handChange"
+                :on-error="handError"
+                :on-success="uploadSuccess"
+            >
+            <!-- :file-list="fileList"> -->
+            <el-button type="text">点击添加数据文件</el-button>
+            <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
+            </el-upload>
+
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="importStatu2 = false">取 消</el-button>
+                <el-button type="primary" @click="uploadFlie">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -1494,6 +1564,14 @@ export default {
   name: "clue",
   data() {
     return {
+
+        importStatu: false,
+        importStatu2: false,
+        paramObj: {
+            token: localStorage.getItem('crm_token'),
+            type: 1,
+            department_id: ''
+        },
         props: {
             label: "name",
             value: 'id'
@@ -1514,6 +1592,7 @@ export default {
       // 转移状态看
       moveStatu: false,
       addClueData: {
+          department_id:'',
           contacts_relationship:'',
         clueType: "1",
         sourceTypeValue: "",
@@ -2079,10 +2158,84 @@ export default {
       searchName: "",
       searchPhone: "",
       searchCname: "",
-      moveClueFlag: 1
+      moveClueFlag: 1,
+      // 当前用户存在的部门
+      currentUserDepartment: []
     };
   },
   methods: {
+      inputClue(flag) {
+          this[flag] = true;
+          if (flag == 'importStatu') {
+            if (this.currentUserDepartment.length == 0) {
+                this.getCurrentUserDepartment();
+            }
+          }
+      },
+      // 上传成功
+      uploadSuccess(response, file, fileList) {
+          console.log('--------------成功----------');
+          console.log(this.uploadUrl);
+          console.log(JSON.stringify(this.paramObj));
+          console.log(response);
+          console.log(file);
+          console.log(fileList);
+          console.log('--------------成功----------');
+          
+          this.importStatu2 = false;
+      },
+      // 导入数据
+      uploadFlie() {
+          if (this.paramObj.department_id) {
+            this.$refs.upload.submit();
+          } else {
+                this.$message({
+                    message: '请选择所属部门',
+                    type: 'error'
+                })
+          }
+      },
+    //    变化后
+        handChange(file, fileList) {
+            // console.log('-------------------------变化后---------------------------------------');
+            // console.log(JSON.stringify(file));
+            // console.log(JSON.stringify(fileList, null, 4));
+            // console.log('-------------------------变化后---------------------------------------');
+        },
+        // 删除前
+        handleRemove(file, fileList) {
+        //     console.log('-------------------------删除前---------------------------------------');
+        // console.log(file, fileList);
+        //     console.log('-------------------------删除前---------------------------------------');
+        },
+        // 拿到服务器返回的数据
+        handlePreview(file) {
+        //     console.log('-------------------------服务器返回---------------------------------------');
+        // console.log(file);
+        // console.log('-------------------------服务器返回---------------------------------------');
+        },
+        // 错误
+        handError(err, file, fileList) {
+            //   console.log('-------------------------错误---------------------------------------');
+            //     // console.log(err);
+            //     console.log(file);
+            //     console.log(fileList);
+            //     console.log('-------------------------错误---------------------------------------');
+        },
+        // 超出数量
+        handleExceed(files, fileList) {
+        this.$message.warning(
+            `当前限制选择 3 个文件，本次选择了 ${
+            files.length
+            } 个文件，共选择了 ${files.length + fileList.length} 个文件`
+        );
+        },
+        // 删除前
+        beforeRemove(file, fileList) {
+        return this.$confirm(`确定移除 ${file.name}？`);
+        },
+
+
     // 获取公司部门
     getFranchiseeEmp() {
       let self = this;
@@ -3065,8 +3218,35 @@ export default {
     },
     // 新增线索按钮
     addClue() {
+    
       this.dialogVisible = true;
+      if (this.currentUserDepartment.length == 0) {
+          this.getCurrentUserDepartment();
+      }
       console.log(JSON.stringify(this.addClueData, null, 4));
+    },
+    // 获取当前用户所在部门
+    getCurrentUserDepartment() {
+            let self = this;
+            this.$axios({
+               method: 'POST',
+               withCredentials: false,
+               url: '/api/department/UserDepartmentList',
+               data: {
+                   token: localStorage.getItem('crm_token'),
+               }
+            })
+            .then(function(res){
+               if (res.data.code === 200) {
+                   console.log(JSON.stringify(res.data.data, null, 4))
+                    self.currentUserDepartment = res.data.data.list
+               } else {
+                   self.message.error(res.data.msg);
+               }
+            })
+            .catch(function(err){
+                console.log(err);
+            });
     },
     // 提交线索
     submitClue() {
@@ -3081,6 +3261,7 @@ export default {
           cue_source: self.addClueData.sourceTypeValue,
           cue_type: self.addClueData.clueType,
           name: self.addClueData.schoolName,
+          department_id: self.addClueData.department_id,
           los: self.addClueData.academicSystem,
           grade: self.addClueData.schoolLevel,
           province_id: self.addClueData.selectCityData[0],
@@ -3101,6 +3282,8 @@ export default {
           cue_source: self.addClueData.sourceTypeValue,
           cue_type: self.addClueData.clueType,
           name: self.addClueData.schoolName,
+          department_id: self.addClueData.department_id,
+          
           type: self.addClueData.organizationType,
           location: self.addClueData.positioning,
 
@@ -3122,7 +3305,8 @@ export default {
           cue_source: self.addClueData.sourceTypeValue,
           cue_type: self.addClueData.clueType,
           name: self.addClueData.schoolName,
-
+          department_id: self.addClueData.department_id,
+        
           los: self.addClueData.academicSystem,
           grade: self.addClueData.schoolLevel,
           // professor_grade
@@ -3151,7 +3335,8 @@ export default {
           the_science: self.addClueData.artsAndSciences,
           sex: self.addClueData.sex,
           school_name: self.addClueData.schoolName,
-
+          department_id: self.addClueData.department_id,
+            
           // los: self.addClueData.academicSystem,
           grade: self.addClueData.schoolLevel,
           student_grade: self.addClueData.grade,
@@ -3389,6 +3574,20 @@ export default {
     // }
   },
   computed: {
+       // 上传文件地址
+      uploadUrl() {
+          let url = ''
+           if (this.clueType == 1) {
+               url =  'https://crm.tonyliangli.cn/api/Clue/saveSchoolImport'
+           } else  if (this.clueType == 2) {
+               url =  'https://crm.tonyliangli.cn/api/Clue/saveMechanismImport'
+           } else  if (this.clueType == 3) {
+               url =  'https://crm.tonyliangli.cn/api/Clue/saveTeacherImport'
+           } else  if (this.clueType == 4) {
+               url =  'https://crm.tonyliangli.cn/api/Clue/saveStudentImport'
+           }
+           return url
+      },
     // 是否禁用子公司选择框
     rangeFlag() {
       if (this.selectRangeItem == 1) {

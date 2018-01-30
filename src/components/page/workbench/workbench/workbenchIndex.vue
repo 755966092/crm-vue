@@ -288,7 +288,10 @@ export default {
                     // console.log(JSON.stringify(self.tableData,null,4))
                     //self.tableDataAll = res.data.data
                 } else {
-                    alert(res.data.msg)
+                    self.$message.error(res.data.msg)
+                    if (res.data.code == 10008) {
+                        self.$router.push('/login');
+                    }
                 }
             })
             .catch(function (err) {
@@ -326,7 +329,11 @@ export default {
                     // console.log('销售简报'+JSON.stringify(self.alesAssistantData,null,4))
                     //self.tableDataAll = res.data.data
                 } else {
-                    alert(res.data.msg)
+                    // alert(res.data.msg)
+                    self.$message.error(res.data.msg)
+                    if (res.data.code == 10008) {
+                        self.$router.push('/login');
+                    }
                 }
             })
             .catch(function (err) {
