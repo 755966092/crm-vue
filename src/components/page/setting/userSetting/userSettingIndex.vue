@@ -959,23 +959,34 @@
                     }
                    
                 } else if (flag == 'currentEmployee' ) {
+                    
                     // 添加员工(从公司员工选择)
-                    self.currentEmployee = false;
-                    str = '添加成功'
-                    if (self.departmentId) {
-                        url = '/api/department/applyUserDepartment',
-                        paramObj = {
-                            token: localStorage.getItem('crm_token'),
-                            department_id: self.departmentId,
-                            user_id: self.currentUserId
+                    
+                    if (self.currentUserId) {
+                        self.currentEmployee = false;
+                        str = '添加成功'
+                        if (self.departmentId) {
+                            url = '/api/department/applyUserDepartment',
+                            paramObj = {
+                                token: localStorage.getItem('crm_token'),
+                                department_id: self.departmentId,
+                                user_id: self.currentUserId
+                            }
+                        } else {
+                            url = '/api/Company/addCompanyDeUser',
+                            paramObj = {
+                                token: localStorage.getItem('crm_token'),
+                                user_id: self.currentUserId
+                            }
                         }
                     } else {
-                        url = '/api/Company/addCompanyDeUser',
-                        paramObj = {
-                            token: localStorage.getItem('crm_token'),
-                            user_id: self.currentUserId
-                        }
+                          self.$message({
+                            message: '请选择要添加员工',
+                            type: 'error'
+                        });
+                        return 0;
                     }
+                    
                     
                 } else if (flag == 'setSupervisor') {
                     // 设置部门主管
@@ -1018,7 +1029,8 @@
                         user_id: self.selRoleData.user_id,
                         to_user_id: self.selUserId,
                         type: self.selectPeopleFlag == '本部门业务' ? 2 : 1,
-                        department_id: self.moveDepatmentId[self.moveDepatmentId.length-1]
+                        department_id: self.departmentId,
+                        to_department_id: self.moveDepatmentId[self.moveDepatmentId.length-1]
                     }
                 } else if (flag == 'deleteEmployee') {
                     self.deleteEmployee = false;
@@ -1031,7 +1043,8 @@
                             user_id: self.selRoleData.user_id,
                             to_user_id: self.selUserId,
                             type: self.deleteEmployeeFlag == '本部门员工' ? 2 : 1,
-                            department_id: self.moveDepatmentId[self.moveDepatmentId.length-1]
+                            department_id: self.departmentId,
+                            to_department_id: self.moveDepatmentId[self.moveDepatmentId.length-1]
                         }
                     } else {
                         // 从公司删除

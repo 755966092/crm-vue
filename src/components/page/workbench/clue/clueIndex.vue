@@ -2186,7 +2186,8 @@ export default {
            this.$message({
                     message: '导入成功',
                     type: 'success'
-                })
+                });
+                this.filterClue()
       },
       // 导入数据
       uploadFlie() {
@@ -3568,6 +3569,7 @@ self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push
     } else {
         
     }
+    
     this.filterClue();
     this.cityList = this.$cityData;
     this.typeList.schoolLevel.show = true;

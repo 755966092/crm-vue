@@ -1485,7 +1485,7 @@
             <a href="http://crm.tonyliangli.cn/excel_muban/14.xlsx" v-else-if="clueType == 4">点击下载导入数据模板</a>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="importStatu = false">取 消</el-button>
-                <el-button type="primary" @click="importStatu = false;importStatu2 = true">确 定</el-button>
+                <el-button type="primary" @click="importStatu = false;importStatu2 = true">下一步</el-button>
             </span>
         </el-dialog>
         <!-- 导入学生第二部 -->
@@ -1540,7 +1540,7 @@
                 width="30%"
                 >
                 <div>
-                     <div class="mt10">
+                     <div class="mt10" v-if="clueType == 4">
                         <p class="mb10 ">选择学生</p>
                         <el-select v-model="addContractData.student_id" placeholder="请选择签约学生">
                             <el-option
@@ -2178,8 +2178,12 @@ export default {
                 console.log(file);
                 console.log(fileList);
                 console.log('--------------成功----------');
-                
+                this.$message({
+                     message: '导入成功',
+                        type: 'success'
+                })
                 this.importStatu2 = false;
+                this.clueDetails();
             },
             // 导入数据
             uploadFlie() {
@@ -2260,16 +2264,12 @@ export default {
           let self = this,
               id;
           if (flag == 'customer') {
-              console.log('11111111');
-              
               id = self.infoEdit.customer_department_id[self.infoEdit.customer_department_id.length-1]
           } else {
-              console.log('222222');
               id = self.infoEdit.service_department_id[self.infoEdit.service_department_id.length-1]
           }
           console.log(JSON.stringify(self.infoEdit));
           console.log(id);
-          
               this.$axios({
                  method: 'POST',
                  withCredentials: false,
@@ -2583,6 +2583,7 @@ export default {
               message: "操作成功",
               type: "success"
             });
+            self.addContractData.student_id = ''
             self.addLogStatu = false;
             self.addContractStatu = false;
             self.clueDetails();
@@ -3468,7 +3469,6 @@ export default {
     console.log(this.$route);
     this.clueType = this.$route.query.clueType;
     this.paramData = this.$route.query;
-    console.log(this.paramData.parentCompanyList);
     this.cityList = this.$cityData;
     this.clueData = this.$route.query.data;
     this.clueDetails();
@@ -3484,13 +3484,13 @@ export default {
         uploadUrl() {
             let url = ''
             if (this.clueType == 1) {
-                url =  'https://crm.tonyliangli.cn/api/Clue/saveSchoolImport'
+                url =  'https://crm.tonyliangli.cn/api/Clue/saveDetailsStudentImport'
             } else  if (this.clueType == 2) {
-                url =  'https://crm.tonyliangli.cn/api/Clue/saveMechanismImport'
+                url =  'https://crm.tonyliangli.cn/api/Clue/saveDetailsStudentImport2'
             } else  if (this.clueType == 3) {
-                url =  'https://crm.tonyliangli.cn/api/Clue/saveTeacherImport'
+                url =  'https://crm.tonyliangli.cn/api/Clue/saveDetailsStudentImport3'
             } else  if (this.clueType == 4) {
-                url =  'https://crm.tonyliangli.cn/api/Clue/saveStudentImport'
+                url =  'https://crm.tonyliangli.cn/api/Clue/saveDetailsStudentImport4'
             }
             return url
         },

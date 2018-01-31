@@ -1207,7 +1207,7 @@
                             </el-option>
                         </el-select>
                     </div>
-                    <div style="width:100%">
+                    <!-- <div style="width:100%">
                         <span class="iptName">所属部门:</span>
                         <el-select v-model="addClueData.department_id"  placeholder="请选择">
                             <el-option
@@ -1217,7 +1217,7 @@
                                 :value="item.department_id">
                             </el-option>
                         </el-select>
-                    </div>
+                    </div> -->
                     <!-- 自定义内容 -->
 
                     <!-- 学校显示 -->
@@ -1304,6 +1304,10 @@
                         <div>
                             <span class="iptName">教师名称:</span>
                             <el-input v-model="addClueData.teacherName" placeholder="请输入内容"></el-input>
+                        </div>
+                        <div>
+                            <span class="iptName">教师职务:</span>
+                            <el-input v-model="addClueData.contactPosition" placeholder="请输入内容"></el-input>
                         </div>
                         <div>
                             <span class="iptName">学校名称:</span>
@@ -1709,7 +1713,7 @@
             :visible.sync="importStatu2"
             width="30%"
             >
-            <div style="width:100%">
+            <!-- <div style="width:100%">
                 <span class="iptName">所属部门:</span>
                 <el-select v-model="paramObj.department_id"  placeholder="请选择">
                     <el-option
@@ -1719,7 +1723,7 @@
                         :value="item.department_id">
                     </el-option>
                 </el-select>
-            </div>
+            </div> -->
             <div class="mt10">
                             <p class="mb10 ">业务部门</p>
                             <el-cascader
@@ -2578,17 +2582,18 @@ export default {
           this.$message({
                     message: '导入成功',
                     type: 'success'
-                })
+                });
+                this.filterClue();
       },
       // 导入数据
       uploadFlie() {
-          if (this.paramObj.department_id) {
+        //   if (this.paramObj.department_id) {
                 this.paramObj2.person_department = this.paramObj.person_department[this.paramObj.person_department.length-1];
                 this.paramObj2.service_department = this.paramObj.service_department[this.paramObj.service_department.length-1];
                 this.paramObj2.customer_department = this.paramObj.customer_department[this.paramObj.customer_department.length-1];
                 this.paramObj2.token = this.paramObj.token;
                 this.paramObj2.type = this.paramObj.type;
-                this.paramObj2.department_id = this.paramObj.department_id;
+                // this.paramObj2.department_id = this.paramObj.department_id;
                 this.paramObj2.person_user = this.paramObj.person_user;
                 this.paramObj2.service_user = this.paramObj.service_user;
                 this.paramObj2.customer_user = this.paramObj.customer_user;
@@ -2596,12 +2601,12 @@ export default {
                  console.log('提交网址:'+this.uploadUrl);
                 this.$refs.upload.submit();
                  
-          } else {
-                this.$message({
-                    message: '请选择所属部门',
-                    type: 'error'
-                })
-          }
+        //   } else {
+        //         this.$message({
+        //             message: '请选择所属部门',
+        //             type: 'error'
+        //         })
+        //   }
       },
     //    变化后
         handChange(file, fileList) {
@@ -4254,8 +4259,8 @@ export default {
     } else {
         
     }
+    this.getCompanyDepartment();
     this.filterClue();
-    
     this.cityList = this.$cityData;
     this.typeList.schoolLevel.show = true;
     this.typeList.academicSystem.show = true;

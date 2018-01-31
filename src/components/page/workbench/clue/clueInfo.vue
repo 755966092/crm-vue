@@ -1241,7 +1241,7 @@
             <a href="http://crm.tonyliangli.cn/excel_muban/14.xlsx" v-else-if="clueType == 4">点击下载导入数据模板</a>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="importStatu = false">取 消</el-button>
-                <el-button type="primary" @click="importStatu = false;importStatu2 = true">确 定</el-button>
+                <el-button type="primary" @click="importStatu = false;importStatu2 = true">下一步</el-button>
             </span>
         </el-dialog>
         <!-- 导入学生第二部 -->
@@ -1722,7 +1722,11 @@
                 console.log(file);
                 console.log(fileList);
                 console.log('--------------成功----------');
-                
+                this.$message({
+                     message: '导入成功',
+                        type: 'success'
+                })
+                this.clueDetails();
                 this.importStatu2 = false;
             },
             // 导入数据
