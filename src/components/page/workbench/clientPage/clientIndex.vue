@@ -1720,11 +1720,88 @@
                     </el-option>
                 </el-select>
             </div>
+            <div class="mt10">
+                            <p class="mb10 ">业务部门</p>
+                            <el-cascader
+                                v-model="paramObj.person_department"
+                                expand-trigger="hover"
+                                :value="changeToClientData.businessDepartment"
+                                :options="companyDepartment"
+                                @change="selectServiceDepartment($event,'businessDepartment')"
+                                clearable
+                                change-on-select
+                            >
+                            </el-cascader>
+                        </div>
+                     <div class="mt10">
+                        <p class="mb10 ">业务负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="paramObj.person_user" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.businessEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="mt10">
+                        <p class="mb10 ">服务部门</p>
+                         <el-cascader
+                            expand-trigger="hover"
+                            :value="changeToClientData.serviceDepartment"
+                            :options="companyDepartment"
+                            @change="selectServiceDepartment($event,'serviceDepartment')"
+                            clearable
+                            v-model="paramObj.service_department"
+                            change-on-select
+                        >
+                        </el-cascader>
+                    </div>
+                    <div class="mt10">
+                        <p class="mb10 ">服务负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.serviceEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="paramObj.service_user" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.serviceEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="mt10">
+                        <p class="mb10 ">售后部门</p>
+                         <el-cascader
+                            v-model="paramObj.customer_department"
+                            
+                            expand-trigger="hover"
+                            :value="changeToClientData.aftermarketDepartment"
+                            :options="companyDepartment"
+                            @change="selectServiceDepartment($event,'aftermarketDepartment')"
+                            clearable
+                            change-on-select
+                        >
+                        </el-cascader>
+                    </div>
+                    <div class="mt10">
+                        <p class="mb10 ">售后负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="paramObj.customer_user" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.aftermarketEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
             <el-upload
                 class="upload-demo"
                 :action="uploadUrl"
-                
-                :data="paramObj"
+                :data="paramObj2"
                 ref="upload"
                 :auto-upload="false"
                 :on-preview="handlePreview"
@@ -1759,10 +1836,17 @@ export default {
         currentUserDepartment: [],
           importStatu: false,
         importStatu2: false,
+        paramObj2: {},
         paramObj: {
             token: localStorage.getItem('crm_token'),
             type: 2,
-            department_id: ''
+            department_id: '',
+            person_user:'',
+            person_department:[],
+            service_user:'',
+            service_department:[],
+            customer_user:'',
+            customer_department:[],
         },
         props: {
             label: "name",
@@ -2479,7 +2563,7 @@ export default {
   },
   methods: {
        inputClue(flag) {
-           console.log(this.uploadUrl);
+          
            
           this[flag] = true;
           if (flag == 'importStatu') {
@@ -2491,11 +2575,27 @@ export default {
       // 上传成功
       uploadSuccess() {
           this.importStatu2 = false;
+          this.$message({
+                    message: '导入成功',
+                    type: 'success'
+                })
       },
       // 导入数据
       uploadFlie() {
           if (this.paramObj.department_id) {
-            this.$refs.upload.submit();
+                this.paramObj2.person_department = this.paramObj.person_department[this.paramObj.person_department.length-1];
+                this.paramObj2.service_department = this.paramObj.service_department[this.paramObj.service_department.length-1];
+                this.paramObj2.customer_department = this.paramObj.customer_department[this.paramObj.customer_department.length-1];
+                this.paramObj2.token = this.paramObj.token;
+                this.paramObj2.type = this.paramObj.type;
+                this.paramObj2.department_id = this.paramObj.department_id;
+                this.paramObj2.person_user = this.paramObj.person_user;
+                this.paramObj2.service_user = this.paramObj.service_user;
+                this.paramObj2.customer_user = this.paramObj.customer_user;
+                console.log('提交参数:'+JSON.stringify(this.paramObj2,null,4));
+                 console.log('提交网址:'+this.uploadUrl);
+                this.$refs.upload.submit();
+                 
           } else {
                 this.$message({
                     message: '请选择所属部门',
@@ -2558,13 +2658,13 @@ export default {
         .then(function(res) {
           if (res.data.code == 200) {
             self.getMenuName(res.data.data.list);
-            console.log(
-              "获取部门所有部门数据:" + JSON.stringify(res.data, null, 4)
-            );
+            // console.log(
+            //   "获取部门所有部门数据:" + JSON.stringify(res.data, null, 4)
+            // );
             self.currentCompanyDepartment = res.data.data.list;
             self.filterClue();
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2640,7 +2740,7 @@ export default {
                     } else {
                     }
                 } else {
-                    self.$message.error(res.data.msg);
+                   self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                 }
                 })
                 .catch(function(err) {
@@ -2687,7 +2787,7 @@ export default {
             // console.log(JSON.stringify(self.changeToClientData));
             // console.log(department_id);
           } else {
-            alert(res.data.msg);
+           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2735,7 +2835,7 @@ export default {
             });
             self.filterClue();
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2803,7 +2903,7 @@ export default {
                 });
                 self.filterClue();
             } else {
-                alert(res.data.msg);
+                self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
             })
             .catch(function(err) {
@@ -2882,7 +2982,7 @@ export default {
             self.parentCompanyList_copy = res.data.data.list;
             self.mother_id = localStorage.getItem("motherCompanyId");
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2909,7 +3009,7 @@ export default {
             self.getMenuName(res.data.data.list);
             self.currentCompanyDepartment = res.data.data.list;
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2956,7 +3056,7 @@ export default {
             // console.log(JSON.stringify(self.changeToClientData));
             // console.log(department_id);
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2980,7 +3080,7 @@ export default {
             self.getMenuName(res.data.data.list);
             self.companyDepartment = res.data.data.list;
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -3005,7 +3105,7 @@ export default {
             self.getMenuName(res.data.data.list);
             self.currentCompanyDepartment = res.data.data.list;
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -3048,7 +3148,7 @@ export default {
             });
             self.franchiseeList = res.data.data.list;
           } else {
-            self.$message.error(res.data.msg);
+           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -3112,7 +3212,7 @@ export default {
                 self.getMenuName(res.data.data.list);
                 self.franchiseeList = res.data.data.list
             } else {
-                self.$message.error(res.data.msg);
+               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
         })
         .catch(function(err){
@@ -3160,7 +3260,7 @@ export default {
             );
             self.currentDepartmentStaff = res.data.data.list;
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -3439,7 +3539,7 @@ export default {
             }
             self.tableData = res.data.data.list;
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -3620,9 +3720,14 @@ export default {
           data: obj
         })
         .then(function(res) {
-          // console.log('返回参数:');
+            if (res.data.code == 200) {
+                
+                // console.log('返回参数:');
           console.log(JSON.stringify(res.data, null, 4));
           window.open("http://crm.tonyliangli.cn" + res.data.url);
+            } else {
+                self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+            }
         })
         .catch(function(err) {
           console.log(err);
@@ -3654,10 +3759,15 @@ export default {
         }
       })
         .then(function(res) {
-          objrr = [];
+            if (res.data.code == 200) {
+                
+                objrr = [];
           self.cityList = res.data.data.list;
           localStorage.setItem("cityData", JSON.stringify(res.data.data.list));
           // console.log(JSON.stringify(res.data.data.list));
+            } else {
+                self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+            }
         })
         .catch(function(err) {
           console.log(err);
@@ -3702,7 +3812,7 @@ export default {
               });
               self.filterClue();
             } else {
-              alert(res.data.msg);
+              self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -3740,7 +3850,7 @@ export default {
                 console.log(JSON.stringify(res.data.data, null, 4))
                 self.currentUserDepartment = res.data.data.list
             } else {
-                self.message.error(res.data.msg);
+                self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
         })
         .catch(function(err){
@@ -3926,7 +4036,7 @@ export default {
             self.filterClue();
           } else {
             
-             self.$message.error(res.data.msg)
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');}
           }
         })
         .catch(function(err) {
@@ -3967,7 +4077,7 @@ export default {
             );
             self.currentCompanyDepartment = res.data.data.list;
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -4011,14 +4121,14 @@ export default {
                         self.getMenuName(res.data.data.list)
                         self.currentCompanyDepartment = res.data.data.list;
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
                     console.log(err);
                 });
             } else {
-                self.$message.error(res.data.msg);
+               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
         })
         .catch(function(err){
@@ -4043,7 +4153,7 @@ export default {
                 self.getMenuName(res.data.data.list)
                 self.franchiseeList = res.data.data.list;
             } else {
-                self.$message.error(res.data.msg);
+               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
         })
         .catch(function(err){
@@ -4083,7 +4193,7 @@ export default {
                 self.currentCompanyDepartment = res.data.data.list;
                 // self.currentDepartmentId = 
             } else {
-                self.$message.error(res.data.msg);
+               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
         })
         .catch(function(err){

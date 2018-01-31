@@ -551,7 +551,7 @@ export default {
             // 加盟审批
             self.joiningTraderFranchiseeListEve();
           } else {
-            self.$message.error(res.data.msg);
+           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -599,7 +599,7 @@ export default {
                      self.joiningTraderFranchiseeList();
                  }
              } else {
-                 self.$message.error(res.data.msg);
+                self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
              }
           })
           .catch(function(err){
@@ -658,7 +658,7 @@ export default {
               console.log(JSON.stringify(res.data.data.list));
               self.invitationData = res.data.data.list;
             } else {
-              self.$message.error(res.data.msg);
+             self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -680,7 +680,7 @@ export default {
               self.invitationData = res.data.data.list;
               console.log(JSON.stringify(res.data.data.list));
             } else {
-              self.$message.error(res.data.msg);
+             self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -717,7 +717,7 @@ export default {
               self.franchiseeData = res.data.data.list;
               console.log(JSON.stringify(res.data.data.list));
             } else {
-              self.$message.error(res.data.msg);
+             self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -737,7 +737,7 @@ export default {
               self.franchiseeData = res.data.data.list;
               console.log(JSON.stringify(res.data.data.list));
             } else {
-              self.$message.error("111" + res.data.msg);
+              self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -769,7 +769,7 @@ export default {
               self.pendingData = res.data.data.list;
               console.log(JSON.stringify(res.data.data.list));
             } else {
-              self.$message.error("222" + res.data.msg);
+              self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -791,7 +791,7 @@ export default {
               console.log(JSON.stringify(res.data.data.list));
               self.cancelledData = res.data.data.list;
             } else {
-              self.$message.error("333" + res.data.msg);
+              self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -813,7 +813,7 @@ export default {
               self.cancelledJvData = res.data.data.list;
               console.log(JSON.stringify(res.data.data.list));
             } else {
-              self.$message.error("444" + res.data.msg);
+              self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -839,7 +839,7 @@ export default {
               }
               self.pendingData = res.data.data.list;
             } else {
-              self.$message.error("555" + res.data.msg);
+              self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -861,7 +861,7 @@ export default {
               self.cancelledData = res.data.data.list;
               console.log(JSON.stringify(res.data.data.list));
             } else {
-              self.$message.error("666" + res.data.msg);
+              self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -883,7 +883,7 @@ export default {
               self.cancelledJvData = res.data.data.list;
               console.log(JSON.stringify(res.data.data.list));
             } else {
-              self.$message.error("777" + res.data.msg);
+              self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -903,9 +903,14 @@ export default {
         }
       })
         .then(function(res) {
-          var arr = [];
+            if (res.data.code == 200) {
+                
+                var arr = [];
           self.getMenuName(res.data.data.list);
           self.companyList = res.data.data.list;
+            } else {
+                self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+            }
           // console.log(JSON.stringify(res.data.data.list));
         })
         .catch(function(err) {
@@ -951,7 +956,7 @@ export default {
             });
             self.joiningTraderFranchiseeMyList();
           } else {
-            self.$message.error(res.data.msg);
+           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {

@@ -165,10 +165,16 @@
                 }
             })
                 .then(function (res) {
-                    var data = res.data.data.list;
-                    data.cityArr = [data.province_id,data.city_id,data.area_id]
-                    self.detailsCompanyList = data
-                    console.log(JSON.stringify(self.detailsCompanyList));
+                    if (res.data.code == 200) {
+                        var data = res.data.data.list;
+                        data.cityArr = [data.province_id,data.city_id,data.area_id]
+                        self.detailsCompanyList = data
+                    } else {
+                        self.$message.error(res.data.msg)
+                        if (res.data.code == 10008) {
+                            self.$router.push('/login');
+                        }
+                    }
                 })
                 .catch(function (err) {
                     console.log(err);
@@ -186,9 +192,17 @@
                     }
                 })
                     .then(function (res) {
-                        var arr = [];
-                        self.getMenuName(res.data.data.list);
-                        self.parentCompanyList = res.data.data.list
+                        if (res.data.code == 200) {
+                            
+                            var arr = [];
+                            self.getMenuName(res.data.data.list);
+                            self.parentCompanyList = res.data.data.list
+                        } else {
+                             self.$message.error(res.data.msg)
+                            if (res.data.code == 10008) {
+                                self.$router.push('/login');
+                            }
+                        }
                         // console.log(JSON.stringify(res.data.data.list));
                     })
                     .catch(function (err) {
@@ -234,7 +248,10 @@
                         })
                         self.getCompanyDetails();
                     } else {
-                        self.$message.error(res.data.msg);
+                         self.$message.error(res.data.msg)
+                        if (res.data.code == 10008) {
+                            self.$router.push('/login');
+                        }
                     }
                 })
                 .catch(function(err){
@@ -253,9 +270,17 @@
                     }
                 })
                     .then(function (res) {
-                        var arr = [];
-                        self.cityList = res.data.data.list;
-                        localStorage.setItem('cityData', JSON.stringify(res.data.data.list))
+                        if (res.data.code == 200) {
+                            
+                            var arr = [];
+                            self.cityList = res.data.data.list;
+                            localStorage.setItem('cityData', JSON.stringify(res.data.data.list))
+                        } else {
+                             self.$message.error(res.data.msg)
+                            if (res.data.code == 10008) {
+                                self.$router.push('/login');
+                            }
+                        }
                         // console.log(JSON.stringify(res.data.data.list));
                     })
                     .catch(function (err) {

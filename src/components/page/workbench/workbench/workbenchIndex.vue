@@ -288,7 +288,7 @@ export default {
                     // console.log(JSON.stringify(self.tableData,null,4))
                     //self.tableDataAll = res.data.data
                 } else {
-                    self.$message.error(res.data.msg)
+                   self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');}
                     if (res.data.code == 10008) {
                         self.$router.push('/login');
                     }
@@ -330,7 +330,7 @@ export default {
                     //self.tableDataAll = res.data.data
                 } else {
                     // alert(res.data.msg)
-                    self.$message.error(res.data.msg)
+                   self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');}
                     if (res.data.code == 10008) {
                         self.$router.push('/login');
                     }

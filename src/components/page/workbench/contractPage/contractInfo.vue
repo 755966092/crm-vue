@@ -1155,7 +1155,7 @@
                        if (res.data.code === 200) {
                            self.companyEmployee = res.data.data.list;
                        } else {
-                           self.$message.error(res.data.msg);
+                          self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                        }
                     })
                     .catch(function(err){
@@ -1225,7 +1225,7 @@
                             type: 'success'
                         })
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -1304,7 +1304,7 @@
                             }
                             self.studentOrClueToCantract = true;
                         } else {
-                            alert(res.data.msg)
+                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function (err) {
@@ -1353,7 +1353,7 @@
                         self.addPaymentStatu = false;
                         self.clueDetails()
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -1381,7 +1381,7 @@
                         });
                         self.clueDetails();
                     } else {
-                        self.message.error(res.data.msg);
+                        self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -1460,7 +1460,7 @@
                             self.addStudentStatu = false;
                             self.clueDetails();
                         } else {
-                            self.$message.error(res.data.msg);
+                           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function(err){
@@ -1503,7 +1503,7 @@
                             type: 'success'
                         })
                     } else {
-                        self.$message.error(res.data.msg)
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');}
                     }
                 })
                 .catch(function(err){
@@ -1548,7 +1548,7 @@
                             // console.log(department_id);
                             
                         } else {
-                            alert(res.data.msg)
+                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function (err) {
@@ -1581,7 +1581,7 @@
                         })
                         self.openClueInfo();
                     } else {
-                        alert(res.data.msg)
+                        self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -1611,7 +1611,7 @@
                         });
                         self.openClueInfo();
                     } else {
-                        alert(res.data.msg)
+                        self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                     })
                 .catch(function(err){
@@ -1636,7 +1636,7 @@
                             self.parentCompanyList = res.data.data.list;
                             
                         } else {
-                            alert(res.data.msg)
+                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function (err) {
@@ -1660,7 +1660,7 @@
                             self.getMenuName(res.data.data.list);
                             self.companyDepartment = res.data.data.list
                         } else {
-                            alert(res.data.msg)
+                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function (err) {
@@ -1799,7 +1799,7 @@
                             type: 'success'
                         })
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -1842,7 +1842,7 @@
                            
                             self.clueDetails();
                         } else {
-                            self.$message.error(res.data.msg);
+                           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function(err){
@@ -1870,7 +1870,7 @@
                                     return value.id != data.id
                                 })
                            } else {
-                               self.$message.error(res.data.msg);
+                              self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                            }
                         })
                         .catch(function(err){
@@ -1905,7 +1905,7 @@
                                 return value.status == self.logShowContent
                             });
                         } else {
-                            self.$message.error(res.data.msg);
+                           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function(err){
@@ -2001,8 +2001,8 @@
                             // // 获取到客户详情后, 获取客户所在公司
                             // self.getCompanyDepartment();
                         } else {
-                            // alert(res.data.msg)
-                            self.$message.error(res.data.msg);
+                            // self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+                           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function (err) {
@@ -2025,9 +2025,14 @@
                         }
                     })
                      .then(function (res) {
-                           // console.log('返回参数:');
+                         if (res.data.code == 200) {
+                             
+                             // console.log('返回参数:');
                             console.log(JSON.stringify(res.data,null,4))
                             window.open("https://crm.tonyliangli.cn"+res.data.url);
+                         } else {
+                             self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+                         }
                         })
                         .catch(function (err) {
                             console.log(err);
@@ -2059,7 +2064,7 @@
                                 type: 'success'
                             })
                         } else {
-                            self.$message.error(res.data.msg);
+                           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function(err){
@@ -2107,7 +2112,7 @@
                                 type: 'success'
                             })
                         } else {
-                            self.$message.error(res.data.msg);
+                           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function(err){
@@ -2151,7 +2156,7 @@
                             type: 'success'
                         })
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -2185,7 +2190,7 @@
                             type: 'success'
                         })
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -2225,7 +2230,7 @@
                             });
                             self.clueDetails();
                         } else {
-                            self.$message.error(res.data.msg);
+                           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function(err){
@@ -2263,10 +2268,15 @@
                     }
                 })
                     .then(function (res) {
-                        objrr = [];
+                        if (res.data.code == 200) {
+                            
+                            objrr = [];
                         self.cityList = res.data.data.list;
                         localStorage.setItem('cityData', JSON.stringify(res.data.data.list))
                         // console.log(JSON.stringify(res.data.data.list));
+                        } else{
+                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+                        }
                     })
                     .catch(function (err) {
                         console.log(err);

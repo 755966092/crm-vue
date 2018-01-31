@@ -1548,7 +1548,7 @@
             >
             <!-- :file-list="fileList"> -->
             <el-button type="text">点击添加数据文件</el-button>
-            <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
+            <div slot="tip" class="el-upload__tip">只能上传excel文件</div>
             </el-upload>
 
             <span slot="footer" class="dialog-footer">
@@ -2183,10 +2183,17 @@ export default {
           console.log('--------------成功----------');
           
           this.importStatu2 = false;
+           this.$message({
+                    message: '导入成功',
+                    type: 'success'
+                })
       },
       // 导入数据
       uploadFlie() {
           if (this.paramObj.department_id) {
+               console.log('上传网址:'+this.uploadUrl);
+                    console.log('上传数据:'+JSON.stringify(this.paramObj,null,4));
+                    
             this.$refs.upload.submit();
           } else {
                 this.$message({
@@ -2258,7 +2265,7 @@ export default {
             self.currentCompanyDepartment = res.data.data.list;
             self.filterClue();
           } else {
-            alert(res.data.msg);
+self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2336,7 +2343,7 @@ export default {
                         } else {
                         }
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err) {
@@ -2419,7 +2426,7 @@ export default {
             self.filterClue();
            
           } else {
-            alert(res.data.msg);
+self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2491,7 +2498,7 @@ export default {
             self.parentCompanyList_copy = res.data.data.list;
             self.mother_id = localStorage.getItem("motherCompanyId");
           } else {
-            alert(res.data.msg);
+self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2518,7 +2525,7 @@ export default {
             self.getMenuName(res.data.data.list);
             self.currentCompanyDepartment = res.data.data.list;
           } else {
-            alert(res.data.msg);
+self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2545,7 +2552,7 @@ export default {
             self.getMenuName(res.data.data.list);
             self.currentCompanyDepartment = res.data.data.list;
           } else {
-            alert(res.data.msg);
+self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2585,7 +2592,7 @@ export default {
             });
             self.franchiseeList = res.data.data.list;
           } else {
-            self.$message.error(res.data.msg);
+           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2649,7 +2656,7 @@ export default {
                 self.getMenuName(res.data.data.list);
                 self.franchiseeList = res.data.data.list
             } else {
-                self.$message.error(res.data.msg);
+               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
         })
         .catch(function(err){
@@ -2698,7 +2705,7 @@ export default {
             );
             self.currentDepartmentStaff = res.data.data.list;
           } else {
-            alert(res.data.msg);
+self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2985,7 +2992,7 @@ export default {
             }
             self.tableData = res.data.data.list;
           } else {
-            alert(res.data.msg);
+self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -3193,7 +3200,7 @@ export default {
               });
               self.filterClue();
             } else {
-              alert(res.data.msg);
+  self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -3379,7 +3386,7 @@ export default {
               });
               self.filterClue();
             } else {
-              self.$message.error(res.data.msg);
+             self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -3426,14 +3433,14 @@ export default {
                         self.getMenuName(res.data.data.list)
                         self.currentCompanyDepartment = res.data.data.list;
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
                     console.log(err);
                 });
             } else {
-                self.$message.error(res.data.msg);
+               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
         })
         .catch(function(err){
@@ -3458,7 +3465,7 @@ export default {
                 self.getMenuName(res.data.data.list)
                 self.franchiseeList = res.data.data.list;
             } else {
-                self.$message.error(res.data.msg);
+               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
         })
         .catch(function(err){
@@ -3498,7 +3505,7 @@ export default {
                 self.currentCompanyDepartment = res.data.data.list;
                 // self.currentDepartmentId = 
             } else {
-                self.$message.error(res.data.msg);
+               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
         })
         .catch(function(err){

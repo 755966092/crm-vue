@@ -959,7 +959,7 @@ export default {
             self.currentCompanyDepartment = res.data.data.list;
             self.filterClue();
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};;
           }
         })
         .catch(function(err) {
@@ -1013,7 +1013,7 @@ export default {
         .then(function(res) {
           if (res.data.code == 200) {
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};;
           }
         })
         .catch(function(err) {
@@ -1085,7 +1085,7 @@ export default {
                 self.getMenuName(res.data.data.list);
                 self.franchiseeList = res.data.data.list
             } else {
-                self.$message.error(res.data.msg);
+               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
         })
         .catch(function(err){
@@ -1112,7 +1112,7 @@ export default {
             self.getMenuName(res.data.data.list);
             self.currentCompanyDepartment = res.data.data.list;
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};;
           }
         })
         .catch(function(err) {
@@ -1157,7 +1157,7 @@ export default {
             );
             self.currentDepartmentStaff = res.data.data.list;
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};;
           }
         })
         .catch(function(err) {
@@ -1289,7 +1289,7 @@ export default {
             console.log(JSON.stringify(res.data.data.list, null, 4));
             self.tableData = res.data.data.list;
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};;
           }
         })
         .catch(function(err) {
@@ -1362,9 +1362,14 @@ export default {
           data: obj
         })
         .then(function(res) {
-          // console.log('返回参数:');
+            if (res.data.code == 200) {
+                
+                // console.log('返回参数:');
           console.log(JSON.stringify(res.data, null, 4));
           window.open("http://crm.tonyliangli.cn" + res.data.url);
+            } else {
+                self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+            }
         })
         .catch(function(err) {
           console.log(err);
@@ -1399,7 +1404,7 @@ export default {
             self.parentCompanyList_copy = res.data.data.list;
             self.mother_id = res.data.data.list[0].id;
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};;
           }
         })
         .catch(function(err) {
@@ -1446,7 +1451,7 @@ export default {
             });
             self.franchiseeList = res.data.data.list;
           } else {
-            self.$message.error(res.data.msg);
+           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -1470,10 +1475,15 @@ export default {
         }
       })
         .then(function(res) {
-          var arr = [];
+            if (res.data.code == 200) {
+                
+                var arr = [];
           self.cityList = res.data.data.list;
           localStorage.setItem("cityData", JSON.stringify(res.data.data.list));
           // console.log(JSON.stringify(res.data.data.list));
+            } else {
+                self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+            }
         })
         .catch(function(err) {
           console.log(err);
@@ -1497,7 +1507,7 @@ export default {
             // 当前子公司下的部门 parentCompanyDepartment
             self.currentCompanyDepartment = res.data.data.list;
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};;
           }
         })
         .catch(function(err) {
@@ -1551,7 +1561,7 @@ export default {
               });
               self.filterClue();
             } else {
-              alert(res.data.msg);
+              self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};;
             }
           })
           .catch(function(err) {
@@ -1597,14 +1607,14 @@ export default {
                         self.getMenuName(res.data.data.list)
                         self.currentCompanyDepartment = res.data.data.list;
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
                     console.log(err);
                 });
             } else {
-                self.$message.error(res.data.msg);
+               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
         })
         .catch(function(err){
@@ -1629,7 +1639,7 @@ export default {
                 self.getMenuName(res.data.data.list)
                 self.franchiseeList = res.data.data.list;
             } else {
-                self.$message.error(res.data.msg);
+               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
         })
         .catch(function(err){
@@ -1670,7 +1680,7 @@ export default {
                 self.currentCompanyDepartment = res.data.data.list;
                 // self.currentDepartmentId = 
             } else {
-                self.$message.error(res.data.msg);
+               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
         })
         .catch(function(err){

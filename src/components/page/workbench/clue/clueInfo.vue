@@ -1234,7 +1234,11 @@
             :visible.sync="importStatu"
             width="30%"
             >
-            <el-button type="text">点击下载导入数据模板</el-button>
+            <!-- <el-button type="text">点击下载导入数据模板</el-button> -->
+            <a href="http://crm.tonyliangli.cn/excel_muban/11.xlsx" v-if="clueType == 1">点击下载导入数据模板</a>
+            <a href="http://crm.tonyliangli.cn/excel_muban/12.xlsx" v-else-if="clueType == 2">点击下载导入数据模板</a>
+            <a href="http://crm.tonyliangli.cn/excel_muban/13.xlsx" v-else-if="clueType == 3">点击下载导入数据模板</a>
+            <a href="http://crm.tonyliangli.cn/excel_muban/14.xlsx" v-else-if="clueType == 4">点击下载导入数据模板</a>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="importStatu = false">取 消</el-button>
                 <el-button type="primary" @click="importStatu = false;importStatu2 = true">确 定</el-button>
@@ -1246,26 +1250,41 @@
             :visible.sync="importStatu2"
             width="30%"
             >
-            
+             <!-- <div style="width:100%">
+                <span class="iptName">所属部门:</span>
+                <el-select v-model="paramObj.department_id"  placeholder="请选择">
+                    <el-option
+                        v-for="item in currentUserDepartment"
+                        :key="item.department_id"
+                        :label="item.department_name"
+                        :value="item.department_id">
+                    </el-option>
+                </el-select>
+            </div> -->
             <el-upload
-            class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :before-remove="beforeRemove"
-            multiple
-            :limit="3"
-            :on-exceed="handleExceed"
-            :on-change="handChange"
+                class="upload-demo"
+                :action="uploadUrl"
+                :data="paramObj"
+                ref="upload"
+                :auto-upload="false"
+                :before-remove="beforeRemove"
+                :before-upload="beforeUpload"
+                multiple
+                name="excel"
+                :limit="3"
+                :on-exceed="handleExceed"
+                :on-change="handChange"
+                :on-error="handError"
+                :on-success="uploadSuccess"
             >
             <!-- :file-list="fileList"> -->
-            <el-button type="text">点击下载导入数据模板</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+            <el-button type="text">点击添加数据文件</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传excel文件</div>
             </el-upload>
 
             <span slot="footer" class="dialog-footer">
                 <el-button @click="importStatu2 = false">取 消</el-button>
-                <el-button type="primary" @click="importStatu2 = false">确 定</el-button>
+                <el-button type="primary" @click="uploadFlie">确 定</el-button>
             </span>
         </el-dialog>
      </div>
@@ -1278,6 +1297,12 @@
         },
         data() {
             return {
+                 paramObj: {
+                    token: localStorage.getItem('crm_token'),
+                    clue_id:'',
+                },
+                currentUserDepartment: [],
+                clueData:'',
                 businessCompanyList: [],
                 fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
                 // 新增日志
@@ -1688,25 +1713,100 @@
         },
         
         methods: {
-            handChange(file, fileList) {
-                console.log(JSON.stringify(file));
-                console.log(JSON.stringify(fileList,null,4));
-                console.log(JSON.stringify(fileList,null,4));
+             // 上传成功
+            uploadSuccess(response, file, fileList) {
+                console.log('--------------成功----------');
+                console.log(this.uploadUrl);
+                console.log(JSON.stringify(this.paramObj));
+                console.log(response);
+                console.log(file);
+                console.log(fileList);
+                console.log('--------------成功----------');
+                
+                this.importStatu2 = false;
+            },
+            // 导入数据
+            uploadFlie() {
+                console.log('上传数据:'+JSON.stringify(this.paramObj,null,4));
+                 this.$refs.upload.submit();
+                // if (this.paramObj.department_id) {
+                //     console.log('上传网址:'+this.uploadUrl);
+                //     console.log('上传数据:'+JSON.stringify(this.paramObj,null,4));
+                    
+                   
+                // } else {
+                //         this.$message({
+                //             message: '请选择所属部门',
+                //             type: 'error'
+                //         })
+                // }
+            },
+            // 上传之前
+            beforeUpload(file) {
+                console.log(file);
+                console.log(this.paramObj);
+                
                 
             },
-            handleRemove(file, fileList) {
-                console.log(file, fileList);
-            },
-            handlePreview(file) {
-                console.log(file);
-            },
-            handleExceed(files, fileList) {
-                this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-            },
-            beforeRemove(file, fileList) {
-                return this.$confirm(`确定移除 ${ file.name }？`);
-            },
-
+            //    变化后
+                handChange(file, fileList) {
+                    console.log(file);
+                    
+                    // console.log('-------------------------变化后---------------------------------------');
+                    // console.log(JSON.stringify(file));
+                    // console.log(JSON.stringify(fileList, null, 4));
+                    // console.log('-------------------------变化后---------------------------------------');
+                },
+              
+                // 拿到服务器返回的数据
+                handlePreview(file) {
+                //     console.log('-------------------------服务器返回---------------------------------------');
+                // console.log(file);
+                // console.log('-------------------------服务器返回---------------------------------------');
+                },
+                // 错误
+                handError(err, file, fileList) {
+                    //   console.log('-------------------------错误---------------------------------------');
+                    //     // console.log(err);
+                    //     console.log(file);
+                    //     console.log(fileList);
+                    //     console.log('-------------------------错误---------------------------------------');
+                },
+                // 超出数量
+                handleExceed(files, fileList) {
+                    this.$message.warning(
+                        `当前限制选择 3 个文件，本次选择了 ${
+                        files.length
+                        } 个文件，共选择了 ${files.length + fileList.length} 个文件`
+                    );
+                },
+                // 删除前
+                beforeRemove(file, fileList) {
+                    return this.$confirm(`确定移除 ${file.name}？`);
+                },
+                // 当前用户所在部门
+                // 获取当前用户所在部门
+                getCurrentUserDepartment() {
+                        let self = this;
+                        this.$axios({
+                        method: 'POST',
+                        withCredentials: false,
+                        url: '/api/department/UserDepartmentList',
+                        data: {
+                            token: localStorage.getItem('crm_token'),
+                        }
+                        })
+                        .then(function(res){
+                        if (res.data.code === 200) {
+                                self.currentUserDepartment = res.data.data.list
+                        } else {
+                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+                        }
+                        })
+                        .catch(function(err){
+                            console.log(err);
+                        });
+                },
             // 切换学生表格显示
             switchStudentShowContent() {
                 if (this.studentShowContent == '1') {
@@ -1740,7 +1840,7 @@
                            self.addLogStatu = false;
                            self.clueDetails()
                        } else {
-                           self.$message.error(res.data.msg);
+                          self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                        }
                     })
                     .catch(function(err){
@@ -1768,7 +1868,7 @@
                         });
                         self.clueDetails();
                     } else {
-                        self.message.error(res.data.msg);
+                        self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -1847,7 +1947,7 @@
                             self.addStudentStatu = false;
                             self.clueDetails();
                         } else {
-                            self.$message.error(res.data.msg);
+                           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function(err){
@@ -1875,7 +1975,7 @@
                     if (res.data.code === 200) {
                         
                     } else {
-                        alert(res.data.msg)
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -1908,7 +2008,7 @@
                         })
                         self.openClueInfo();
                     } else {
-                        alert(res.data.msg)
+                        self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -1939,7 +2039,7 @@
                         });
                         self.openClueInfo();
                     } else {
-                        alert(res.data.msg)
+                        self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                     })
                 .catch(function(err){
@@ -2001,7 +2101,7 @@
                             }
                             self.studentOrClueToCantract = true;
                         } else {
-                            alert(res.data.msg)
+                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function (err) {
@@ -2048,13 +2148,13 @@
                                     self.companyDepartment = res.data.data.list;
                                 // }
                             } else {
-                                self.$message.error(res.data.msg);
+                               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                             }
                         })
                         .catch(function(err) {
                             console.log(err);
                         });
-        },
+            },
             // 获取部门员工
             getDepartmentEmployee() {
                 let self = this;
@@ -2088,7 +2188,7 @@
                             // console.log(department_id);
                             
                         } else {
-                            alert(res.data.msg)
+                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function (err) {
@@ -2112,7 +2212,7 @@
                             self.getMenuName(res.data.data.list);
                             self.companyDepartment = res.data.data.list
                         } else {
-                            alert(res.data.msg)
+                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function (err) {
@@ -2149,10 +2249,12 @@
                     this.addLogStatu = true;    
                 } else if (flag == 'importStudent') {
                     this.importStatu = true;
+                    this.getCurrentUserDepartment();
                 }
                 else {
                     this.delClueStatu = true;
                 }
+                
             },
             // 学生转换为客户
             studentturnIntoCustomersFn(flag, index) {
@@ -2252,7 +2354,7 @@
                             type: 'success'
                         })
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -2300,7 +2402,7 @@
                             });
                             self.clueDetails();
                         } else {
-                            self.$message.error(res.data.msg);
+                           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function(err){
@@ -2329,7 +2431,7 @@
                             type: 'success'
                         })
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -2418,8 +2520,8 @@
                             // 获取到线索详情后, 获取线索所在公司
                             self.getCompanyDepartment();
                         } else {
-                            // alert(res.data.msg)
-                            self.$message.error(res.data.msg);
+                            // self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+                           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function (err) {
@@ -2441,9 +2543,14 @@
                     }
                 })
                  .then(function (res) {
-                       // console.log('返回参数:');
+                    if (res.data.code == 200) {
+                        
+                        // console.log('返回参数:');
                         console.log(JSON.stringify(res.data,null,4))
                         window.open("https://crm.tonyliangli.cn"+res.data.url);
+                    } else {
+                        self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+                    }
                     })
                     .catch(function (err) {
                         console.log(err);
@@ -2475,7 +2582,7 @@
                                 type: 'success'
                             })
                         } else {
-                            self.$message.error(res.data.msg);
+                           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function(err){
@@ -2537,7 +2644,7 @@
                                 type: 'success'
                             })
                         } else {
-                            self.$message.error(res.data.msg);
+                           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function(err){
@@ -2582,7 +2689,7 @@
                             type: 'success'
                         })
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -2616,7 +2723,7 @@
                             type: 'success'
                         })
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -2656,7 +2763,7 @@
                             });
                             self.clueDetails();
                         } else {
-                            self.$message.error(res.data.msg);
+                           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function(err){
@@ -2699,7 +2806,7 @@
                         self.getMenuName(res.data.data.list);
                         self.businessCompanyList = res.data.data.list;
                     } else {
-                        alert(res.data.msg);
+                        self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};;
                     }
                     })
                     .catch(function(err) {
@@ -2718,10 +2825,15 @@
                     }
                 })
                     .then(function (res) {
-                        objrr = [];
+                        if (res.data.code== 200) {
+                            
+                            objrr = [];
                         self.cityList = res.data.data.list;
                         localStorage.setItem('cityData', JSON.stringify(res.data.data.list))
                         // console.log(JSON.stringify(res.data.data.list));
+                        } else {
+                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+                        }
                     })
                     .catch(function (err) {
                         console.log(err);
@@ -2735,12 +2847,30 @@
             this.clueType = this.$route.query.clueType;
             this.clueDetails();
             this.cityList = this.$cityData;
+            this.clueData = this.$route.query.data;
+            this.paramObj.clue_id = this.$route.query.data.clue_id;
             // if (localStorage.getItem('cityData')) {
             //     this.cityList = JSON.parse(localStorage.getItem("cityData"))
             // } else {
             //     this.requestCity();
             // }
             
+        },
+        computed: {
+              // 上传文件地址
+            uploadUrl() {
+                let url = ''
+                if (this.clueType == 1) {
+                    url =  'https://crm.tonyliangli.cn/api/Clue/saveDetailsStudentImport'
+                } else  if (this.clueType == 2) {
+                    url =  'https://crm.tonyliangli.cn/api/Clue/saveDetailsStudentImport2'
+                } else  if (this.clueType == 3) {
+                    url =  'https://crm.tonyliangli.cn/api/Clue/saveDetailsStudentImport3'
+                } else  if (this.clueType == 4) {
+                    url =  'https://crm.tonyliangli.cn/api/Clue/saveDetailsStudentImport4'
+                }
+                return url
+            },
         }
     }
 </script>

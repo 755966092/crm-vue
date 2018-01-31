@@ -1793,7 +1793,7 @@ export default {
                     } else {
                     }
                 } else {
-                    self.$message.error(res.data.msg);
+                   self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                 }
                 })
                 .catch(function(err) {
@@ -2041,7 +2041,7 @@ export default {
             });
             self.franchiseeList = res.data.data.list;
           } else {
-            self.$message.error(res.data.msg);
+           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2793,7 +2793,7 @@ export default {
               });
               self.filterClue();
             } else {
-              self.$message.error(res.data.msg);
+             self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {

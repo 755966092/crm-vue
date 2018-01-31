@@ -1790,7 +1790,7 @@ export default {
         .then(function(res) {
           if (res.data.code == 200) {
           } else {
-            alert(res.data.msg);
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {

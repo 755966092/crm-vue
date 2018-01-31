@@ -149,7 +149,7 @@ export default {
                      })
                      self.getAllRole();
                  } else {
-                     self.$message.error(res.data.msg);
+                    self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                  }
               })
               .catch(function(err){
@@ -209,7 +209,7 @@ export default {
                        type: 'success'
                    })
                } else {
-                   self.$message.error(res.data.msg);
+                  self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                }
             })
             .catch(function(err){
@@ -228,8 +228,13 @@ export default {
         }
       })
         .then(function(res) {
-            self.getMenuName(res.data.data.list);
+            if (res.data.code == 200) {
+                
+                self.getMenuName(res.data.data.list);
             self.parentCompanyList = res.data.data.list;
+            } else {
+                self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+            }
         })
         .catch(function(err) {
           console.log(err);
@@ -265,7 +270,7 @@ export default {
                 } 
                 
             } else {
-                self.$message.error(res.data.msg);
+               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
         })
         .catch(function(err){
@@ -284,9 +289,14 @@ export default {
         }
       })
         .then(function(res) {
-            self.allClueList = res.data.data.list;
-            console.log('所有权限'+JSON.stringify(res.data.data.list));
+            if (res.data.code == 200) {
+                
+                self.allClueList = res.data.data.list;
+            // console.log('所有权限'+JSON.stringify(res.data.data.list));
           self.getMotherCompanyRole();
+            } else {
+                self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+            }
         })
         .catch(function(err) {
           console.log(err);
@@ -314,22 +324,22 @@ export default {
                             res.data.data.list[i].opat_auth = res.data.data.list[i].opat_auth.split(',').map((value)=>value?parseInt(value):'')
                         }
                     }
-                    console.log('当前:::'+ JSON.stringify(res.data.data.list));
+                    // console.log('当前:::'+ JSON.stringify(res.data.data.list));
                     
                     self.currentRole = res.data.data.list[0].id;
                     self.dataPermission = res.data.data.list[0].data_auth;
                     self.currentRolePermissions = res.data.data.list[0].opat_auth || [];
-                    console.log('当前子公司所有角色111:'+self.currentRolePermissions);
+                    // console.log('当前子公司所有角色111:'+self.currentRolePermissions);
                     
                     
                 } else {
                     self.currentRole = '';
                     self.dataPermission = '';
                     self.currentRolePermissions = [];
-                    console.log('当前子公司所有角色22:'+self.currentRolePermissions);
+                    // console.log('当前子公司所有角色22:'+self.currentRolePermissions);
                 }
             } else {
-                self.$message.error(res.data.msg);
+               self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
          
           // console.log(this.allClueList);

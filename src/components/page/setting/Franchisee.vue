@@ -391,7 +391,10 @@ export default {
                 });
                 self.joiningTraderApplyFranchiseeStatu();
             } else {
-                self.$message.error(res.data.msg);
+                self.$message.error(res.data.msg)
+                        if (res.data.code == 10008) {
+                            self.$router.push('/login');
+                        }
             }
         })
         .catch(function(err){
@@ -441,7 +444,10 @@ export default {
                          self.joiningTraderapplyFranchiseeXianYi();
                     }
               } else {
-                  self.$message.error(res.data.msg);
+                  self.$message.error(res.data.msg)
+                        if (res.data.code == 10008) {
+                            self.$router.push('/login');
+                        }
               }
            })
            .catch(function(err){
@@ -489,7 +495,10 @@ export default {
                    self.invitationData = res.data.data.list;
                    console.log(JSON.stringify(res.data.data, null, 4))
                } else {
-                   self.$message.error(res.data.msg);
+                   self.$message.error(res.data.msg)
+                            if (res.data.code == 10008) {
+                                self.$router.push('/login');
+                            }
                }
             })
             .catch(function(err){
@@ -551,7 +560,7 @@ export default {
               
               
             } else {
-              self.$message.error(res.data.msg);
+              self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');}
             }
           })
           .catch(function(err) {
@@ -586,7 +595,7 @@ export default {
               self.applicationStatusData = res.data.data.list;
               console.log('表格数据::'+JSON.stringify(self.applicationStatusData));
             } else {
-              self.$message.error(res.data.msg);
+             self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -612,7 +621,7 @@ export default {
             if (res.data.code === 200) {
               self.alreadyJoinedData = res.data.data.list;
             } else {
-              self.$message.error(res.data.msg);
+             self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -633,7 +642,7 @@ export default {
             if (res.data.code === 200) {
               self.alreadyJoinedData = res.data.data.list;
             } else {
-              self.$message.error(res.data.msg);
+             self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
           })
           .catch(function(err) {
@@ -657,7 +666,7 @@ export default {
             self.invitationData = res.data.data.list;
             console.log(self.invitationData);
           } else {
-            self.$message.error(res.data.msg);
+           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -689,7 +698,7 @@ export default {
             console.log(self.industryArr);
             self.restaurants = self.loadAll();
           } else {
-            self.$message.error(res.data.msg);
+           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -708,9 +717,14 @@ export default {
             }
         })
             .then(function (res) {
-                var arr = [];
-                self.getMenuName(res.data.data.list);
-                self.companyList = res.data.data.list
+                if (res.deta.code == 200) {
+                    
+                    var arr = [];
+                    self.getMenuName(res.data.data.list);
+                    self.companyList = res.data.data.list
+                } else {
+                    self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+                }
                 // console.log(JSON.stringify(res.data.data.list));
             })
             .catch(function (err) {

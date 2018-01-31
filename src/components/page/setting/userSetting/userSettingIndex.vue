@@ -661,7 +661,7 @@
                                 // })
                                 self.departmentStaffOption = arr2;
                        } else {
-                           self.$message.error(res.data.msg);
+                          self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                        }
                     
                        
@@ -712,7 +712,7 @@
                             self.getChildrenDepartment();
                            }
                        } else {
-                           self.$message.error(res.data.msg);
+                          self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                        }
                     })
                     .catch(function(err){
@@ -741,7 +741,7 @@
                         }
                         self.franchiseeList = res.data.data.list
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -772,7 +772,7 @@
                             type: 'success'
                         })
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -823,7 +823,7 @@
                         // console.log('公司员工::'+ JSON.stringify(res.data.data));
                         
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -852,7 +852,7 @@
                         }
                         self.roleList = res.data.data.list;
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -1126,7 +1126,7 @@
 
                         }
                     } else {
-                        self.$message.error(res.data.msg);
+                       self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
                 })
                 .catch(function(err){
@@ -1237,8 +1237,10 @@
                     }
                 })
                     .then(function (res) {
-                        if (res.data.data.list.length > 0) {
-                             self.treeData = res.data.data.list;
+                        if (res.data.code == 200) {
+                            
+                            if (res.data.data.list.length > 0) {
+                                self.treeData = res.data.data.list;
                             // 初始化页面, 显示第一个部门的员工
                             // self.departmentName = res.data.data.list[0].label;
                             // self.departmentNewName = res.data.data.list[0].label;
@@ -1251,6 +1253,9 @@
                              self.treeData = res.data.data.list;
                              self.departmentName = '';
                              self.departmentId = 0;
+                        }
+                        } else {
+                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                     })
                     .catch(function (err) {
@@ -1290,7 +1295,7 @@
                             }
                          
                        } else {
-                           self.$message.error(res.data.msg);
+                          self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                        }
                     })
                     .catch(function(err){
@@ -1309,7 +1314,9 @@
                     }
                 })
                     .then(function (res) {
-                        self.getMenuName(res.data.data.list);
+                        if (res.data.code == 200) {
+                            
+                            self.getMenuName(res.data.data.list);
                         self.parentCompanyList = res.data.data.list
                         console.log(JSON.stringify(self.parentCompanyList));
                         if (self.departmentId == 0) {
@@ -1319,6 +1326,9 @@
                             self.departmentName = self.parentCompanyList[0].name;
                         }
                         self.departmentName = self.departmentNewName;
+                        } else {
+                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+                        }
                     })
                     .catch(function (err) {
                         console.log(err);
@@ -1385,20 +1395,25 @@
                         }
                     })
                         .then(function (res) {
-                            self.departmentStaff = res.data.data.list;
-                            console.log(res.data.data.list);
-                            if (res.data.data.list.length > 0) {
-                                let arr = [];
-                                for (let i = 0; i < res.data.data.list.length; i++) {
-                                    let obj = res.data.data.list[i];
-                                    arr.push({
-                                        label: obj.user_name,
-                                        value: obj.user_id
-                                    })
+                            if (res.data.code == 200) {
+                                
+                                self.departmentStaff = res.data.data.list;
+                                // console.log(res.data.data.list);
+                                if (res.data.data.list.length > 0) {
+                                    let arr = [];
+                                    for (let i = 0; i < res.data.data.list.length; i++) {
+                                        let obj = res.data.data.list[i];
+                                        arr.push({
+                                            label: obj.user_name,
+                                            value: obj.user_id
+                                        })
+                                    }
+                                    self.departmentStaffOption = arr;
+                                } else {
+                                    self.departmentStaffOption = [];
                                 }
-                                self.departmentStaffOption = arr;
                             } else {
-                                self.departmentStaffOption = [];
+                                self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                             }
                            
                             
