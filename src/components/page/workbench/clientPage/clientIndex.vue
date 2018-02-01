@@ -1724,6 +1724,19 @@
                     </el-option>
                 </el-select>
             </div> -->
+            <div class="mt10" v-if="role_data_auth==5">
+                <p class="mb10 ">选择子公司</p>
+                <el-cascader
+                    v-model="affiliatedCompany"
+                    expand-trigger="hover"
+                    :options="parentCompanyList"
+                    @change="getCompanyDepartment()"
+                    clearable
+                    change-on-select
+                >
+                <!-- @change="selectServiceDepartment($event,'businessDepartment')" -->
+                </el-cascader>
+            </div>
             <div class="mt10">
                             <p class="mb10 ">业务部门</p>
                             <el-cascader
@@ -1837,8 +1850,10 @@ export default {
   name: "clue",
   data() {
     return {
+       
+        affiliatedCompany:[],
         currentUserDepartment: [],
-          importStatu: false,
+        importStatu: false,
         importStatu2: false,
         paramObj2: {},
         paramObj: {
@@ -2566,28 +2581,29 @@ export default {
     };
   },
   methods: {
-       inputClue(flag) {
-          
-           
+        inputClue(flag) {
           this[flag] = true;
           if (flag == 'importStatu') {
+              if (this.role_data_auth != 5) {
+                  this.getCompanyDepartment();
+              }
             if (this.currentUserDepartment.length == 0) {
                 this.getCurrentUserDepartment();
             }
           }
-      },
-      // 上传成功
-      uploadSuccess() {
-          this.importStatu2 = false;
-          this.$message({
-                    message: '导入成功',
-                    type: 'success'
-                });
-                this.filterClue();
-      },
+        },
+        // 上传成功
+        uploadSuccess() {
+            this.importStatu2 = false;
+            this.$message({
+                        message: '导入成功',
+                        type: 'success'
+                    });
+                    this.filterClue();
+        },
       // 导入数据
-      uploadFlie() {
-        //   if (this.paramObj.department_id) {
+        uploadFlie() {
+             //   if (this.paramObj.department_id) {
                 this.paramObj2.person_department = this.paramObj.person_department[this.paramObj.person_department.length-1];
                 this.paramObj2.service_department = this.paramObj.service_department[this.paramObj.service_department.length-1];
                 this.paramObj2.customer_department = this.paramObj.customer_department[this.paramObj.customer_department.length-1];
@@ -2600,14 +2616,14 @@ export default {
                 console.log('提交参数:'+JSON.stringify(this.paramObj2,null,4));
                  console.log('提交网址:'+this.uploadUrl);
                 this.$refs.upload.submit();
-                 
-        //   } else {
-        //         this.$message({
-        //             message: '请选择所属部门',
-        //             type: 'error'
-        //         })
-        //   }
-      },
+                    
+            //   } else {
+            //         this.$message({
+            //             message: '请选择所属部门',
+            //             type: 'error'
+            //         })
+            //   }
+        },
     //    变化后
         handChange(file, fileList) {
             // console.log('-------------------------变化后---------------------------------------');
@@ -2617,15 +2633,15 @@ export default {
         },
         // 删除前
         handleRemove(file, fileList) {
-        //     console.log('-------------------------删除前---------------------------------------');
-        // console.log(file, fileList);
-        //     console.log('-------------------------删除前---------------------------------------');
+            //     console.log('-------------------------删除前---------------------------------------');
+            // console.log(file, fileList);
+            //     console.log('-------------------------删除前---------------------------------------');
         },
         // 拿到服务器返回的数据
         handlePreview(file) {
-        //     console.log('-------------------------服务器返回---------------------------------------');
-        // console.log(file);
-        // console.log('-------------------------服务器返回---------------------------------------');
+            //     console.log('-------------------------服务器返回---------------------------------------');
+            // console.log(file);
+            // console.log('-------------------------服务器返回---------------------------------------');
         },
         // 错误
         handError(err, file, fileList) {
@@ -2637,15 +2653,15 @@ export default {
         },
          // 超出数量
         handleExceed(files, fileList) {
-        this.$message.warning(
-            `当前限制选择 3 个文件，本次选择了 ${
-            files.length
-            } 个文件，共选择了 ${files.length + fileList.length} 个文件`
-        );
+            this.$message.warning(
+                `当前限制选择 3 个文件，本次选择了 ${
+                files.length
+                } 个文件，共选择了 ${files.length + fileList.length} 个文件`
+            );
         },
         // 删除前
         beforeRemove(file, fileList) {
-        return this.$confirm(`确定移除 ${file.name}？`);
+            return this.$confirm(`确定移除 ${file.name}？`);
         },
        // 获取公司部门
     getFranchiseeEmp() {
@@ -3068,24 +3084,36 @@ export default {
           console.log(err);
         });
     },
-    // 获取母公司部门
+    // 添加客户选择公司
     getCompanyDepartment() {
       let self = this;
+      let paramObj;
+      if (self.role_data_auth == 5) {
+          paramObj = {
+          token: localStorage.getItem("crm_token"),
+          company_id: self.affiliatedCompany[self.affiliatedCompany.length-1]
+        }
+      } else {
+          paramObj = {
+              token: localStorage.getItem("crm_token"),
+          }
+      }
+      console.log('参数:'+JSON.stringify(paramObj,null,4));
+      console.log('权限:'+this.role_data_auth);
+      
       this.$axios({
         method: "POST",
         withCredentials: false,
-        url: "/api/department/getChildrenDepartmentTo",
-        data: {
-          token: localStorage.getItem("crm_token"),
-          mother_id: localStorage.getItem("motherCompanyId")
-        }
+        url: "/api/Department/addClueSDepartment",
+        data: paramObj
       })
         .then(function(res) {
           if (res.data.code === 200) {
+              console.log('返回参数:'+JSON.stringify(res.data.data));
             self.getMenuName(res.data.data.list);
             self.companyDepartment = res.data.data.list;
           } else {
-            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+            self.$message.error(res.data.msg+'111');if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -4210,7 +4238,7 @@ export default {
     if (this.role_data_auth==5) {
         // 所有权限
         this.applyCompany();
-        this.getCompanyDepartment();
+        // this.getCompanyDepartment();
     } else if (this.role_data_auth==4) {
         // 公司权限
         // 请求当前用户所属公司所有部门
@@ -4259,7 +4287,7 @@ export default {
     } else {
         
     }
-    this.getCompanyDepartment();
+    // this.getCompanyDepartment();
     this.filterClue();
     this.cityList = this.$cityData;
     this.typeList.schoolLevel.show = true;
