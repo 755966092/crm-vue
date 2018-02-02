@@ -483,6 +483,7 @@
                                 </el-row>
                                 
                                 <div class="school" :class="{schoolColor:item.studentIptDis}">
+                                    
                                     <el-button v-if="item.is_turn == 1" @click="studentturnIntoCustomersFn('single', index)" style="width:100px;margin-top:10px">转成客户</el-button>
                                     <!-- <el-button v-if="item.is_turn == 1" @click="studentturnIntoCustomersFn('single', index)" :disabled="item.studentIptDis" style="width:100px;margin-top:10px">转成客户</el-button> -->
                                     <el-row>
@@ -696,13 +697,24 @@
                             show-overflow-tooltip
                             label="学生名称"
                             min-width="120">
+                                <template slot-scope="scope" >
+                                    <div  style="cursor: pointer" @click="openInfoPage(scope.row)">
+                                        {{scope.row.name}}
+                                    </div>
+                                 </template>
                             </el-table-column>
+
                             <el-table-column
                             prop="parent_name"
                             label="家长姓名"
                             show-overflow-tooltip
                             align="center"
                             min-width="100">
+                                <template slot-scope="scope" >
+                                    <div  style="cursor: pointer" @click="openInfoPage(scope.row)">
+                                        {{scope.row.parent_name}}
+                                    </div>
+                                 </template>
                             </el-table-column>
                              <el-table-column
                             prop="parent_mobile"
@@ -768,9 +780,10 @@
                     <div class="addLogBtn">
                         <span @click="turnIntoCustomersFn('addLog')">新增日志</span>
                         <span class="delBtn" @click="delLogItem('log')">删除</span>
-                         <span class="btn">
+                        <span class="delBtn" @click="exportData">导出</span>
+                         <!-- <span class="btn">
                               <el-button @click="exportData" type="success">导出</el-button>
-                         </span>
+                         </span> -->
                     </div>
                     <div class="logTable">
                         <el-table
@@ -1714,6 +1727,24 @@
         },
         
         methods: {
+             // 打开新页面
+            openInfoPage(data) {
+                console.log('行数数据::'+JSON.stringify(data));
+                let path;
+                if(this.studentShowContent == 1) {
+                    // 线索
+                    path = "/clue/clueInfo"
+                } else {
+                    // 客户
+                    path="/client/clientInfo"
+                }
+                data.clue_id = data.of_where
+                this.$router.push({
+                    path: path,
+                    query: { data: data, clueType: this.clueType }
+                });
+                
+            },
              // 上传成功
             uploadSuccess(response, file, fileList) {
                 console.log('--------------成功----------');
@@ -2941,14 +2972,11 @@
         margin-right: 10px;
         cursor: pointer;
     }
-    .studentBtnGroup span:nth-child(1),
-    .studentBtnGroup span:nth-child(2) {
+    .studentBtnGroup span,
+    .studentBtnGroup span {
         color: #2CA2FC
     }
-    .studentBtnGroup span:nth-child(3),
-    .studentBtnGroup span:nth-child(4) {
-        color: #999
-    }
+   
     .showBtn {
         margin: 10px 0;
     }

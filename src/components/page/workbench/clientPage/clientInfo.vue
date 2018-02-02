@@ -702,6 +702,7 @@
                                 </el-row>
                                 
                                 <div class="school" :class="{schoolColor:item.studentIptDis}">
+                                    <el-button v-if="item.is_turn == 1" @click="studentturnIntoCustomersFn('single', index)" style="width:100px;margin-top:10px">转成客户</el-button>
                                     <el-row>
                                         <el-col :span="3">
                                             <p>姓名：</p>
@@ -912,7 +913,13 @@
                             sortable
                             show-overflow-tooltip
                             label="学生名称"
-                            min-width="120">
+                            min-width="120"
+                            >
+                                 <template slot-scope="scope" >
+                                    <div  style="cursor: pointer" @click="openInfoPage(scope.row)">
+                                        {{scope.row.name}}
+                                    </div>
+                                 </template>
                             </el-table-column>
                             <el-table-column
                             prop="parent_name"
@@ -920,7 +927,14 @@
                             show-overflow-tooltip
                             align="center"
                             min-width="100">
+                                 <template slot-scope="scope" >
+                                    <div  style="cursor: pointer" @click="openInfoPage(scope.row)">
+                                        {{scope.row.parent_name}}
+                                    </div>
+                                 </template>
+
                             </el-table-column>
+
                              <el-table-column
                             prop="parent_mobile"
                             label="联系方式"
@@ -2169,6 +2183,24 @@ export default {
   },
 
   methods: {
+      // 打开新页面
+      openInfoPage(data) {
+          console.log('行数数据::'+JSON.stringify(data));
+            let path;
+                if(this.studentShowContent == 1) {
+                    // 线索
+                    path = "/clue/clueInfo"
+                } else {
+                    // 客户
+                    path="/client/clientInfo"
+                }
+                data.clue_id = data.of_where
+                this.$router.push({
+                    path: path,
+                    query: { data: data, clueType: this.clueType }
+                });
+          
+      },
          // 上传成功
             uploadSuccess(response, file, fileList) {
                 console.log('--------------成功----------');
