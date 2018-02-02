@@ -1842,6 +1842,18 @@
                 <el-button type="primary" @click="uploadFlie">确 定</el-button>
             </span>
         </el-dialog>
+         <!-- 删除线索 -->
+        <el-dialog
+            title="删除客户"
+            :visible.sync="delClueDialog"
+            width="30%"
+            >
+             <p>是否确认删除客户</p>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="delClueDialog = false">取 消</el-button>
+                <el-button type="primary" @click="delClueFn">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -1850,7 +1862,7 @@ export default {
   name: "clue",
   data() {
     return {
-       
+        delClueDialog: false,
         affiliatedCompany:[],
         currentUserDepartment: [],
         importStatu: false,
@@ -2581,6 +2593,37 @@ export default {
     };
   },
   methods: {
+      delClueFn() {
+           let paramObj = {};
+        let self = this;
+        paramObj = {
+          token: localStorage.getItem("crm_token"),
+          clue_id: self.selTableData.clue_id
+        };
+       
+        self
+          .$axios({
+            method: "POST",
+            withCredentials: false,
+            url: "/api/clue/deleteClue",
+            data: paramObj
+          })
+          .then(function(res) {
+            if (res.data.code == 200) {
+              self.$message({
+                message: "删除客户成功",
+                type: "success"
+              });
+              self.filterClue();
+              self.delClueDialog = false
+            } else {
+              self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+            }
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+      },
         inputClue(flag) {
           this[flag] = true;
           if (flag == 'importStatu') {
@@ -2968,6 +3011,7 @@ export default {
     },
     // 客户详情
     openClueInfo(index, data) {
+        console.log('线索详情'+JSON.stringify(data));
       // 跳转到客户详情的页面
       this.$router.push({
         path: "/client/clientInfo",
@@ -3823,34 +3867,7 @@ export default {
     showModelTable(index, data, flag) {
       this.selTableData = data;
       if (flag == "deleteBtn") {
-        let paramObj = {};
-        let self = this;
-        paramObj = {
-          token: localStorage.getItem("crm_token"),
-          clue_id: data.clue_id
-        };
-       
-        self
-          .$axios({
-            method: "POST",
-            withCredentials: false,
-            url: "/api/clue/deleteClue",
-            data: paramObj
-          })
-          .then(function(res) {
-            if (res.data.code == 200) {
-              self.$message({
-                message: "删除客户成功",
-                type: "success"
-              });
-              self.filterClue();
-            } else {
-              self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
-            }
-          })
-          .catch(function(err) {
-            console.log(err);
-          });
+       this.delClueDialog = true;
       } else if (flag == "handover") {
         // console.log(JSON.stringify(data));
         // console.log(JSON.stringify(this.children_id));

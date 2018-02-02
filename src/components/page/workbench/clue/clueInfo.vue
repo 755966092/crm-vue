@@ -483,7 +483,8 @@
                                 </el-row>
                                 
                                 <div class="school" :class="{schoolColor:item.studentIptDis}">
-                                    <el-button v-if="item.is_turn == 1" @click="studentturnIntoCustomersFn('single', index)" :disabled="item.studentIptDis" style="width:100px;margin-top:10px">转成客户</el-button>
+                                    <el-button v-if="item.is_turn == 1" @click="studentturnIntoCustomersFn('single', index)" style="width:100px;margin-top:10px">转成客户</el-button>
+                                    <!-- <el-button v-if="item.is_turn == 1" @click="studentturnIntoCustomersFn('single', index)" :disabled="item.studentIptDis" style="width:100px;margin-top:10px">转成客户</el-button> -->
                                     <el-row>
                                         <el-col :span="3">
                                             <p>姓名：</p>

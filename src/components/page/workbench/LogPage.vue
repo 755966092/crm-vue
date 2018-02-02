@@ -548,7 +548,7 @@
                                     :value="item.value">
                                 </el-option>
                             </el-select>
-                            <el-button slot="append" icon="el-icon-search" class="el-icon-search"></el-button>
+                            <el-button slot="append" @click="filterClue" icon="el-icon-search" ></el-button>
                         </el-input>
                     </el-col>
                 </el-row>
@@ -770,20 +770,20 @@ export default {
       tableData: [],
       options: [
         {
-          label: "第一学",
+          label: "日志内容",
           value: 1
         },
         {
-          label: "第二学",
+          label: "对象名称",
           value: 2
         },
         {
-          label: "第三学",
+          label: "联系人名称",
           value: 3
         }
       ],
       // 搜索框筛选列表
-      optionsValue: 2,
+      optionsValue: 1,
       // 搜索框内容
       searchIptValue: "",
       // 范围选中内容
@@ -1080,10 +1080,12 @@ export default {
         contact_ifmt: self.selectedItems.contactifmt,
         followup_start: self.selectedItems.lastFollowupTime[0],
         followup_end: self.selectedItems.lastFollowupTime[1],
-       children_id:children_id,
+        children_id:children_id,
           department_id: self.department_id[self.department_id.length-1],
         user_id: self.employees_id,
-        name: ""
+        name: self.optionsValue == 2?self.searchIptValue:'',
+        content: self.optionsValue == 1?self.searchIptValue:'',
+        cname: self.optionsValue == 3?self.searchIptValue:''
       };
 
       console.log("请求参数:" + JSON.stringify(obj, null, 4));

@@ -1556,6 +1556,18 @@
                 <el-button type="primary" @click="uploadFlie">确 定</el-button>
             </span>
         </el-dialog>
+           <!-- 删除线索 -->
+        <el-dialog
+            title="删除线索"
+            :visible.sync="delClueDialog"
+            width="30%"
+            >
+             <p>是否确认删除线索</p>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="delClueDialog = false">取 消</el-button>
+                <el-button type="primary" @click="delClueFn">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -1564,7 +1576,7 @@ export default {
   name: "clue",
   data() {
     return {
-
+        delClueDialog: false,
         importStatu: false,
         importStatu2: false,
         paramObj: {
@@ -2164,6 +2176,40 @@ export default {
     };
   },
   methods: {
+      // 删除线索模态框
+      delClueFn() {
+          
+          let paramObj = {};
+            //  console.log(data);
+            let self = this;
+            paramObj = {
+            token: localStorage.getItem("crm_token"),
+            clue_id: self.selTableData.clue_id
+            };
+            console.log("提交线索参数:" + JSON.stringify(paramObj, null, 4));
+            self
+            .$axios({
+                method: "POST",
+                withCredentials: false,
+                url: "/api/clue/deleteClue",
+                data: paramObj
+            })
+            .then(function(res) {
+                if (res.data.code == 200) {
+                    self.$message({
+                        message: "删除线索成功",
+                        type: "success"
+                    });
+                    self.delClueDialog = false;
+                    self.filterClue();
+                } else {
+                    self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            });
+      },
       inputClue(flag) {
           this[flag] = true;
           if (flag == 'importStatu') {
@@ -2469,6 +2515,8 @@ self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push
     // 线索详情
     openClueInfo(index, data) {
       // 跳转到线索详情的页面
+    console.log('线索详情'+JSON.stringify(data));
+    
       this.$router.push({
         path: "/clue/clueInfo",
         query: { data: data, clueType: this.clueType }
@@ -2499,7 +2547,7 @@ self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push
             self.parentCompanyList_copy = res.data.data.list;
             self.mother_id = localStorage.getItem("motherCompanyId");
           } else {
-self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+        self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2526,7 +2574,7 @@ self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push
             self.getMenuName(res.data.data.list);
             self.currentCompanyDepartment = res.data.data.list;
           } else {
-self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+    self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -2553,7 +2601,7 @@ self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push
             self.getMenuName(res.data.data.list);
             self.currentCompanyDepartment = res.data.data.list;
           } else {
-self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+        self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -3178,35 +3226,7 @@ self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push
     showModelTable(index, data, flag) {
       this.selTableData = data;
       if (flag == "deleteBtn") {
-        let paramObj = {};
-        //  console.log(data);
-        let self = this;
-        paramObj = {
-          token: localStorage.getItem("crm_token"),
-          clue_id: data.clue_id
-        };
-        console.log("提交线索参数:" + JSON.stringify(paramObj, null, 4));
-        self
-          .$axios({
-            method: "POST",
-            withCredentials: false,
-            url: "/api/clue/deleteClue",
-            data: paramObj
-          })
-          .then(function(res) {
-            if (res.data.code == 200) {
-              self.$message({
-                message: "删除线索成功",
-                type: "success"
-              });
-              self.filterClue();
-            } else {
-  self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
-            }
-          })
-          .catch(function(err) {
-            console.log(err);
-          });
+        this.delClueDialog = true;
       } else if (flag == "handover") {
         this.moveStatu = true;
       }

@@ -1074,9 +1074,9 @@
                     <el-select v-model="changeToClientData.businessEmployeeId" placeholder="请选择">
                         <el-option
                         v-for="item in changeToClientData.businessEmployee"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
+                        :key="item.user_id"
+                        :label="item.user_name"
+                        :value="item.user_id">
                         </el-option>
                     </el-select>
                 </div>
@@ -1099,9 +1099,9 @@
                     <el-select v-model="changeToClientData.serviceEmployeeId" placeholder="请选择">
                         <el-option
                         v-for="item in changeToClientData.serviceEmployee"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
+                      :key="item.user_id"
+                        :label="item.user_name"
+                        :value="item.user_id">
                         </el-option>
                     </el-select>
                 </div>
@@ -1124,9 +1124,9 @@
                     <el-select v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择">
                         <el-option
                         v-for="item in changeToClientData.aftermarketEmployee"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
+                        :key="item.user_id"
+                        :label="item.user_name"
+                        :value="item.user_id">
                         </el-option>
                     </el-select>
                 </div>
@@ -1544,7 +1544,7 @@
                         <p class="mb10 ">选择学生</p>
                         <el-select v-model="addContractData.student_id" placeholder="请选择签约学生">
                             <el-option
-                            v-for="item in clueInfoData.studentShowList"
+                            v-for="item in clueInfoData.studentContractList"
                             :key="item.student_id"
                             :label="item.name"
                             :value="item.student_id">
@@ -2761,10 +2761,11 @@ export default {
       } else {
         slectIpt = "aftermarketEmployee";
       }
+      console.log(department_id)
       this.$axios({
         method: "POST",
         withCredentials: false,
-        url: "/api/company/companyUsers",
+        url: "/api/Department/ZhuanDUser",
         data: {
           token: localStorage.getItem("crm_token"),
           department_id: department_id
@@ -2772,11 +2773,11 @@ export default {
       })
         .then(function(res) {
           if (res.data.code === 200) {
+              console.log(JSON.stringify(res.data.data.list));
             self.changeToClientData[slectIpt] = res.data.data.list;
-            // console.log(JSON.stringify(self.changeToClientData));
             // console.log(department_id);
           } else {
-            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+            self.$message.error(res.data.msg+'asda');if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
