@@ -296,8 +296,9 @@
                 title="从现有员工中选择"
                 :visible.sync="currentEmployee"
                 width="50%"
-            >
+            >   
                 <div>
+                    选择员工
                     <el-select v-model="currentUserId" placeholder="请选择">
                         <el-option
                             v-for="item in companyAllUser"
@@ -305,6 +306,17 @@
                             :label="item.label"
                             :value="item.value"
                             >
+                        </el-option>
+                    </el-select>
+                </div>
+                 选择角色
+                <div>
+                    <el-select v-model="roleId" placeholder="请选择">
+                        <el-option
+                            v-for="item in roleList"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
                         </el-option>
                     </el-select>
                 </div>
@@ -836,11 +848,15 @@
                 this.$axios({
                     method: 'POST',
                     withCredentials: false,
-                    url: '/api/Role/roleList',
-                    data: {
-                        token: localStorage.getItem('crm_token'),
-                        company_id: self.selCompanyList[self.selCompanyList.length-1]
-                    }
+                    // url: '/api/Role/roleList',
+                    // data: {
+                    //     token: localStorage.getItem('crm_token'),
+                    //     company_id: self.selCompanyList[self.selCompanyList.length-1]
+                    // }
+                     url: '/api/Role/roleListMu',
+                        data: {
+                            token: localStorage.getItem('crm_token'),
+                        }
                 })
                 .then(function(res){
                     if (res.data.code === 200) {
@@ -970,7 +986,7 @@
                             paramObj = {
                                 token: localStorage.getItem('crm_token'),
                                 department_id: self.departmentId,
-                                user_id: self.currentUserId
+                                user_id: self.currentUserId,
                             }
                         } else {
                             url = '/api/Company/addCompanyDeUser',

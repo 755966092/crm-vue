@@ -3383,14 +3383,14 @@ self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push
         };
       }
       console.log("提交线索参数:" + JSON.stringify(paramObj, null, 4));
-      let objFlag = 1;
+    //   let objFlag = 1;
     //   for (const key in paramObj) {
     //     if (!paramObj[key]) {
     //       objFlag = 0;
     //     }
     //   }
-      console.log(objFlag);
-      if (objFlag) {
+    //   console.log(objFlag);
+    //   if (objFlag) {
         self
           .$axios({
             method: "POST",
@@ -3413,9 +3413,9 @@ self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push
           .catch(function(err) {
             console.log(err);
           });
-      } else {
-        self.$message.error("请完善参数");
-      }
+    //   } else {
+    //     self.$message.error("请完善参数");
+    //   }
     },
     // 请求当前用户所属公司所有部门
     // 请求当前用户所在部门及其子部门

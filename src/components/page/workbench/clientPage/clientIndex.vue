@@ -1433,6 +1433,19 @@
 
 
                     <!-- 以下为固定内容, 每个类型的客户都应该填写 -->
+                     <div class="mt10" v-if="role_data_auth==5">
+                        <p class="mb10 ">选择子公司</p>
+                        <el-cascader
+                            v-model="affiliatedCompany"
+                            expand-trigger="hover"
+                            :options="parentCompanyList"
+                            @change="getCompanyDepartment()"
+                            clearable
+                            change-on-select
+                        >
+                        <!-- @change="selectServiceDepartment($event,'businessDepartment')" -->
+                        </el-cascader>
+                    </div>
                        <div class="mt10">
                             <p class="mb10 ">业务部门</p>
                             <el-cascader

@@ -8,7 +8,7 @@
                     <el-button type="text" @click="delRole">删除角色</el-button>
                 </div>
                 <div class="block">
-                <el-cascader
+                <!-- <el-cascader
                    expand-trigger="hover"
                    :options="parentCompanyList"
                    @change="handleChange"
@@ -17,7 +17,7 @@
                     :show-all-levels="false"
                     v-model="selCompanyList"
                >
-               </el-cascader>
+               </el-cascader> -->
                 </div>
                 <div id="radioBtn">
                     <el-radio-group v-model="currentRole"  @change="handRole">
@@ -156,7 +156,8 @@ export default {
                          type: 'success'
                      });
                      self.delRoleStatu = false;
-                     self.getAllRole();
+                    //  self.getAllRole();
+                    self.getMotherCompanyRole();
                  } else {
                      self.$message.error(res.data.msg);
                  }
@@ -191,7 +192,8 @@ export default {
                          message: '添加角色成功',
                          type: 'success'
                      })
-                     self.getAllRole();
+                    //  self.getAllRole();
+                     self.getMotherCompanyRole();
                  } else {
                     self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                  }
@@ -226,7 +228,8 @@ export default {
     // 选择子公司
     handleChange(data) {
       this.companyId = data[data.length - 1];
-      this.getAllRole();
+    //   this.getAllRole();
+    this.getMotherCompanyRole()
     },
     // 修改角色权限
     roleEditRole() {
@@ -337,8 +340,8 @@ export default {
                 
                 self.allClueList = res.data.data.list;
             // console.log('所有权限'+JSON.stringify(res.data.data.list));
-        //   self.getMotherCompanyRole();
-            self.getAllRole();
+          self.getMotherCompanyRole();
+            // self.getAllRole();
             } else {
                 self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
