@@ -309,7 +309,7 @@
                         </el-option>
                     </el-select>
                 </div>
-                 选择角色
+                 <!-- 选择角色
                 <div>
                     <el-select v-model="roleId" placeholder="请选择">
                         <el-option
@@ -319,7 +319,7 @@
                             :value="item.value">
                         </el-option>
                     </el-select>
-                </div>
+                </div> -->
                 <span slot="footer" class="dialog-footer">
 								<el-button @click="currentEmployee = false">取 消</el-button>
 								<el-button type="primary" @click="addSubCompany('currentEmployee')">确 定</el-button>
@@ -977,7 +977,6 @@
                 } else if (flag == 'currentEmployee' ) {
                     
                     // 添加员工(从公司员工选择)
-                    
                     if (self.currentUserId) {
                         self.currentEmployee = false;
                         str = '添加成功'
@@ -1006,7 +1005,6 @@
                     
                 } else if (flag == 'setSupervisor') {
                     // 设置部门主管
-                    
                     self.setSupervisor = false;
                     if (self.departmentId) {
                          url = '/api/department/makeAdminDepartment',
@@ -1115,6 +1113,7 @@
                         
                         if (flag == 'company') {
                             self.applyCompany();
+                            self.subCompanyName = ''
                         } else if (flag == 'department') { 
                             self.subDepartmentName = '';
                             self.subDepartment = false;
@@ -1145,6 +1144,19 @@
                         } else if (flag == 'setSupervisor' || flag == 'currentEmployee' || flag == 'newEmployee' || flag == 'selectRole'|| flag == 'deleteEmployee' || flag=="dialogVisible") {
                              self.selUserId = '';
                              self.newEmployee = false;
+                             if (flag == 'newEmployee') {
+                                    self.addEmployeeData = {
+                                        name: '',
+                                        phone: '',
+                                        psd: '',
+                                        role: ''
+                                    };
+                             } else if (flag == 'currentEmployee') {
+                                 self.currentUserId = ''
+                             } else if (flag == 'selectRole') {
+                                 self.roleId = ''
+                             }
+
                              if (self.departmentId) {
                                 self.departmentMakeAdminDepartmentList();
                              } else {

@@ -1158,7 +1158,7 @@
                 :visible.sync="shiftClueStatu"
                 width="30%"
                 >
-                <div class="mt10">
+                <!-- <div class="mt10">
                     <p class="mb10 ">选择部门</p>
                     <el-cascader
                         expand-trigger="hover"
@@ -1172,7 +1172,7 @@
                 </div>
                 <div class="mt10">
                     <p class="mb10 ">选择负责人</p>
-                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                    
                     <el-select v-model="shiftClueEmployeeId" placeholder="请选择">
                         <el-option
                         v-for="item in changeToClientData.businessEmployee"
@@ -1181,7 +1181,96 @@
                         :value="item.id">
                         </el-option>
                     </el-select>
-                </div>
+                </div> -->
+                 <div class="mt10">
+                        <p class="mb10 ">选择子公司</p>
+                        <el-cascader
+                            v-model="affiliatedCompany"
+                            expand-trigger="hover"
+                            :options="parentCompanyList"
+                            @change="getCompanyDepartment()"
+                            clearable
+                            change-on-select
+                        >
+                        <!-- @change="selectServiceDepartment($event,'businessDepartment')" -->
+                        </el-cascader>
+                    </div>
+                       <div class="mt10">
+                            <p class="mb10 ">业务部门</p>
+                            <el-cascader
+                            
+                                expand-trigger="hover"
+                                v-model="changeToClientData.businessDepartment"
+                                :options="companyDepartment"
+                                @change="selectServiceDepartment($event,'businessDepartment')"
+                                clearable
+                                change-on-select
+                            >
+                            </el-cascader>
+                        </div>
+                     <div class="mt10">
+                        <p class="mb10 ">业务负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="changeToClientData.businessEmployeeId" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.businessEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="mt10">
+                        <p class="mb10 ">服务部门</p>
+                         <el-cascader
+                            expand-trigger="hover"
+                            v-model="changeToClientData.serviceDepartment"
+                            :options="companyDepartment"
+                            @change="selectServiceDepartment($event,'serviceDepartment')"
+                            clearable
+                            change-on-select
+                        >
+                        </el-cascader>
+                    </div>
+                    <div class="mt10">
+                        <p class="mb10 ">服务负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.serviceEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="changeToClientData.serviceEmployeeId" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.serviceEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="mt10">
+                        <p class="mb10 ">售后部门</p>
+                         <el-cascader
+                            expand-trigger="hover"
+                            v-model="changeToClientData.aftermarketDepartment"
+                            :options="companyDepartment"
+                            @change="selectServiceDepartment($event,'aftermarketDepartment')"
+                            clearable
+                            change-on-select
+                        >
+                        </el-cascader>
+                    </div>
+                    <div class="mt10">
+                        <p class="mb10 ">售后负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.aftermarketEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
+                
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="shiftClueStatu = false">取 消</el-button>
                     <el-button type="primary" @click="shiftClue">确 定</el-button>
@@ -1657,6 +1746,7 @@ export default {
   components: {},
   data() {
     return {
+        affiliatedCompany:[],
          paramObj: {
             token: localStorage.getItem('crm_token'),
             clue_id:'',
@@ -2178,27 +2268,117 @@ export default {
       studentToCantractArr: [],
       studentToCantractFlag: "",
       // 公司员工
-      childrenCompanyStaffList: []
+      childrenCompanyStaffList: [],
+      parentCompanyList_copy: [],
+      parentCompanyList: []
     };
   },
 
   methods: {
+      // 选择服务部门
+    selectServiceDepartment(data, flag) {
+      this.changeToClientData.flagDepartment = flag;
+      this.changeToClientData[flag] = data;
+      // 获取部门员工
+      this.getDepartmentEmployee2();
+    },
+    getDepartmentEmployee2() {
+      let self = this;
+      // 跟进selectIpt 来判断当前应该获取哪一个部门的员工
+      let slectIpt = "";
+      let flagDepartment = self.changeToClientData.flagDepartment;
+      let changeToClientData = self.changeToClientData;
+      let department_id =
+        changeToClientData[flagDepartment][
+          changeToClientData[flagDepartment].length - 1
+        ];
+      if (flagDepartment == "businessDepartment") {
+        slectIpt = "businessEmployee";
+      } else if (flagDepartment == "serviceDepartment") {
+        slectIpt = "serviceEmployee";
+      } else {
+        slectIpt = "aftermarketEmployee";
+      }
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/department/makeAdminCDepartmentList",
+        data: {
+          token: localStorage.getItem("crm_token"),
+          department_id: department_id
+        }
+      })
+        .then(function(res) {
+          if (res.data.code === 200) {
+            self.changeToClientData[slectIpt] = res.data.data.list;
+            // console.log(JSON.stringify(self.changeToClientData));
+            // console.log(department_id);
+          } else {
+           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
+       // 添加客户选择公司
+    getCompanyDepartment() {
+      let self = this;
+      let paramObj;
+    //   if (self.role_data_auth == 5) {
+    //       paramObj = {
+    //       token: localStorage.getItem("crm_token"),
+    //     }
+    //   } else {
+    //       paramObj = {
+    //           token: localStorage.getItem("crm_token"),
+    //       }
+    //   }
+      console.log('参数:'+JSON.stringify(paramObj,null,4));
+    //   console.log('权限:'+this.role_data_auth);
+      
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/Department/addClueSDepartment",
+        data: {
+             token: localStorage.getItem("crm_token"),
+          company_id: self.affiliatedCompany[self.affiliatedCompany.length-1] || self.clueInfoData.list.company_id
+
+        }
+      })
+        .then(function(res) {
+          if (res.data.code === 200) {
+              console.log('返回参数:'+JSON.stringify(res.data.data));
+            self.getMenuName(res.data.data.list);
+            self.companyDepartment = res.data.data.list;
+          } else {
+            self.$message.error(res.data.msg+'111');if (res.data.code == 10008) {self.$router.push('/login');};
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
       // 打开新页面
       openInfoPage(data) {
           console.log('行数数据::'+JSON.stringify(data));
-            let path;
                 if(this.studentShowContent == 1) {
                     // 线索
-                    path = "/clue/clueInfo"
-                } else {
-                    // 客户
-                    path="/client/clientInfo"
-                }
-                data.clue_id = data.of_where
-                this.$router.push({
-                    path: path,
+                    data.clue_id = data.of_where
+                    this.$router.push({
+                    path: "/clue/clueInfo",
                     query: { data: data, clueType: this.clueType }
-                });
+                    });
+                } else {
+                    this.clueData.clue_id = data.of_where;
+                    this.clueDetails();
+                    // 客户
+                    
+                
+                }
+                
+               
           
       },
          // 上传成功
@@ -2284,7 +2464,7 @@ export default {
                         if (res.data.code === 200) {
                                 self.currentUserDepartment = res.data.data.list
                         } else {
-                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};if (res.data.code == 10008) {self.$router.push('/login');};
+                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
                         })
                         .catch(function(err){
@@ -2320,7 +2500,7 @@ export default {
                         self.infoEdit.service_user = res.data.data.list
                     }
                  } else {
-                     self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};if (res.data.code == 10008) {self.$router.push('/login');};
+                     self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');}
                  }
               })
               .catch(function(err){
@@ -2328,6 +2508,34 @@ export default {
               });
 
       },
+       // 所有子
+    applyCompany() {
+      let self = this;
+      this.$axios({
+        method: "POST",
+        withCredentials: false,
+        url: "/api/company/CompanyMyList",
+        data: {
+          token: localStorage.getItem("crm_token")
+        }
+      })
+        .then(function(res) {
+          if (res.data.code == 200) {
+            console.log(JSON.stringify(res.data.data));
+
+            // 当前用户只会有一个母公司
+            self.getMenuName(res.data.data.list);
+            self.parentCompanyList = res.data.data.list;
+            self.parentCompanyList_copy = res.data.data.list;
+            
+          } else {
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    },
      // 编辑信息
      infoSelStatus() {
          let self = this;
@@ -2340,7 +2548,7 @@ export default {
                 url: '/api/clue/editCustomerFu',
                 data: {
                     token: localStorage.getItem('crm_token'),
-                    customer_id: self.$route.query.data.clue_id,
+                    customer_id: self.clueData.clue_id,
                     service_user:self.infoEdit.service_user_id,
                     service_department:self.infoEdit.service_department_id[self.infoEdit.service_department_id.length-1],
                     customer_user:self.infoEdit.customer_user_id,
@@ -2537,7 +2745,7 @@ export default {
       } else {
         if (self.studentOrClueToCantract) {
           // 客户转客户
-          obj.clue_id = self.$route.query.data.clue_id;
+          obj.clue_id = self.clueData.clue_id;
         } else {
           // 学生转客户
           obj.clue_id = self.studentToCantract;
@@ -2584,7 +2792,7 @@ export default {
         obj = {
           token: localStorage.getItem("crm_token"),
           type: 2,
-          clue_id: self.$route.query.data.clue_id,
+          clue_id: self.clueData.clue_id,
           contact_ifmt: self.addLogData.contactType,
           content: self.addLogData.content,
           status: self.addLogData.status,
@@ -2595,7 +2803,7 @@ export default {
         url = "/api/clueContract/addClueContract";
         obj = self.addContractData;
         obj.token = localStorage.getItem("crm_token");
-        obj.client_id = self.$route.query.data.clue_id;
+        obj.client_id = self.clueData.clue_id;
         obj.company_id =
           self.addContractData.company_id_arr[
             self.addContractData.company_id_arr.length - 1
@@ -2671,7 +2879,7 @@ export default {
         obj = self.addContactData;
         param = {
           token: localStorage.getItem("crm_token"),
-          clue_id: self.$route.query.data.clue_id,
+          clue_id: self.clueData.clue_id,
           name: obj.contactName,
           department: obj.department,
           post: obj.post,
@@ -2710,7 +2918,7 @@ export default {
           area_id: obj.selectCityData[2],
           parent_id:
             self.clueType == 4 ? self.clueInfoData.list.contacts_id : "",
-          clue_id: self.$route.query.data.clue_id
+          clue_id: self.clueData.clue_id
         };
       }
 
@@ -2750,7 +2958,7 @@ export default {
         url: "/api/clue/editClueStatu",
         data: {
           token: localStorage.getItem("crm_token"),
-          clue_id: self.$route.query.data.clue_id,
+          clue_id: self.clueData.clue_id,
           followup_statu: self.clueInfoData.list.followup_statu
         }
       })
@@ -2832,7 +3040,7 @@ export default {
         url: "/api/clue/deleteClue",
         data: {
           token: localStorage.getItem("crm_token"),
-          clue_id: self.$route.query.data.clue_id
+          clue_id: self.clueData.clue_id
         }
       })
         .then(function(res) {
@@ -2854,18 +3062,32 @@ export default {
     shiftClue() {
       this.shiftClueStatu = false;
       let self = this;
+      console.log('参数:'+JSON.stringify({
+          token: localStorage.getItem("crm_token"),
+          clue_id: self.clueData.clue_id,
+         company_id: self.affiliatedCompany[self.affiliatedCompany.length-1],
+            person_user: self.changeToClientData.businessEmployeeId,
+            person_department: self.changeToClientData.businessDepartment[self.changeToClientData.businessDepartment.length-1],
+            service_user: self.changeToClientData.serviceEmployeeId,
+            service_department: self.changeToClientData.serviceDepartment[self.changeToClientData.serviceDepartment.length -1],
+            customer_user: self.changeToClientData.aftermarketEmployeeId,
+            customer_department: self.changeToClientData.aftermarketDepartment[self.changeToClientData.aftermarketDepartment.length -1]
+        },null,4));
+      
       this.$axios({
         method: "POST",
         withCredentials: false,
-        url: "/api/clue/transferClue",
+        url: "/api/Customer/transferCustomer",
         data: {
           token: localStorage.getItem("crm_token"),
-          clue_id: self.$route.query.data.clue_id,
-          department_id:
-            self.changeToClientData.businessDepartment[
-              self.changeToClientData.businessDepartment.length - 1
-            ],
-          user_new: self.shiftClueEmployeeId
+          clue_id: self.clueData.clue_id,
+         company_id: self.affiliatedCompany[self.affiliatedCompany.length-1],
+            person_user: self.changeToClientData.businessEmployeeId,
+            person_department: self.changeToClientData.businessDepartment[self.changeToClientData.businessDepartment.length-1],
+            service_user: self.changeToClientData.serviceEmployeeId,
+            service_department: self.changeToClientData.serviceDepartment[self.changeToClientData.serviceDepartment.length -1],
+            customer_user: self.changeToClientData.aftermarketEmployeeId,
+            customer_department: self.changeToClientData.aftermarketDepartment[self.changeToClientData.aftermarketDepartment.length -1]
         }
       })
         .then(function(res) {
@@ -2885,29 +3107,29 @@ export default {
     },
 
     // 获取子公司部门
-    getCompanyDepartment() {
-      let self = this;
-      this.$axios({
-        method: "POST",
-        withCredentials: false,
-        url: "/api/department/getChildrenDepartmentTo",
-        data: {
-          token: localStorage.getItem("crm_token"),
-          mother_id: self.clueInfoData.list.company_id
-        }
-      })
-        .then(function(res) {
-          if (res.data.code === 200) {
-            self.getMenuName(res.data.data.list);
-            self.companyDepartment = res.data.data.list;
-          } else {
-            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
-          }
-        })
-        .catch(function(err) {
-          console.log(err);
-        });
-    },
+    // getCompanyDepartment() {
+    //   let self = this;
+    //   this.$axios({
+    //     method: "POST",
+    //     withCredentials: false,
+    //     url: "/api/department/getChildrenDepartmentTo",
+    //     data: {
+    //       token: localStorage.getItem("crm_token"),
+    //       mother_id: self.clueInfoData.list.company_id
+    //     }
+    //   })
+    //     .then(function(res) {
+    //       if (res.data.code === 200) {
+    //         self.getMenuName(res.data.data.list);
+    //         self.companyDepartment = res.data.data.list;
+    //       } else {
+    //         self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+    //       }
+    //     })
+    //     .catch(function(err) {
+    //       console.log(err);
+    //     });
+    // },
     // 处理树形数据, 删除空的children
     getMenuName(menus) {
       for (var value of menus) {
@@ -3138,7 +3360,7 @@ export default {
         url: "/api/clue/detailsClue",
         data: {
           token: localStorage.getItem("crm_token"),
-          clue_id: self.$route.query.data.clue_id,
+          clue_id: self.clueData.clue_id,
           type: 2
         }
       })
@@ -3236,7 +3458,7 @@ export default {
         url: "/api/clueFollowup/clueFollowupLists",
         data: {
           token: localStorage.getItem("crm_token"),
-          clue_id: self.$route.query.data.clue_id,
+          clue_id: self.clueData.clue_id,
           type: 2,
           statutype: 1,
           status: this.logShowContent
@@ -3266,7 +3488,7 @@ export default {
           url: "/api/clue/clueEditRemake",
           data: {
             token: localStorage.getItem("crm_token"),
-            clue_id: self.$route.query.data.clue_id,
+            clue_id: self.clueData.clue_id,
             remake: this.clueInfoData.details.remake
           }
         })
@@ -3505,6 +3727,7 @@ export default {
     this.cityList = this.$cityData;
     this.clueData = this.$route.query.data;
     this.clueDetails();
+    this.applyCompany();
     this.paramObj.clue_id = this.$route.query.data.clue_id 
     // if (localStorage.getItem('cityData')) {
     //     this.cityList = JSON.parse(localStorage.getItem("cityData"))

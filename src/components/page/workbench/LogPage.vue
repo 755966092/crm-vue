@@ -1350,28 +1350,7 @@ export default {
           console.log(err);
         });
     },
-    // 表格数据
-    getTableData() {
-      var self = this;
-      self
-        .$axios({
-          method: "GET",
-          withCredentials: false,
-          url: "http://localhost:8081/mock/clueTableData"
-        })
-        .then(function(res) {
-            if (res.data.code == 200) {
-                
-                // console.log(JSON.stringify(res,null,4));
-          self.tableData = res.data;
-            } else {
-                self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
-            }
-        })
-        .catch(function(err) {
-          console.log(err);
-        });
-    },
+  
     // 点击c城市级联选择器
     selCity(data) {
       this.selectedItems.area = data;
@@ -1583,7 +1562,6 @@ export default {
     } else {
         
     }
-    this.getTableData();
     this.filterClue();
     this.cityList = this.$cityData;
     // if (localStorage.getItem("cityData")) {

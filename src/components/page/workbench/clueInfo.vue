@@ -965,26 +965,7 @@
                 console.log(this)
             },
             // 表格数据
-            getTableData() {
-                var self = this;
-                self.$axios({
-                    method: 'GET',
-                    withCredentials: false,
-                    url: 'http://localhost:8081/mock/clueTableData',
-                })
-                    .then(function (res) {
-                        if (res.data.code == 200) {
-                            
-                            // console.log(JSON.stringify(res,null,4));
-                        self.tableData = res.data
-                        } else {
-                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-            },
+           
             // 点击级联选择器
             handleChange() {
 
@@ -998,7 +979,6 @@
             }
         },
         created() {
-            this.getTableData();
             this.applyCompany();
             this.typeList.schoolLevel.show = true;
             this.typeList.academicSystem.show = true;

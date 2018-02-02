@@ -665,13 +665,17 @@
                             </template>
                         </el-table-column>
                         <el-table-column
-                            prop="city_name"
                             label="所在地区"
                             sortable
                             align="center"
                             show-overflow-tooltip
-                            min-width="130"
+                            min-width="230"
                         >
+                            <template slot-scope="scope">
+                                <div class="nowrap">
+                                    {{scope.row.province_name}}{{scope.row.city_name!='-'?'/'+scope.row.city_name:''}}{{scope.row.area_name!='-'?'/'+scope.row.area_name:''}}
+                                </div>
+                            </template>
                         </el-table-column>
                         <el-table-column
                             prop="school_grade"
@@ -3731,5 +3735,12 @@ self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push
 
     .hide {
     display: none;
+    }
+    .nowrap {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        margin: 0 auto;
     }
 </style>

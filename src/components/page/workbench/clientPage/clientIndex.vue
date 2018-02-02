@@ -698,13 +698,17 @@
                             </template>
                         </el-table-column>
                         <el-table-column
-                            prop="city_name"
                             label="所在地区"
                             sortable
                             align="center"
                             show-overflow-tooltip
-                            min-width="130"
+                            min-width="230"
                         >
+                         <template slot-scope="scope">
+                                <div class="nowrap">
+                                    {{scope.row.province_name}}{{scope.row.city_name!='-'?'/'+scope.row.city_name:''}}{{scope.row.area_name!='-'?'/'+scope.row.area_name:''}}
+                                </div>
+                            </template>
                         </el-table-column>
                         <el-table-column
                             prop="school_grade"
@@ -1451,7 +1455,7 @@
                             <el-cascader
                             
                                 expand-trigger="hover"
-                                :value="changeToClientData.businessDepartment"
+                                v-model="changeToClientData.businessDepartment"
                                 :options="companyDepartment"
                                 @change="selectServiceDepartment($event,'businessDepartment')"
                                 clearable
@@ -1476,7 +1480,7 @@
                         <p class="mb10 ">服务部门</p>
                          <el-cascader
                             expand-trigger="hover"
-                            :value="changeToClientData.serviceDepartment"
+                            v-model="changeToClientData.serviceDepartment"
                             :options="companyDepartment"
                             @change="selectServiceDepartment($event,'serviceDepartment')"
                             clearable
@@ -1501,7 +1505,7 @@
                         <p class="mb10 ">售后部门</p>
                          <el-cascader
                             expand-trigger="hover"
-                            :value="changeToClientData.aftermarketDepartment"
+                            v-model="changeToClientData.aftermarketDepartment"
                             :options="companyDepartment"
                             @change="selectServiceDepartment($event,'aftermarketDepartment')"
                             clearable
@@ -1572,80 +1576,94 @@
                 :visible.sync="turnIntoCustomersStatu"
                 width="30%"
                 >
+                   <div class="mt10">
+                     <!-- <div class="mt10" v-if="role_data_auth==5"> -->
+                        <p class="mb10 ">选择子公司</p>
+                        <el-cascader
+                            v-model="affiliatedCompany"
+                            expand-trigger="hover"
+                            :options="parentCompanyList"
+                            @change="getCompanyDepartment()"
+                            clearable
+                            change-on-select
+                        >
+                        <!-- @change="selectServiceDepartment($event,'businessDepartment')" -->
+                        </el-cascader>
+                    </div>
                 <div class="mt10">
-                    <p class="mb10 ">业务部门</p>
-                    <el-cascader
-                        expand-trigger="hover"
-                        :value="changeToClientData.businessDepartment"
-                        :options="currentCompanyDepartment"
-                        @change="selectServiceDepartment($event,'businessDepartment')"
-                        clearable
-                        change-on-select
-                    >
-                    </el-cascader>
-                </div>
-                <div class="mt10">
-                    <p class="mb10 ">业务负责人</p>
-                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
-                    <el-select v-model="changeToClientData.businessEmployeeId" placeholder="请选择">
-                        <el-option
-                        v-for="item in changeToClientData.businessEmployee"
-                        :key="item.user_id"
-                        :label="item.user_name"
-                        :value="item.user_id">
-                        </el-option>
-                    </el-select>
-                </div>
-                
-                <div class="mt10">
-                    <p class="mb10 ">服务部门</p>
-                     <el-cascader
-                        expand-trigger="hover"
-                        :value="changeToClientData.serviceDepartment"
-                        :options="currentCompanyDepartment"
-                        @change="selectServiceDepartment($event,'serviceDepartment')"
-                        clearable
-                        change-on-select
-                    >
-                    </el-cascader>
-                </div>
-                <div class="mt10">
-                    <p class="mb10 ">服务负责人</p>
-                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.serviceEmployeeId" placeholder="请选择"> -->
-                    <el-select v-model="changeToClientData.serviceEmployeeId" placeholder="请选择">
-                        <el-option
-                        v-for="item in changeToClientData.serviceEmployee"
-                        :key="item.user_id"
-                        :label="item.user_name"
-                        :value="item.user_id">
-                        </el-option>
-                    </el-select>
-                </div>
-                
-                <div class="mt10">
-                    <p class="mb10 ">售后部门</p>
-                     <el-cascader
-                        expand-trigger="hover"
-                        :value="changeToClientData.aftermarketDepartment"
-                        :options="currentCompanyDepartment"
-                        @change="selectServiceDepartment($event,'aftermarketDepartment')"
-                        clearable
-                        change-on-select
-                    >
-                    </el-cascader>
-                </div>
-                <div class="mt10">
-                    <p class="mb10 ">售后负责人</p>
-                    <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择"> -->
-                    <el-select v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择">
-                        <el-option
-                        v-for="item in changeToClientData.aftermarketEmployee"
-                        :key="item.user_id"
-                        :label="item.user_name"
-                        :value="item.user_id">
-                        </el-option>
-                    </el-select>
-                </div>
+                            <p class="mb10 ">业务部门</p>
+                            <el-cascader
+                                expand-trigger="hover"
+                                v-model="changeToClientData.businessDepartment"
+                                :options="companyDepartment"
+                                @change="selectServiceDepartment($event,'businessDepartment')"
+                                clearable
+                                change-on-select
+                            >
+                            </el-cascader>
+                        </div>
+                     <div class="mt10">
+                        <p class="mb10 ">业务负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="changeToClientData.businessEmployeeId" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.businessEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="mt10">
+                        <p class="mb10 ">服务部门</p>
+                         <el-cascader
+                            expand-trigger="hover"
+                            v-model="changeToClientData.serviceDepartment"
+                            :options="companyDepartment"
+                            @change="selectServiceDepartment($event,'serviceDepartment')"
+                            clearable
+                            change-on-select
+                        >
+                        </el-cascader>
+                    </div>
+                    <div class="mt10">
+                        <p class="mb10 ">服务负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.serviceEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="changeToClientData.serviceEmployeeId" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.serviceEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="mt10">
+                        <p class="mb10 ">售后部门</p>
+                         <el-cascader
+                            expand-trigger="hover"
+                            v-model="changeToClientData.aftermarketDepartment"
+                            :options="companyDepartment"
+                            @change="selectServiceDepartment($event,'aftermarketDepartment')"
+                            clearable
+                            change-on-select
+                        >
+                        </el-cascader>
+                    </div>
+                    <div class="mt10">
+                        <p class="mb10 ">售后负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.aftermarketEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="turnIntoCustomersStatu = false">取 消</el-button>
                     <el-button type="primary" @click="intoContract">确 定</el-button>
@@ -1654,10 +1672,10 @@
          </div>
            <!-- 转移线索 -->
           <el-dialog
-                    title="转移线索"
+                    title="转移客户"
                     :visible.sync="moveStatu"
                 >
-                <div>
+                <!-- <div>
                     <p>选择公司</p>
                     <el-cascader
                         expand-trigger="hover"
@@ -1698,7 +1716,100 @@
                             :value="item.user_id">
                         </el-option>
                     </el-select>
-                </div>
+                </div> -->
+
+                <!-- 以下为固定内容, 每个类型的客户都应该填写 -->
+                     <div class="mt10">
+                     <!-- <div class="mt10" v-if="role_data_auth==5"> -->
+                        <p class="mb10 ">选择子公司</p>
+                        <el-cascader
+                            v-model="affiliatedCompany"
+                            expand-trigger="hover"
+                            :options="parentCompanyList"
+                            @change="getCompanyDepartment()"
+                            clearable
+                            change-on-select
+                        >
+                        <!-- @change="selectServiceDepartment($event,'businessDepartment')" -->
+                        </el-cascader>
+                    </div>
+                       <div class="mt10">
+                            <p class="mb10 ">业务部门</p>
+                            <el-cascader
+                                expand-trigger="hover"
+                                v-model="changeToClientData.businessDepartment"
+                                :options="companyDepartment"
+                                @change="selectServiceDepartment($event,'businessDepartment')"
+                                clearable
+                                change-on-select
+                            >
+                            </el-cascader>
+                        </div>
+                     <div class="mt10">
+                        <p class="mb10 ">业务负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.businessEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="changeToClientData.businessEmployeeId" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.businessEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="mt10">
+                        <p class="mb10 ">服务部门</p>
+                         <el-cascader
+                            expand-trigger="hover"
+                            v-model="changeToClientData.serviceDepartment"
+                            :options="companyDepartment"
+                            @change="selectServiceDepartment($event,'serviceDepartment')"
+                            clearable
+                            change-on-select
+                        >
+                        </el-cascader>
+                    </div>
+                    <div class="mt10">
+                        <p class="mb10 ">服务负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.serviceEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="changeToClientData.serviceEmployeeId" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.serviceEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="mt10">
+                        <p class="mb10 ">售后部门</p>
+                         <el-cascader
+                            expand-trigger="hover"
+                            v-model="changeToClientData.aftermarketDepartment"
+                            :options="companyDepartment"
+                            @change="selectServiceDepartment($event,'aftermarketDepartment')"
+                            clearable
+                            change-on-select
+                        >
+                        </el-cascader>
+                    </div>
+                    <div class="mt10">
+                        <p class="mb10 ">售后负责人</p>
+                        <!-- <el-select @change="selectDefaultContact" v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择"> -->
+                        <el-select v-model="changeToClientData.aftermarketEmployeeId" placeholder="请选择">
+                            <el-option
+                            v-for="item in changeToClientData.aftermarketEmployee"
+                            :key="item.user_id"
+                            :label="item.user_name"
+                            :value="item.user_id">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+
+
                  <span slot="footer" class="dialog-footer">
                         <el-button @click="moveStatu = false">取 消</el-button>
                         <el-button type="primary" @click="selMoveCompany('moveStatu')">确 定</el-button>
@@ -2766,26 +2877,43 @@ export default {
       } else if (flag == "moveStatu") {
         self.moveStatu = false;
         // 提交转移
+        console.log('affiliatedCompany:'+this.affiliatedCompany);
+        
+        console.log('changeToClientData.businessDepartment:'+this.changeToClientData.businessDepartment);
+        
+        console.log('changeToClientData.businessEmployeeId:'+this.changeToClientData.businessEmployeeId);
+        
+        console.log('changeToClientData.serviceDepartment:'+this.changeToClientData.serviceDepartment);
+        
+        console.log('changeToClientData.serviceEmployeeId:'+this.changeToClientData.serviceEmployeeId);
+        
+        console.log('changeToClientData.aftermarketDepartment:'+this.changeToClientData.aftermarketDepartment);
+        
+        console.log('changeToClientData.aftermarketEmployeeId:'+this.changeToClientData.aftermarketEmployeeId);
+        
         if(self.moveClueFlag == 1){
             str = "转移线索成功";
-            (url = "/api/clue/transferClue"),
+            (url = "/api/customer/transferClue"),
             (paramObj = {
                 token: localStorage.getItem("crm_token"),
                 clue_id: self.selTableData.clue_id,
-                company_id:
-                self.moveClueCompanyId[self.moveClueCompanyId.length - 1],
-                department_id:
-                self.moveClueDepartmentId[self.moveClueDepartmentId.length - 1],
-                user_new: self.moveClueEmployeesId
+                company_id: self.affiliatedCompany[self.affiliatedCompany.length-1],
+                person_user: self.changeToClientData.businessEmployeeId,
+                person_department: self.changeToClientData.businessDepartment[self.changeToClientData.businessDepartment.length-1],
+                service_user: self.changeToClientData.serviceEmployeeId,
+                service_department: self.changeToClientData.serviceDepartment[self.changeToClientData.serviceDepartment.length-1],
+                customer_user: self.changeToClientData.aftermarketEmployeeId,
+                customer_department: self.changeToClientData.aftermarketDepartment[self.changeToClientData.aftermarketDepartment.length - 1],
             });
         } else {
             self.delLogItem();
+            return '';
         }
       
       } else if (flag == "emp") {
         // 选择部门
         // url = "/api/Department/shaiChaUser";
-        url: "/api/Department/ZhuanDUser",
+        url = "/api/Department/ZhuanDUser",
         paramObj = {
           token: localStorage.getItem("crm_token"),
           department_id:
@@ -2796,36 +2924,39 @@ export default {
       console.log("提交参数:" + JSON.stringify(paramObj, null, 4));
       // console.log('提交参数:'+JSON.stringify(selTableData,null,4));
         if (paramObj) {
-            this.$axios({
+            self.$axios({
                 method: "POST",
                 withCredentials: false,
                 url: url,
                 data: paramObj
             })
                 .then(function(res) {
-                if (res.data.code === 200) {
-                    console.log(JSON.stringify(res.data.data));
+                    if (res.data.code === 200) {
+                        console.log(JSON.stringify(res.data.data));
 
-                    // 当前子公司下的部门 parentCompanyDepartment
-                    if (flag == "depa") {
-                    self.getMenuName(res.data.data.list);
-                    self.moveDepartmentList = res.data.data.list;
-                    } else if (flag == "emp") {
-                    self.moveDepartmentStaff = res.data.data.list;
-                    } else if (flag == "moveStatu") {
-                    self.$message({
-                        message: str,
-                        type: "success"
-                    });
-                    self.filterClue();
+                        // 当前子公司下的部门 parentCompanyDepartment
+                        self.getMenuName(res.data.data.list);
+                        if (flag == "depa") {
+                            self.moveDepartmentList = res.data.data.list;
+                        } else if (flag == "emp") {
+                            self.moveDepartmentStaff = res.data.data.list;
+                        } else if (flag == "moveStatu") {
+                            self.$message({
+                                message: str,
+                                type: "success"
+                            });
+                            self.filterClue();
+                        } else {
+                        }
                     } else {
+                    self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                     }
-                } else {
-                   self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
-                }
                 })
                 .catch(function(err) {
-                console.log(err);
+                    console.log('----');
+                    console.error(err);
+                    console.log('----');
+                    
                 });
         }
     },
@@ -2886,17 +3017,17 @@ export default {
       let obj = {
         token: localStorage.getItem("crm_token"),
         clue_id: self.selTableData.clue_id,
-        person_user: changeToClientData.businessEmployeeId,
-        person_department:changeToClientData.businessDepartment[changeToClientData.businessDepartment.length - 1],
-        service_user: changeToClientData.serviceEmployeeId,
+        person_user: self.changeToClientData.businessEmployeeId,
+        person_department: self.changeToClientData.businessDepartment[self.changeToClientData.businessDepartment.length - 1],
+        service_user: self.changeToClientData.serviceEmployeeId,
         service_department:
-          changeToClientData.serviceDepartment[
-            changeToClientData.serviceDepartment.length - 1
+          self.changeToClientData.serviceDepartment[
+            self.changeToClientData.serviceDepartment.length - 1
           ],
-        customer_user: changeToClientData.aftermarketEmployeeId,
+        customer_user: self.changeToClientData.aftermarketEmployeeId,
         customer_department:
-          changeToClientData.aftermarketDepartment[
-            changeToClientData.aftermarketDepartment.length - 1
+          self.changeToClientData.aftermarketDepartment[
+            self.changeToClientData.aftermarketDepartment.length - 1
           ]
       };
 
@@ -2944,7 +3075,7 @@ export default {
     },
     // 删除客户
     delLogItem(flag) {
-      let arr = [],self = this,obj,url;
+      let arr = [],self = this,obj,url,str;
       for (let i = 0; i < this.multipleSelection.length; i++) {
         // this.tableData = this.tableData.filter(value => {
         //   return value.clue_id != this.multipleSelection[i].clue_id;
@@ -2956,19 +3087,27 @@ export default {
             token: localStorage.getItem("crm_token"),
             clueIds: JSON.stringify(arr)
             }
+            str='批量删除客户成功'
             url = "/api/clue/deleteStudentClues"
         } else {
+            str='批量转移客户成功'
             obj = {
             token: localStorage.getItem("crm_token"),
             clueIds: JSON.stringify(arr),
-            company_id:
-                    self.moveClueCompanyId[self.moveClueCompanyId.length - 1],
-                    department_id:
-                    self.moveClueDepartmentId[self.moveClueDepartmentId.length - 1],
-                    user_new: self.moveClueEmployeesId
+            company_id: self.affiliatedCompany[self.affiliatedCompany.length-1],
+            person_user: self.changeToClientData.businessEmployeeId,
+            person_department: self.changeToClientData.businessDepartment[self.changeToClientData.businessDepartment.length-1],
+            service_user: self.changeToClientData.serviceEmployeeId,
+            service_department: self.changeToClientData.serviceDepartment[self.changeToClientData.serviceDepartment.length -1],
+            customer_user: self.changeToClientData.aftermarketEmployeeId,
+            customer_department: self.changeToClientData.aftermarketDepartment[self.changeToClientData.aftermarketDepartment.length -1]
             }
-            url = "/api/clue/transferClues"
+            // url = "/api/clue/transferClues"
+            url = "/api/customer/transferClues"
         }
+        console.log('提交参数:'+JSON.stringify(obj,null,4));
+        console.log('提交网址:'+JSON.stringify(url));
+        
         if (obj) {
             this.$axios({
             method: "POST",
@@ -2979,7 +3118,7 @@ export default {
             .then(function(res) {
             if (res.data.code == 200) {
                 self.$message({
-                message: "批量删除客户成功",
+                message: str,
                 type: "success"
                 });
                 self.filterClue();
@@ -2988,7 +3127,7 @@ export default {
             }
             })
             .catch(function(err) {
-            console.log(err);
+                console.log(err);
             });
         }
       
@@ -4463,5 +4602,12 @@ export default {
 
 .hide {
   display: none;
+}
+.nowrap {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    margin: 0 auto;
 }
 </style>

@@ -1349,11 +1349,11 @@
                     subject:'',
                     grade:'',
                     parentsName:'',
-                    phone:'111',
-                    tel:'222',
-                    weixin:'333',
-                    qq:'444',
-                    email:'555',
+                    phone:'',
+                    tel:'',
+                    weixin:'',
+                    qq:'',
+                    email:'',
                     schoolName:'',
                     schoolLevel:'',
                     selectCityData:[],
@@ -1982,6 +1982,44 @@
                             });
                             self.addStudentStatu = false;
                             self.clueDetails();
+
+                            if (flag == 'contact') {
+                                 // 新增联系人数据
+                                addContactData = {
+                                    contactName: '',
+                                    department: '',
+                                    post: '',
+                                    grade: '',
+                                    subject: '',
+                                    phone: '',
+                                    tel: '',
+                                    weixin: '',
+                                    qq: '',
+                                    email: '',
+                                    selectCityData: [],
+                                    address: '',
+                                    company_name: '',
+                                    relationship: ''
+                                }
+                            } else {
+                                // 新增学生数据
+                                addStudentData = {
+                                    name:'',
+                                    sex:'',
+                                    subject:'',
+                                    grade:'',
+                                    parentsName:'',
+                                    phone:'',
+                                    tel:'',
+                                    weixin:'',
+                                    qq:'',
+                                    email:'',
+                                    schoolName:'',
+                                    schoolLevel:'',
+                                    selectCityData:[],
+                                }
+                            }
+                            
                         } else {
                            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
                         }
