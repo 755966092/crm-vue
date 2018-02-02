@@ -497,6 +497,7 @@
                         <el-radio-button label="1">待付款</el-radio-button>
                         <el-radio-button label="2">部分结算</el-radio-button>
                         <el-radio-button label="3">全部结清</el-radio-button>
+                        <el-radio-button label="5">未结清</el-radio-button>
                     </el-radio-group>
                 </div>
             </el-col>

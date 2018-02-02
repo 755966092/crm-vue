@@ -5,6 +5,7 @@
                 <div class="title">
                     <span>角色</span>
                     <el-button type="text" @click="addRole">新建角色</el-button>
+                    <el-button type="text" @click="delRole">删除角色</el-button>
                 </div>
                 <div class="block">
                 <el-cascader
@@ -97,6 +98,18 @@
                     <el-button type="primary" @click="addRole2">创 建</el-button>
                 </span>
           </el-dialog>
+          <!-- 删除角色 -->
+           <el-dialog
+                title="删除角色"
+                :visible.sync="delRoleStatu"
+                width="30%"
+                >
+                    <span >是否确定删除角色</span>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="delRoleStatu = false">取 消</el-button>
+                    <el-button type="primary" @click="delRole2">创 建</el-button>
+                </span>
+          </el-dialog>
     </div>
 </template>
 <script>
@@ -117,10 +130,41 @@ export default {
       
       allRoleList: [],
       companyId: localStorage.getItem("motherCompanyId"),
-      
+      delRoleStatu: false
     };
   },
   methods: {
+      // 删除角色
+      delRole() {
+          this.delRoleStatu = true
+      },
+      delRole2() {
+              let self = this;
+              this.$axios({
+                 method: 'POST',
+                 withCredentials: false,
+                 url: '/api/Role/roleDelete',
+                 data: {
+                     token: localStorage.getItem('crm_token'),
+                     role_id: self.currentRole
+                 }
+              })
+              .then(function(res){
+                 if (res.data.code === 200) {
+                     self.$message({
+                         message: '删除角色成功',
+                         type: 'success'
+                     });
+                     self.delRoleStatu = false;
+                     self.getAllRole();
+                 } else {
+                     self.$message.error(res.data.msg);
+                 }
+              })
+              .catch(function(err){
+                  console.log(err);
+              });
+      },
       // 添加角色
       addRole() {
           this.addRoleStatu = true;
@@ -293,7 +337,8 @@ export default {
                 
                 self.allClueList = res.data.data.list;
             // console.log('所有权限'+JSON.stringify(res.data.data.list));
-          self.getMotherCompanyRole();
+        //   self.getMotherCompanyRole();
+            self.getAllRole();
             } else {
                 self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
             }
@@ -324,7 +369,7 @@ export default {
                             res.data.data.list[i].opat_auth = res.data.data.list[i].opat_auth.split(',').map((value)=>value?parseInt(value):'')
                         }
                     }
-                    // console.log('当前:::'+ JSON.stringify(res.data.data.list));
+                  
                     
                     self.currentRole = res.data.data.list[0].id;
                     self.dataPermission = res.data.data.list[0].data_auth;
@@ -363,6 +408,7 @@ export default {
   created() {
     this.applyCompany();
     this.opatRole();
+    
   }
 };
 </script>

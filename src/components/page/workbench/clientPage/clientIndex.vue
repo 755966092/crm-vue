@@ -2203,6 +2203,10 @@ export default {
             {
               value: "4",
               label: "没有合同"
+            },
+            {
+              value: "5",
+              label: "未结清"
             }
           ]
         },

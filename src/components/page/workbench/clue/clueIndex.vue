@@ -3293,8 +3293,8 @@ self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push
           los: self.addClueData.academicSystem,
           grade: self.addClueData.schoolLevel,
           province_id: self.addClueData.selectCityData[0],
-          city_id: self.addClueData.selectCityData[1],
-          area_id: self.addClueData.selectCityData[2],
+          city_id: self.addClueData.selectCityData[1]||'',
+          area_id: self.addClueData.selectCityData[2]||'',
           address: self.addClueData.address,
           contacts_name: self.addClueData.contactName,
           contacts_post: self.addClueData.contactPosition,
@@ -3316,8 +3316,8 @@ self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push
           location: self.addClueData.positioning,
 
           province_id: self.addClueData.selectCityData[0],
-          city_id: self.addClueData.selectCityData[1],
-          area_id: self.addClueData.selectCityData[2],
+          city_id: self.addClueData.selectCityData[1]||'',
+          area_id: self.addClueData.selectCityData[2]||'',
           address: self.addClueData.address,
           contacts_name: self.addClueData.contactName,
           contacts_post: self.addClueData.contactPosition,
@@ -3343,8 +3343,8 @@ self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push
           contacts_professor_subjects: self.addClueData.professorSubjects,
 
           province_id: self.addClueData.selectCityData[0],
-          city_id: self.addClueData.selectCityData[1],
-          area_id: self.addClueData.selectCityData[2],
+          city_id: self.addClueData.selectCityData[1]||'',
+          area_id: self.addClueData.selectCityData[2]||'',
           address: self.addClueData.address,
           contacts_name: self.addClueData.teacherName,
           contacts_post: self.addClueData.contactPosition,
@@ -3370,8 +3370,8 @@ self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push
           student_grade: self.addClueData.grade,
             contacts_relationship: self.addClueData.contacts_relationship,
           province_id: self.addClueData.selectCityData[0],
-          city_id: self.addClueData.selectCityData[1],
-          area_id: self.addClueData.selectCityData[2],
+          city_id: self.addClueData.selectCityData[1]||'',
+          area_id: self.addClueData.selectCityData[2]||'',
           address: self.addClueData.address,
           contacts_name: self.addClueData.contactName,
         //   contacts_post: self.addClueData.contactPosition,
@@ -3384,11 +3384,11 @@ self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push
       }
       console.log("提交线索参数:" + JSON.stringify(paramObj, null, 4));
       let objFlag = 1;
-      for (const key in paramObj) {
-        if (!paramObj[key]) {
-          objFlag = 0;
-        }
-      }
+    //   for (const key in paramObj) {
+    //     if (!paramObj[key]) {
+    //       objFlag = 0;
+    //     }
+    //   }
       console.log(objFlag);
       if (objFlag) {
         self
