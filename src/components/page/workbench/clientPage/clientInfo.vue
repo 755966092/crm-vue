@@ -984,6 +984,7 @@
                                     <el-button
                                     size="mini"
                                     :disabled="scope.row.is_turn == 2"
+                                    v-if="scope.row.is_turn != 2"
                                     type="success"
                                     @click="handleEdit(scope.$index, scope.row, 'studentToContract')">转客户</el-button>
                                     <el-button
@@ -2275,14 +2276,8 @@ export default {
   },
 
   methods: {
-      // 选择服务部门
-    selectServiceDepartment(data, flag) {
-      this.changeToClientData.flagDepartment = flag;
-      this.changeToClientData[flag] = data;
-      // 获取部门员工
-      this.getDepartmentEmployee2();
-    },
-    getDepartmentEmployee2() {
+    // 获取部门员工
+    getDepartmentEmployee() {
       let self = this;
       // 跟进selectIpt 来判断当前应该获取哪一个部门的员工
       let slectIpt = "";
@@ -2311,10 +2306,10 @@ export default {
         .then(function(res) {
           if (res.data.code === 200) {
             self.changeToClientData[slectIpt] = res.data.data.list;
-            // console.log(JSON.stringify(self.changeToClientData));
+            console.log(JSON.stringify(self.changeToClientData));
             // console.log(department_id);
           } else {
-           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
+            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
           }
         })
         .catch(function(err) {
@@ -3005,7 +3000,7 @@ export default {
       this.$axios({
         method: "POST",
         withCredentials: false,
-        url: "/api/Department/ZhuanDUser",
+        url: "/api/department/makeAdminCDepartmentList",
         data: {
           token: localStorage.getItem("crm_token"),
           department_id: department_id

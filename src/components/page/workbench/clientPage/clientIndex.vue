@@ -2961,13 +2961,13 @@ export default {
         }
     },
     // 选择服务部门
-    selectServiceDepartment(data, flag) {
+    selectServiceDepartment1(data, flag) {
       this.changeToClientData.flagDepartment = flag;
       this.changeToClientData[flag] = data;
       // 获取部门员工
       this.getDepartmentEmployee2();
     },
-    getDepartmentEmployee2() {
+    getDepartmentEmployee21() {
       let self = this;
       // 跟进selectIpt 来判断当前应该获取哪一个部门的员工
       let slectIpt = "";
@@ -2996,7 +2996,7 @@ export default {
         .then(function(res) {
           if (res.data.code === 200) {
             self.changeToClientData[slectIpt] = res.data.data.list;
-            // console.log(JSON.stringify(self.changeToClientData));
+            console.log(JSON.stringify(self.changeToClientData));
             // console.log(department_id);
           } else {
            self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
@@ -3274,7 +3274,7 @@ export default {
         .then(function(res) {
           if (res.data.code === 200) {
             self.changeToClientData[slectIpt] = res.data.data.list;
-            // console.log(JSON.stringify(self.changeToClientData));
+            console.log(JSON.stringify(self.changeToClientData));
             // console.log(department_id);
           } else {
             self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
