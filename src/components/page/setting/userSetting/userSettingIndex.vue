@@ -1318,22 +1318,29 @@
                     .then(function(res,err){
                        if (res.data.code === 200) {
                          if (res.data.data.list.length > 0) {
+                             
+                             
                             self.getMenuName(res.data.data.list);
-                            res.data.data.company.children = res.data.data.list
-                            self.treeData = [res.data.data.company];
+                            // -------------------
+                            // res.data.data.company.children = res.data.data.list
+                            // self.treeData = [res.data.data.company];
+                            // -------------------
+                            self.treeData = res.data.data.list;
+                            self.departmentId = res.data.data.list[0].id
                             self.departmentMakeAdminDepartmentList();
                          } else {
                              self.treeData = [res.data.data.company];
                              self.departmentName = '';
                              self.departmentId = 0;
                          }
-                          if (self.departmentId == 0) {
+                         console.log('数据:'+JSON.stringify(self.treeData));
+                        //   if (self.departmentId == 0) {
                                 self.departmentNewName = self.treeData[0].name
                                 self.departmentName = self.treeData[0].name;
-                            } else {
+                            // } else {
                                 // self.departmentId = 0;
-                                self.departmentName = self.departmentNewName
-                            }
+                                // self.departmentName = self.departmentNewName
+                            // }
                          
                        } else {
                           self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
@@ -1360,12 +1367,12 @@
                             self.getMenuName(res.data.data.list);
                         self.parentCompanyList = res.data.data.list
                         console.log(JSON.stringify(self.parentCompanyList));
-                        if (self.departmentId == 0) {
-                            self.getChildrenDepartment();
-                        } else {
-                            self.departmentNewName = self.parentCompanyList[0].name
-                            self.departmentName = self.parentCompanyList[0].name;
-                        }
+                        // if (self.departmentId == 0) {
+                        //     self.getChildrenDepartment();
+                        // } else {
+                        //     self.departmentNewName = self.parentCompanyList[0].name
+                        //     self.departmentName = self.parentCompanyList[0].name;
+                        // }
                         self.departmentName = self.departmentNewName;
                         } else {
                             self.$message.error(res.data.msg);if (res.data.code == 10008) {self.$router.push('/login');};
@@ -1415,7 +1422,9 @@
             },
             // 当前部门下的员工
             departmentMakeAdminDepartmentList() {
+                
                 var self = this,url;
+                console.log('部门ID:'+self.departmentId);
                 if (self.departmentId) {
                     
                 } else {
@@ -1439,7 +1448,7 @@
                             if (res.data.code == 200) {
                                 
                                 self.departmentStaff = res.data.data.list;
-                                // console.log(res.data.data.list);
+                                console.log( '员工::'+JSON.stringify(res.data.data.list));
                                 if (res.data.data.list.length > 0) {
                                     let arr = [];
                                     for (let i = 0; i < res.data.data.list.length; i++) {
@@ -1467,7 +1476,7 @@
         },
         //
         created() {
-            this.getCompanyUser();
+            // this.getCompanyUser();
             // this.childrenDepartment();
             this.getChildrenDepartment();
             this.applyCompany();

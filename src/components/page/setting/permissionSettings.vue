@@ -235,7 +235,6 @@ export default {
     roleEditRole() {
             let self = this;
             console.log(self.currentRolePermissions);
-            
             let obj = {
                     token: localStorage.getItem('crm_token'),
                     role_id: self.currentRole,

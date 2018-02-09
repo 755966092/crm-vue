@@ -2366,11 +2366,10 @@ export default {
                     query: { data: data, clueType: this.clueType }
                     });
                 } else {
-                    this.clueData.clue_id = data.of_where;
+                    this.clueType = 4
+                    this.clueData.clue_id = data.student_id;
                     this.clueDetails();
                     // 客户
-                    
-                
                 }
                 
                
